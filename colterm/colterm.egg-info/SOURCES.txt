@@ -1,0 +1,8 @@
+setup.py
+colterm/__init__.py
+colterm/term.py
+colterm.egg-info/PKG-INFO
+colterm.egg-info/SOURCES.txt
+colterm.egg-info/dependency_links.txt
+colterm.egg-info/requires.txt
+colterm.egg-info/top_level.txt
