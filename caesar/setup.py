@@ -7,5 +7,5 @@ setup(
     author='Karl-Dieter Zimmer-Bentin',
     author_email='dzb@pruefbit.de',
     description='A caesar and rot13 cipher codec.',
-    python_requires='>=3.12',
+    python_requires='>=3.9',
 )

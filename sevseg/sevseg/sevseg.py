@@ -9,6 +9,8 @@ The symbols are composed of characters with this segment order:
 The resulting symbols are represented by a 2D array, five characters, wide
 three characters high.
 """
+from datetime import datetime
+
 SYMBOLS = '0123456789- '
 PARTS = [list(cp) for cp in ('     ', ' __  ', '   | ', '|  | ', '|__| ', '|__  ', ' __| ')]
 CODES = [
@@ -16,10 +18,19 @@ CODES = [
     (1, 5, 6), (0, 5, 4), (1, 2, 2), (1, 4, 4), (1, 4, 2),
     (0, 1, 0), (0, 0, 0)
 ]
+COLON = '  ', '\u2022 ', '\u2022 '
 
 
 def to_sevenseg(number: int | float, *, width: int = 0) -> str:
     return '\n'.join(get_sevenseg_matrix(number, width=width))
+
+
+def hms_time_display(hour: int, minute: int, second: int) -> str:
+    hh = get_sevenseg_matrix(hour % 24, width=2)
+    mm = get_sevenseg_matrix(minute % 60, width=2)
+    ss = get_sevenseg_matrix(second % 60, width=2)
+    display = list(zip(hh, COLON, mm, COLON, ss))
+    return '\n'.join(''.join(row) for row in display)
 
 
 def get_sevenseg_matrix(number: int | float, *, width: int = 0) -> list[str]:

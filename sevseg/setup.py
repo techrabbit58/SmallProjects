@@ -1,14 +1,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='colterm',
+    name='sevseg',
     version='0.1.0',
     packages=find_packages(),
-    install_requires=[
-        'colorama',
-    ],
     author='Karl-Dieter Zimmer-Bentin',
     author_email='dzb@pruefbit.de',
-    description='Add some convenience to colorama.',
+    description='Create very basic seven-segment displays as text.',
     python_requires='>=3.9',
 )
