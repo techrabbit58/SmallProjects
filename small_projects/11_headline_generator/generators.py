@@ -5,8 +5,8 @@ NOUNS = ('Athlete,Shovel,Clown,Paleo Diet,Doctor,Parent,Cat,Dog,Chicken,Robot,Vi
 MODES = 'Soon,This Year,Later Today,Right Now,Next Week'.split(',')
 OBJECT_PRONOUNS = 'Her,Him,Them'.split(',')
 COUNTRIES = ('France,United Kingdom,Germany,Italy,Portugal,Estonia,Finland,Sweden,Norway,'
-             'Belgium,Spain,Bulgaria,Russia,Poland,Swizerland,Madagascar,Kongo,Aethiopia,San Marino,'
-             'Malta,Israel,Slowakia,Croatia,Romania,Luxembourg,Latvia,Armenia,Turkey').split(',')
+             'Belgium,Spain,Bulgaria,Russia,Poland,Switzerland,Madagascar,Kongo,Ethiopia,San Marino,'
+             'Malta,Israel,Slovakia,Croatia,Romania,Luxembourg,Latvia,Armenia,Turkey').split(',')
 PLACES = ('House,Attic,Bank Deposit Box,Pocket,School,Basement,Workplace,'
           'Donut Shop,Wardrobe,Bunker,Shelter,Car,Van,Drawer').split(',')
 
@@ -20,7 +20,7 @@ def what_you_dont_know() -> str:
     noun = random.choice(NOUNS)
     plural_noun = random.choice(NOUNS) + 's'
     mode = random.choice(MODES)
-    return f'Whithout This {noun}, {plural_noun} Could Kill You {mode}'
+    return f'Without This {noun}, {plural_noun} Could Kill You {mode}'
 
 
 def big_companies_hate_her() -> str:

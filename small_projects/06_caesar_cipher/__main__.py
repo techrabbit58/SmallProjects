@@ -5,7 +5,7 @@ from .parser import get_argument_parser
 
 
 def main():
-    args = get_argument_parser('caesar').parse_args()
+    args = get_argument_parser('caesarcode').parse_args()
     text = ' '.join(args.message)
     match args.operation:
         case 'rot13':

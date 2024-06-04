@@ -1,7 +1,0 @@
-setup.py
-caesarcode/__init__.py
-caesarcode/caesar.py
-caesarcode.egg-info/PKG-INFO
-caesarcode.egg-info/SOURCES.txt
-caesarcode.egg-info/dependency_links.txt
-caesarcode.egg-info/top_level.txt

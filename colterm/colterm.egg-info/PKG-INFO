@@ -4,5 +4,5 @@ Version: 0.1.0
 Summary: Add some convenience to colorama.
 Author: Karl-Dieter Zimmer-Bentin
 Author-email: dzb@pruefbit.de
-Requires-Python: >=3.12
+Requires-Python: >=3.9
 Requires-Dist: colorama

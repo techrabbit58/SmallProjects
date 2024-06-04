@@ -6,6 +6,6 @@ setup(
     packages=find_packages(),
     author='Karl-Dieter Zimmer-Bentin',
     author_email='dzb@pruefbit.de',
-    description='A caesar and rot13 cipher codec.',
+    description='A caesarcode and rot13 cipher codec.',
     python_requires='>=3.9',
 )
