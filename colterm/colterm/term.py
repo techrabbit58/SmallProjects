@@ -1,4 +1,4 @@
-# Origin: colterm
+# Origin: bext
 # By Al Sweigart al@inventwithpython.com
 # Copyright 2019, BSD 3-Clause license, see LICENSE file.
 # Built on top of Colorama by Jonathan Hartley
@@ -485,8 +485,11 @@ def fg(color: str, *, bright: bool = True) -> None:
         color = random.choice(ALL_COLORS)
 
     sys.stdout.write(_color_map[color][0])
-    if color != 'reset':
+    if color == 'reset':
+        sys.stdout.write(colorama.Style.RESET_ALL)
+    else:
         sys.stdout.write(colorama.Style.BRIGHT if bright else colorama.Style.NORMAL)
+
     sys.stdout.flush()
 
 

@@ -29,10 +29,13 @@ def get_seconds_left(prog: str) -> int:
 def print_time_left(current: datetime) -> None:
     hour, minute, second = current.hour, current.minute, current.second
     term.clear()
+    term.fg('red')
     term.hide_cursor()
     print(sevseg.hms_time_display(hour, minute, second))
+    term.fg('yellow')
     print('Press Ctrl+C to quit before zero.')
     term.show_cursor()
+    term.fg('reset')
 
 
 def main(prog: str) -> None:
