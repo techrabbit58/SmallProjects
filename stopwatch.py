@@ -26,7 +26,6 @@ def main() -> None:
 
     while True:
         print_time(current)
-        current += timedelta(seconds=1)
 
         try:
             time.sleep(1)
@@ -34,6 +33,8 @@ def main() -> None:
         except KeyboardInterrupt:
             print('\nBye!\n')
             sys.exit()
+
+        current += timedelta(seconds=1)
 
 
 if __name__ == '__main__':
