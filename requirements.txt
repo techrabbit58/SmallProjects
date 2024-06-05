@@ -1,6 +1,0 @@
-caesarcode @ file:///home/dieter/PycharmProjects/SmallProjects/caesarcode
-colorama==0.4.6
-colterm @ file:///home/dieter/PycharmProjects/SmallProjects/colterm
-pyfiglet==1.0.2
-pyperclip==1.8.2
-sevseg @ file:///home/dieter/PycharmProjects/SmallProjects/sevseg
