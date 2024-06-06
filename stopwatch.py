@@ -1,7 +1,7 @@
 import time
 from datetime import datetime, timedelta
 
-import getkey
+import key_stroke
 
 import sevseg
 from colterm import term
@@ -18,31 +18,34 @@ def print_time(current: datetime, is_on_hold: bool) -> None:
     term.fg('yellow')
     print('           P A U S E D' if is_on_hold else '')
     print('   Press Ctrl+C or Q to stop.')
-    print('Press spacebar to pause/continue.')
+    print('Space bar toggles pause/continue.')
     term.show_cursor()
     term.fg('reset')
 
 
 def main() -> None:
+    kb = key_stroke.Key_Stroke()
     current = datetime.min
     is_on_hold = False
 
     while True:
         print_time(current, is_on_hold)
 
+        key = 'none'
+
+        if kb.kbhit():
+            key = kb.getch()
+
+        if key in {'q', 'Q'}:
+            break
+        if key == ' ':
+            is_on_hold = not is_on_hold
+            continue
+        if key != 'none':
+            continue
+
         try:
-            key = getkey.getkey(blocking=False)
-
-            if key in {'q', 'Q'}:
-                break
-            if key == ' ':
-                is_on_hold = not is_on_hold
-                continue
-            if key != '':
-                continue
-
             time.sleep(1)
-
         except KeyboardInterrupt:
             break
 
