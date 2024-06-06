@@ -54,5 +54,6 @@ def main() -> None:
 
     print('\nBye!\n')
 
+
 if __name__ == '__main__':
     main()
