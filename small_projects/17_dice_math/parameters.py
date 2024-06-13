@@ -1,2 +1,5 @@
 MIN_DICE = 2
 MAX_DICE = 6
+QUIZ_DURATION = 30  # seconds
+PENALTY = 1
+REWARD = 4
