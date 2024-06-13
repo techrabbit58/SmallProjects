@@ -98,7 +98,7 @@ def main() -> None:
         if answer == 'quit':
             break
         else:
-            if countdown > 9 and int(answer) == total:
+            if countdown >= 10 and int(answer) == total:
                 correct_answers += 1
             else:
                 incorrect_answers += 1
