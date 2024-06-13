@@ -1,0 +1,2 @@
+MIN_DICE = 2
+MAX_DICE = 6
