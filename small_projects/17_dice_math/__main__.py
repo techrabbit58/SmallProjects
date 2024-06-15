@@ -98,10 +98,22 @@ def main() -> None:
             break
         else:
             if countdown >= 10 and int(answer) == total:
+                term.fg('green')
+                print(f'Your answer was correct after {QUIZ_DURATION - (countdown // 10)} seconds: {answer} pips.')
                 correct_answers += 1
+            elif not countdown:
+                term.fg('red')
+                print(f'\nYour anwer is missing after {QUIZ_DURATION} seconds. You lose.')
+                incorrect_answers += 1
             else:
+                term.fg('red')
+                print(f'Your answer {answer} was wrong. Instead, {total} would have been the correct answer.')
                 incorrect_answers += 1
             score = correct_answers * REWARD - incorrect_answers * PENALTY
+
+        term.fg('reset')
+        print('Press any key to continue.')
+        wait_for_any_key(kb)
 
     term.clear()
     print('Correct answers:   ', correct_answers)
