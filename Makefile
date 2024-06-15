@@ -7,7 +7,7 @@ caesarcode: ./caesarcode/setup.py ./caesarcode/caesarcode/caesarcode.py ./caesar
 sevseg: ./sevseg/setup.py ./sevseg/sevseg/sevseg.py ./sevseg/sevseg/__init__.py
 	pip install ./sevseg -U
 
-requirements: colterm sevseg caesarcode requirements.txt
+requirements: requirements.txt
 	pip install -r requirements.txt
 
 update: colterm sevseg caesarcode requirements
