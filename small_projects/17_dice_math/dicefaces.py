@@ -10,6 +10,9 @@ _frame = [
     list("'-------'"),
 ]
 
+FACE_HEIGHT = len(_frame)
+FACE_WIDTH = len(_frame[0])
+
 
 def _pips(n: int) -> Callable[[], list[tuple[int, int]]]:
     assert 1 <= n <= 6

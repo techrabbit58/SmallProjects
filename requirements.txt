@@ -1,4 +1,6 @@
 colorama==0.4.6
+get-key==1.60.0
 key_stroke==1.0.1
 pyfiglet==1.0.2
 pyperclip==1.8.2
+setuptools==70.0.0

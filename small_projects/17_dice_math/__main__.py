@@ -1,11 +1,12 @@
 import random
 import time
 from textwrap import dedent
+from typing import TypeAlias
 
 import key_stroke
 from colterm import term
 
-from .dicefaces import die_face
+from .dicefaces import die_face, FACE_WIDTH, FACE_HEIGHT
 from .parameters import MIN_DICE, MAX_DICE, QUIZ_DURATION, PENALTY, REWARD
 
 
@@ -43,6 +44,38 @@ def wait_for_any_key(kb: key_stroke.Key_Stroke) -> None:
     term.get_key()
 
 
+DiceFace: TypeAlias = list[str]
+Canvas: TypeAlias = dict[tuple[int, int], str]
+
+
+def can_place_face_at(origin_x: int, origin_y: int, canvas: Canvas) -> bool:
+    for x, y in {
+        (origin_x, origin_y),
+        (origin_x + FACE_WIDTH, origin_y),
+        (origin_x + FACE_WIDTH, origin_y + FACE_HEIGHT),
+        (origin_x, origin_y + FACE_HEIGHT)
+    }:
+        if (y, x) in canvas:
+            return False
+    return True
+
+
+def place_dice_faces(canvas_width: int, canvas_height: int, dice_faces: list[DiceFace]) -> Canvas:
+    canvas = {}
+
+    for face in dice_faces:
+        while True:
+            origin_x = random.randint(0, canvas_width - FACE_WIDTH - 1)
+            origin_y = random.randint(1, canvas_height - FACE_HEIGHT - 4)
+            if can_place_face_at(origin_x, origin_y, canvas):
+                for dx in range(FACE_WIDTH):
+                    for dy in range(FACE_HEIGHT):
+                        canvas[(origin_y + dy, origin_x + dx)] = face[dy][dx]
+                break
+
+    return canvas
+
+
 def main() -> None:
     kb = key_stroke.Key_Stroke()
 
@@ -55,10 +88,10 @@ def main() -> None:
     correct_answers = incorrect_answers = score = 0
 
     while True:
-        print('Guess the number of pips:')
-
         num_dice = random.randint(MIN_DICE, MAX_DICE)
         total, dice = roll(num_dice)
+
+        canvas = place_dice_faces(term.width(), term.height(), dice)
 
         countdown = QUIZ_DURATION * 10
         answer = ''
@@ -66,10 +99,16 @@ def main() -> None:
             term.clear()
             term.hide_cursor()
 
+            print('Guess the number of pips:')
+
             term.fg('cyan')
-            print('\n'.join('   '.join(row) for row in zip(*dice)))
+            # print('\n'.join('   '.join(row) for row in zip(*dice)))
+            for (y, x), ch in canvas.items():
+                term.goto(x, y)
+                print(ch, flush=True, end='')
 
             term.fg('yellow')
+            term.goto(0, term.height() - 4)
             print(f'Your current score is {score} points.')
             print(f'There are {num_dice} dice shown. Guess the total number of pips.')
             print(f'You have {countdown // 10} seconds left.')
