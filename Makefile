@@ -12,5 +12,8 @@ requirements: requirements.txt
 
 update: colterm sevseg caesarcode requirements
 
-dice_math:
+dice_math: colterm
 	python -m small_projects.17_dice_math
+
+dice_roller:
+	python -m small_projects.18_dice_roller
