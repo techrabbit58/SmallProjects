@@ -7,7 +7,12 @@ import key_stroke
 from colterm import term
 
 from .dicefaces import die_face, FACE_WIDTH, FACE_HEIGHT
-from .parameters import MIN_DICE, MAX_DICE, QUIZ_DURATION, PENALTY, REWARD
+
+MIN_DICE = 2
+MAX_DICE = 6
+QUIZ_DURATION = 15  # seconds
+PENALTY = 1
+REWARD = 4
 
 
 def roll(num_dice: int) -> tuple[int, list[list[str]]]:
