@@ -17,3 +17,6 @@ dice_math: colterm
 
 dice_roller:
 	python -m small_projects.18_dice_roller
+
+digital_clock: sevseg colterm
+	python -m small_projects.19_digital_clock
