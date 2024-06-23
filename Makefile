@@ -20,3 +20,6 @@ dice_roller:
 
 digital_clock: sevseg colterm
 	python -m small_projects.19_digital_clock
+
+digital_stream:
+	python -m small_projects.20_digital_stream
