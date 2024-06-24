@@ -13,9 +13,9 @@ from contextlib import contextmanager
 import colorama
 
 
-class ColtermError(Exception):
+class ColTermError(Exception):
     """Raised by the code in this get_key module. If "get_key" ever raises
-    an exception that isn't ColtermError, you can assume it's caused
+    an exception that isn't ColTermError, you can assume it's caused
     by a bug in the get_key module."""
     pass
 
@@ -362,7 +362,7 @@ class GetKeyUnix(object):
         try:
             self.__decoded_stream = OSReadWrapper()
         except Exception:
-            raise ColtermError('Cannot use unix platform on non-file-like stream')
+            raise ColTermError('Cannot use unix platform on non-file-like stream')
 
     def get_key(self, *, blocking: bool = True) -> str:
         buffer = ''
@@ -484,12 +484,11 @@ def fg(color: str, *, bright: bool = True) -> None:
     if color == 'random':
         color = random.choice(ALL_COLORS)
 
-    sys.stdout.write(_color_map[color][0])
     if color == 'reset':
         sys.stdout.write(colorama.Style.RESET_ALL)
-    else:
-        sys.stdout.write(colorama.Style.BRIGHT if bright else colorama.Style.NORMAL)
 
+    sys.stdout.write(_color_map[color][0])
+    sys.stdout.write(colorama.Style.BRIGHT if bright else colorama.Style.NORMAL)
     sys.stdout.flush()
 
 
@@ -513,16 +512,16 @@ def _goto_xy_by_control_code(x: int, y: int) -> None:
 
     (0, 0) is the top-left corner coordinate."""
     if x < 0:
-        raise ColtermError('x coordinate is negative')
+        raise ColTermError('x coordinate is negative')
     if y < 0:
-        raise ColtermError('y coordinate is negative')
+        raise ColTermError('y coordinate is negative')
 
     _width, _height = shutil.get_terminal_size()
 
     if x >= _width:
-        raise ColtermError('x coordinate is greater than terminal width ' + str(_width))
+        raise ColTermError('x coordinate is greater than terminal width ' + str(_width))
     if y >= _height:
-        raise ColtermError('y coordinate is greater than terminal height ' + str(_height))
+        raise ColTermError('y coordinate is greater than terminal height ' + str(_height))
 
     sys.stdout.write('\x1b[%d;%dH' % (y + 1, x + 1))
     sys.stdout.flush()
@@ -533,16 +532,16 @@ def _win32_goto_xy(x: int, y: int) -> None:
 
     (0, 0) is the top-left corner coordinate."""
     if x < 0:
-        raise ColtermError('x coordinate is negative')
+        raise ColTermError('x coordinate is negative')
     if y < 0:
-        raise ColtermError('y coordinate is negative')
+        raise ColTermError('y coordinate is negative')
 
     _width, _height = shutil.get_terminal_size()
 
     if x >= _width:
-        raise ColtermError('x coordinate is greater than terminal width ' + str(_width))
+        raise ColTermError('x coordinate is greater than terminal width ' + str(_width))
     if y >= _height:
-        raise ColtermError('y coordinate is greater than terminal height ' + str(_height))
+        raise ColTermError('y coordinate is greater than terminal height ' + str(_height))
 
     h = ctypes.windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE)
     ctypes.windll.kernel32.SetConsoleCursorPosition(h, COORD(x, y))
@@ -729,6 +728,6 @@ elif current_platform == 'unix':
     get_key = GetKeyUnix().get_key
 
 else:
-    raise ColtermError('Unknown platform:' + sys.platform)
+    raise ColTermError('Unknown platform:' + sys.platform)
 
 init()  # Automatically called on import. Initializes Colorama.

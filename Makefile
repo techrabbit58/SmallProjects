@@ -23,3 +23,6 @@ digital_clock: sevseg colterm
 
 digital_stream:
 	python -m small_projects.20_digital_stream
+
+monty_hall: colterm
+	python -m small_projects.48_monty_hall
