@@ -460,16 +460,16 @@ def deinit() -> None:
 ALL_COLORS = ('black', 'red', 'green', 'yellow', 'blue', 'purple', 'cyan', 'white')
 
 _color_map = {
-    'black': (colorama.Fore.BLACK, colorama.Back.BLACK),
-    'red': (colorama.Fore.RED, colorama.Back.RED),
-    'green': (colorama.Fore.GREEN, colorama.Back.GREEN),
-    'yellow': (colorama.Fore.YELLOW, colorama.Back.YELLOW),
-    'blue': (colorama.Fore.BLUE, colorama.Back.BLUE),
-    'magenta': (colorama.Fore.MAGENTA, colorama.Back.MAGENTA),
-    'purple': (colorama.Fore.MAGENTA, colorama.Back.MAGENTA),
-    'cyan': (colorama.Fore.CYAN, colorama.Back.CYAN),
-    'white': (colorama.Fore.WHITE, colorama.Back.WHITE),
-    'reset': (colorama.Fore.RESET, colorama.Back.RESET),
+    'black': (colorama.Fore.BLACK, colorama.Back.BLACK, colorama.Fore.LIGHTBLACK_EX),
+    'red': (colorama.Fore.RED, colorama.Back.RED, colorama.Fore.LIGHTRED_EX),
+    'green': (colorama.Fore.GREEN, colorama.Back.GREEN, colorama.Fore.LIGHTGREEN_EX),
+    'yellow': (colorama.Fore.YELLOW, colorama.Back.YELLOW, colorama.Fore.LIGHTYELLOW_EX),
+    'blue': (colorama.Fore.BLUE, colorama.Back.BLUE, colorama.Fore.LIGHTBLUE_EX),
+    'magenta': (colorama.Fore.MAGENTA, colorama.Back.MAGENTA, colorama.Fore.LIGHTMAGENTA_EX),
+    'purple': (colorama.Fore.MAGENTA, colorama.Back.MAGENTA, colorama.Fore.LIGHTMAGENTA_EX),
+    'cyan': (colorama.Fore.CYAN, colorama.Back.CYAN, colorama.Fore.LIGHTCYAN_EX),
+    'white': (colorama.Fore.WHITE, colorama.Back.WHITE, colorama.Fore.LIGHTWHITE_EX),
+    'reset': (colorama.Fore.RESET, colorama.Back.RESET, colorama.Fore.RESET),
 }
 
 
@@ -486,10 +486,9 @@ def fg(color: str, *, bright: bool = True) -> None:
 
     if color == 'reset':
         sys.stdout.write(colorama.Style.RESET_ALL)
-
-    sys.stdout.write(_color_map[color][0])
-    sys.stdout.write(colorama.Style.BRIGHT if bright else colorama.Style.NORMAL)
-    sys.stdout.flush()
+    else:
+        sys.stdout.write(_color_map[color][2 if bright else 0])
+        sys.stdout.flush()
 
 
 def bg(color: str) -> None:

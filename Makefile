@@ -1,3 +1,11 @@
+.PHONY: clean install
+
+clean:
+	pip uninstall colterm caesarcode sevseg -y
+
+install:
+	pip install ./colterm ./caesarcode ./sevseg
+
 colterm: ./colterm/setup.py ./colterm/colterm/term.py ./colterm/colterm/__init__.py
 	pip install ./colterm -U
 
@@ -12,17 +20,17 @@ requirements: requirements.txt
 
 update: colterm sevseg caesarcode requirements
 
-dice_math: colterm
+dice_math:
 	python -m small_projects.17_dice_math
 
 dice_roller:
 	python -m small_projects.18_dice_roller
 
-digital_clock: sevseg colterm
+digital_clock: sevseg
 	python -m small_projects.19_digital_clock
 
 digital_stream:
 	python -m small_projects.20_digital_stream
 
-monty_hall: colterm
+monty_hall:
 	python -m small_projects.48_monty_hall
