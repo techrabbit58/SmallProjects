@@ -34,3 +34,6 @@ digital_stream:
 
 monty_hall:
 	python -m small_projects.48_monty_hall
+
+dna:
+	python -m small_projects.21_dna
