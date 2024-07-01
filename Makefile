@@ -37,3 +37,6 @@ monty_hall:
 
 dna:
 	python -m small_projects.21_dna
+
+ducklings:
+	python -m small_projects.22_ducklings
