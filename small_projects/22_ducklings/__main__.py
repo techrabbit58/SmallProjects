@@ -6,7 +6,7 @@ import time
 from .duckling import Duckling
 
 DUCKLING_WIDTH = 5
-PAUSE = .2  # seconds
+PAUSE = .12  # seconds
 DENSITY = .1  # percent
 
 

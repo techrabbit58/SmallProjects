@@ -40,3 +40,6 @@ dna:
 
 ducklings:
 	python -m small_projects.22_ducklings
+
+etching:
+	python -m small_projects.23_etching_drawer
