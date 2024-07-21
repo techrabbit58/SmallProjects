@@ -37,6 +37,18 @@ def get_help():
     """).strip()
 
 
+@dataclass
+class Position:
+    x: int
+    y: int
+
+    def as_tuple(self) -> tuple[int, int]:
+        return self.x, self.y
+
+    def reset(self) -> None:
+        self.x = self.y = 0
+
+
 opposite_of = dict(zip('WSAD', 'SWDA'))
 
 
@@ -46,109 +58,109 @@ class Canvas:
     height: int = field(kw_only=True)
     screen: dict[tuple[int, int], set[str]] = field(init=False, default_factory=dict)
 
-    def update(self, command: str, *, cursor_x: int, cursor_y: int) -> tuple[int, int]:
+    def update(self, command: str, pos: Position) -> Position:
         """
-        Update the direction set for this screen position.
-        Advance the cursor.
+        update the direction set for this screen position.
+        advance the cursor.
         :param command: the movement command that updates the current cell and advances the cursor
-        :param cursor_x: the current column 0 <= x < width
-        :param cursor_y: the current row 0 <= x <= height
-        :return: the new cursor position, as a tuple (column, row)
+        :param pos: the current column 0 <= x < width and row 0 <= x <= height
+        :return: the updated cursor position
         """
         if not self.screen:  # avoid index errors and handle position (0, 0) correctly
             if command in set('WS'):
-                self.screen[(cursor_x, cursor_y)] = set('S')
+                self.screen[pos.as_tuple()] = set('S')
             elif command in set('AD'):
-                self.screen[(cursor_x, cursor_y)] = set('D')
+                self.screen[pos.as_tuple()] = set('D')
 
-        if command == 'W' and cursor_y > 0:
-            self.screen[(cursor_x, cursor_y)].add(command)
-            cursor_y -= 1
-        elif command == 'S' and cursor_y < self.height - 1:
-            self.screen[(cursor_x, cursor_y)].add(command)
-            cursor_y += 1
-        elif command == 'A' and cursor_x > 0:
-            self.screen[(cursor_x, cursor_y)].add(command)
-            cursor_x -= 1
-        elif command == 'D' and cursor_x < self.width - 1:
-            self.screen[(cursor_x, cursor_y)].add(command)
-            cursor_x += 1
+        if command == 'W' and pos.y > 0:
+            self.screen[pos.as_tuple()].add(command)
+            pos.y -= 1
+        elif command == 'S' and pos.y < self.height - 1:
+            self.screen[pos.as_tuple()].add(command)
+            pos.y += 1
+        elif command == 'A' and pos.x > 0:
+            self.screen[pos.as_tuple()].add(command)
+            pos.x -= 1
+        elif command == 'D' and pos.x < self.width - 1:
+            self.screen[pos.as_tuple()].add(command)
+            pos.x += 1
 
-        if (cursor_x, cursor_y) not in self.screen:
-            self.screen[(cursor_x, cursor_y)] = set()
+        if pos.as_tuple() not in self.screen:
+            self.screen[pos.as_tuple()] = set()
 
-        self.screen[(cursor_x, cursor_y)].add(opposite_of[command])
+        self.screen[pos.as_tuple()].add(opposite_of[command])
 
-        return cursor_x, cursor_y
+        return pos
 
     def reset(self) -> None:
         self.screen = {}
 
+    def to_string(self, pos: Position = None) -> str:
+        if pos is None:
+            pos = Position(-1, -1)
 
-def get_canvas_string(canvas: Canvas, *, cursor_x: int = None, cursor_y: int = None) -> str:
-    canvas_string = []
+        canvas_string = []
 
-    def update_canvas_string(cell: set[str]):
-        if row == cursor_y and col == cursor_x:
-            canvas_string.append(CURSOR)
-            return
+        def update_canvas_string(cell: set[str]):
+            if row == pos.y and col == pos.x:
+                canvas_string.append(CURSOR)
+                return
 
-        if cell in (set('WS'), set('W'), set('S')):
-            canvas_string.append(UP_DOWN)
-        elif cell in (set('AD'), set('A'), set('D')):
-            canvas_string.append(LEFT_RIGHT)
-        elif cell == set('SD'):
-            canvas_string.append(DOWN_RIGHT)
-        elif cell == set('AS'):
-            canvas_string.append(DOWN_LEFT)
-        elif cell == set('WD'):
-            canvas_string.append(UP_RIGHT)
-        elif cell == set('WA'):
-            canvas_string.append(UP_LEFT)
-        elif cell == set('WSD'):
-            canvas_string.append(UP_DOWN_RIGHT)
-        elif cell == set('WSA'):
-            canvas_string.append(UP_DOWN_LEFT)
-        elif cell == set('ASD'):
-            canvas_string.append(DOWN_LEFT_RIGHT)
-        elif cell == set('WAD'):
-            canvas_string.append(UP_LEFT_RIGHT)
-        elif cell == set('WASD'):
-            canvas_string.append(CROSS)
-        else:
-            canvas_string.append(SKIP)
+            if cell in (set('WS'), set('W'), set('S')):
+                canvas_string.append(UP_DOWN)
+            elif cell in (set('AD'), set('A'), set('D')):
+                canvas_string.append(LEFT_RIGHT)
+            elif cell == set('SD'):
+                canvas_string.append(DOWN_RIGHT)
+            elif cell == set('AS'):
+                canvas_string.append(DOWN_LEFT)
+            elif cell == set('WD'):
+                canvas_string.append(UP_RIGHT)
+            elif cell == set('WA'):
+                canvas_string.append(UP_LEFT)
+            elif cell == set('WSD'):
+                canvas_string.append(UP_DOWN_RIGHT)
+            elif cell == set('WSA'):
+                canvas_string.append(UP_DOWN_LEFT)
+            elif cell == set('ASD'):
+                canvas_string.append(DOWN_LEFT_RIGHT)
+            elif cell == set('WAD'):
+                canvas_string.append(UP_LEFT_RIGHT)
+            elif cell == set('WASD'):
+                canvas_string.append(CROSS)
+            else:
+                canvas_string.append(SKIP)
 
-    for row in range(canvas.height):
-        for col in range(canvas.width):
-            update_canvas_string(canvas.screen.get((col, row)))
+        for row in range(self.height):
+            for col in range(self.width):
+                update_canvas_string(self.screen.get((col, row)))
 
-        canvas_string.append('\n')
+            canvas_string.append('\n')
 
-    return ''.join(canvas_string)
+        return ''.join(canvas_string)
 
+    def save_to_file(self, moves: list[str]) -> tuple[str, str]:
+        filename = None
 
-def save_canvas(canvas: Canvas, moves: list[str]) -> tuple[str, str]:
-    filename = None
+        try:
+            print('Enter a filename to save to:')
+            filename = input('enter filename: ')
+            if not filename.endswith('.txt'):
+                filename += '.txt'
+            with open(filename, 'x', encoding='utf8') as f:
+                print(''.join(moves), file=f)
+                print(self.to_string(), file=f)
+        except Exception as ex:
+            return filename, str(ex)
 
-    try:
-        print('Enter a filename to save to:')
-        filename = input('enter filename: ')
-        if not filename.endswith('.txt'):
-            filename += '.txt'
-        with open(filename, 'x', encoding='utf8') as f:
-            print(''.join(moves), file=f)
-            print(get_canvas_string(canvas), file=f)
-    except Exception as ex:
-        return filename, str(ex)
-
-    return filename, 'OK'
+        return filename, 'OK'
 
 
 def main(prog: str):
     width, height = shutil.get_terminal_size()
 
     canvas = Canvas(width=width - 1, height=height - 4)
-    cursor_x = cursor_y = 0
+    pos = Position(0, 0)
 
     moves = []
 
@@ -156,10 +168,10 @@ def main(prog: str):
 
     while True:
         if not message:
-            print(prog, '...', f'(row={cursor_y}, col={cursor_x})')
+            print(prog, '...', f'(row={pos.y}, col={pos.x})')
         message = False
 
-        print(get_canvas_string(canvas, cursor_x=cursor_x, cursor_y=cursor_y))
+        print(canvas.to_string(pos))
         response = get_command()
 
         if not response:
@@ -175,11 +187,11 @@ def main(prog: str):
 
         if response in {'C', 'CLEAR'}:
             canvas.reset()
-            cursor_x = cursor_y = 0
+            pos.reset()
             continue
 
         if response in {'F', 'FILE'}:
-            filename, message = save_canvas(canvas, moves)
+            filename, message = canvas.save_to_file(moves)
             if message == 'OK':
                 print(f'Canvas has been saved to file "{filename}"')
             else:
@@ -192,7 +204,7 @@ def main(prog: str):
                 continue
 
             moves.append(command)
-            cursor_x, cursor_y = canvas.update(command, cursor_x=cursor_x, cursor_y=cursor_y)
+            pos = canvas.update(command, pos)
 
 
 if __name__ == '__main__':
