@@ -96,13 +96,10 @@ class Canvas:
         self.screen = {}
 
     def to_string(self, pos: Position = None) -> str:
-        if pos is None:
-            pos = Position(-1, -1)
-
         canvas_string = []
 
         def update_canvas_string(cell: set[str]):
-            if row == pos.y and col == pos.x:
+            if pos is not None and row == pos.y and col == pos.x:
                 canvas_string.append(CURSOR)
                 return
 
