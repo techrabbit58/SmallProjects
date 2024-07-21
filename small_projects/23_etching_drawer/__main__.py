@@ -176,6 +176,7 @@ def main(prog: str):
 
         if response in {'H', 'HELP'}:
             print(get_help())
+            input('\nPress enter to continue ... ')
             continue
 
         if response in {'Q', 'QUIT'}:
