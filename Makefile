@@ -46,3 +46,6 @@ etching:
 
 factorfinder:
 	python -m small_projects.24_factor_finder
+
+fastdraw:
+	python -m small_projects.25_fast_draw
