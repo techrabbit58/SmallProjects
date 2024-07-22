@@ -43,3 +43,6 @@ ducklings:
 
 etching:
 	python -m small_projects.23_etching_drawer
+
+factorfinder:
+	python -m small_projects.24_factor_finder
