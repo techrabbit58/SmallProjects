@@ -49,3 +49,6 @@ factorfinder:
 
 fastdraw:
 	python -m small_projects.25_fast_draw
+
+fibonacci:
+	python -m small_projects.26_fibonacci
