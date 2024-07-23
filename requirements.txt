@@ -4,3 +4,4 @@ key_stroke
 pyfiglet
 pyperclip
 setuptools
+pytest
