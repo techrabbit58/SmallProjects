@@ -52,3 +52,6 @@ fastdraw:
 
 fibonacci:
 	python -m small_projects.26_fibonacci
+
+periodictable:
+	python -m small_projects.53_periodic_table_of_elements
