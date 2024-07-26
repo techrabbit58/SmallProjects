@@ -58,3 +58,6 @@ periodictable:
 
 rot13:
 	python -m small_projects.61_rot13
+
+vigenere:
+	python -m small_projects.80_vigenere
