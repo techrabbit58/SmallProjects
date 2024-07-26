@@ -55,3 +55,6 @@ fibonacci:
 
 periodictable:
 	python -m small_projects.53_periodic_table_of_elements
+
+rot13:
+	python -m small_projects.61_rot13
