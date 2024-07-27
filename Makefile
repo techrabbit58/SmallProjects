@@ -61,3 +61,6 @@ rot13:
 
 vigenere:
 	python -m small_projects.80_vigenere
+
+simplecode:
+	python -m small_projects.66_simple_substitution_cipher
