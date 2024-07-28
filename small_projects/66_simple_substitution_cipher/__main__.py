@@ -13,6 +13,9 @@ class Shell:
 
     def _get_action(self, candidate: str) -> Callable[[list[str]], bool | None]:
         candidate = f'do_{candidate.lower()}'
+        for attr in dir(self):
+            if attr != 'do_default' and attr.startswith(candidate):
+                candidate = attr
         return getattr(self, candidate, self.do_default)
 
     def _show_key(self) -> None:
@@ -31,7 +34,7 @@ class Shell:
                 response = input('Enter a valid command, or "help" to get a brief usage information.\n> ').strip()
                 args = shlex.split(response)
                 action = self._get_action(args[0])
-                is_terminated = action(args)
+                is_terminated = action([response] if action is self.do_default else args)
                 if is_terminated:
                     break
             except ValueError as ex:
@@ -52,6 +55,9 @@ class Shell:
     def do_key(self, args: list[str]) -> None:
         """KEY keyword(s)\tMake a new key from the given keyword(s)."""
         raw_key = [ch.lower() for ch in ''.join(args[1:]) if ch.lower() in self._symbols]
+        if not raw_key:
+            print('The KEY command requires an argument!\n')
+            return
         self._shuffled = []
         remaining_symbols = list(self._symbols)
         for ch in raw_key:
