@@ -64,3 +64,6 @@ vigenere:
 
 simplecode:
 	python -m small_projects.66_simple_substitution_cipher
+
+piglatin:
+	python -m small_projects.54_pig_latin
