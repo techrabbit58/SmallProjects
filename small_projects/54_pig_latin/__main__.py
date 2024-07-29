@@ -1,6 +1,10 @@
 import signal
 from typing import Never
 
+import pyperclip
+
+from . import piglatin
+
 
 def ctrl_c_handler(*_) -> Never:
     print('^C')
@@ -24,7 +28,9 @@ def gameloop(prog: str) -> None:
         if not response:
             continue
 
-        print(f'{prog}: "{response}"')
+        translated = piglatin.to_english_piglatin(response)
+        print(f'{prog}: "{translated}"\n')
+        pyperclip.copy(translated)
 
 
 gameloop('Pig Latin')
