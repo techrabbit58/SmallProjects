@@ -2,6 +2,7 @@ from abc import ABC
 from dataclasses import dataclass, field
 
 SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+ALPHABET_SIZE = len(SYMBOLS)
 
 
 def as_signal(symbol: str) -> int:
@@ -13,40 +14,45 @@ def as_symbol(signal: int) -> str:
 
 
 class SubstitutionDevice(ABC):
-    left: str
+    left: str = SYMBOLS
     right: str
+    offset: int = 0
 
     def forward(self, signal: int) -> int:
-        symbol = self.right[signal]
-        return self.left.find(symbol)
+        symbol = self.right[(signal + self.offset) % ALPHABET_SIZE]
+        return (self.left.find(symbol) + self.offset) % ALPHABET_SIZE
 
     def backward(self, signal: int) -> int:
-        symbol = self.left[signal]
-        return self.right.find(symbol)
+        symbol = self.left[(signal - self.offset) % ALPHABET_SIZE]
+        return (self.right.find(symbol) - self.offset) % ALPHABET_SIZE
 
 
 class Plugboard(SubstitutionDevice):
     def __init__(self, *substitutions: str) -> None:
-        self.left = SYMBOLS
         wiring = list(self.left)
         for left, right in substitutions:
             a = SYMBOLS.find(left)
             b = SYMBOLS.find(right)
-            wiring[a], wiring[b] = wiring[b], wiring[a]
+            aux = wiring[a]
+            wiring[a] = wiring[b]
+            wiring[b] = aux
         self.right = ''.join(wiring)
 
 
 class Rotor(SubstitutionDevice):
     def __init__(self, wiring: str, notch: str) -> None:
         self.right = wiring.strip().upper()
-        self.left = SYMBOLS
-        self.notch = notch
+        self.notch = as_signal(notch)
+
+    def advance(self, delta: int = 1) -> bool:
+        self.offset = (self.offset + delta) % ALPHABET_SIZE
+        carry = self.notch == self.offset
+        return carry
 
 
 class Reflector(SubstitutionDevice):
     def __init__(self, wiring: str) -> None:
         self.right = wiring.strip().upper()
-        self.left = SYMBOLS
 
     def reflect(self, signal: int) -> int:
         return self.forward(signal)
@@ -81,14 +87,22 @@ class EnigmaConfig:
             Reflector(self.reflector)
         ]
 
-    def _rotate(self, offset: int = 1) -> None:
-        ...
+    def set_key(self, key: str) -> None:
+        for r, symbol in enumerate(key, 1):
+            self.rotors[r].offset = as_signal(symbol)
+
+    def _advance(self, delta: int = 1) -> None:
+        carry = self.rotors[3].advance(delta)
+        if carry:
+            carry = self.rotors[2].advance(delta)
+        if carry:
+            self.rotors[1].advance(delta)
 
     def translate(self, symbol: str) -> str:
         signal = as_signal(symbol)
         reflector = -1
 
-        self._rotate()
+        self._advance()
 
         for subst in self.rotors[:reflector]:
             signal = subst.forward(signal)
@@ -110,5 +124,8 @@ cfg = EnigmaConfig(
 )
 
 
-for ch in 'AAA':
-    print(cfg.translate(ch))
+cfg.set_key('AAZ')
+for ch in 'YEKWYHONUTWLBUKSBVVKQTBSHOQRYJMUOIADDCGZRO':
+    print(cfg.translate(ch), end='')
+print()
+print(''.join(as_symbol(o.offset) for o in cfg.rotors[1:-1]))
