@@ -16,6 +16,7 @@ def as_symbol(signal: int) -> str:
 class SubstitutionDevice(ABC):
     left: str = SYMBOLS
     right: str
+    labels: str = SYMBOLS
 
     def forward(self, signal: int) -> int:
         symbol = self.right[signal]
@@ -24,6 +25,12 @@ class SubstitutionDevice(ABC):
     def backward(self, signal: int) -> int:
         symbol = self.left[signal]
         return self.right.find(symbol)
+
+    def rotate(self, _: int = None) -> None:
+        raise NotImplementedError()
+
+    def is_carry(self) -> bool:
+        return False
 
 
 class Plugboard(SubstitutionDevice):
@@ -39,23 +46,33 @@ class Plugboard(SubstitutionDevice):
 
 
 class Rotor(SubstitutionDevice):
-    def __init__(self, wiring: str, notch: str) -> None:
+    def __init__(self, wiring: str, notch: str, ring: str = 'A') -> None:
         self.right = wiring.strip().upper()
+        self.labels = SYMBOLS
         self.notch = notch
+        self._set_ring(SYMBOLS.find(ring) + 1)
+
+    def _set_ring(self, ring: int) -> None:
+        distance = (ALPHABET_SIZE - ring + 1) % ALPHABET_SIZE
+        self.rotate(distance, with_label=False)
+        adjusted_notch_position = SYMBOLS.find(self.notch) - ring + 1
+        self.notch = SYMBOLS[adjusted_notch_position]
 
     def is_carry(self) -> bool:
         return self.notch == self.left[0]
 
-    def advance(self) -> None:
-        self.left = self.left[1:] + self.left[0]
-        self.right = self.right[1:] + self.right[0]
+    def rotate(self, n: int = 1, with_label: bool = True) -> None:
+        self.left = self.left[n:] + self.left[:n]
+        self.right = self.right[n:] + self.right[:n]
+        if with_label:
+            self.labels = self.labels[n:] + self.labels[:n]
 
 
 class Reflector(SubstitutionDevice):
     def __init__(self, wiring: str) -> None:
         self.right = wiring.strip().upper()
 
-    def reflect(self, signal: int) -> int:
+    def backward(self, signal: int) -> int:
         return self.forward(signal)
 
 
@@ -73,72 +90,93 @@ REFLECTOR_C = 'FVPJIAOYEDRZXWGCTKUQSBNMHL'
 @dataclass
 class EnigmaConfig:
     jumpers: list[str] = field(repr=False, kw_only=True)
-    right_rotor: tuple[str, str] = field(repr=False, kw_only=True)
-    middle_rotor: tuple[str, str] = field(repr=False, kw_only=True)
-    left_rotor: tuple[str, str] = field(repr=False, kw_only=True)
+    rotors: list[tuple[str, str]] = field(repr=False, kw_only=True)
     reflector: str = field(repr=False, kw_only=True)
-    substitution_devices: list[SubstitutionDevice] = field(init=False)
+    mappings: list[SubstitutionDevice] = field(init=False)
+    rings: str = field(repr=False, kw_only=True, default='AAA')
 
     def __post_init__(self) -> None:
-        self.rotors = [
+        self.mappings = [
             Plugboard(*self.jumpers),
-            Rotor(*self.right_rotor),
-            Rotor(*self.middle_rotor),
-            Rotor(*self.left_rotor),
+            Rotor(*self.rotors[-1], self.rings[-1]),
+            Rotor(*self.rotors[-2], self.rings[-2]),
+            Rotor(*self.rotors[-3], self.rings[-3]),
             Reflector(self.reflector)
         ]
 
     def set_key(self, key: str) -> None:
-        for r, symbol in enumerate(self.rotors[1:-1], 1):
-            move = as_signal(key[-r])
-            for n in range(move):
-                self.rotors[r].advance()
+        for p, rotor in enumerate(self.mappings[1:-1], 1):
+            rotor.rotate(as_signal(key[-p]))
 
     def _advance(self) -> None:
-        if self.rotors[1].is_carry() and self.rotors[2].is_carry():
-            self.rotors[1].advance()
-            self.rotors[2].advance()
-            self.rotors[3].advance()
-        elif self.rotors[2].is_carry():  # double step anomaly of middle rotor
-            self.rotors[1].advance()
-            self.rotors[2].advance()
-            self.rotors[3].advance()
-        elif self.rotors[1].is_carry():
-            self.rotors[1].advance()
-            self.rotors[2].advance()
+        if self.mappings[1].is_carry() and self.mappings[2].is_carry():
+            self.mappings[1].rotate()
+            self.mappings[2].rotate()
+            self.mappings[3].rotate()
+        elif self.mappings[2].is_carry():  # double step anomaly of middle rotor
+            self.mappings[1].rotate()
+            self.mappings[2].rotate()
+            self.mappings[3].rotate()
+        elif self.mappings[1].is_carry():
+            self.mappings[1].rotate()
+            self.mappings[2].rotate()
         else:
-            self.rotors[1].advance()
+            self.mappings[1].rotate()
 
     def translate(self, symbol: str) -> str:
-        signal = as_signal(symbol)
+        if symbol.upper() not in SYMBOLS:
+            return symbol
+
+        was_lower = symbol.islower()
+
+        signal = as_signal(symbol.upper())
 
         self._advance()
 
-        signal = self.rotors[0].forward(signal)
-        signal = self.rotors[1].forward(signal)
-        signal = self.rotors[2].forward(signal)
-        signal = self.rotors[3].forward(signal)
+        signal = self.mappings[0].forward(signal)
+        signal = self.mappings[1].forward(signal)
+        signal = self.mappings[2].forward(signal)
+        signal = self.mappings[3].forward(signal)
 
-        signal = self.rotors[4].reflect(signal)
+        signal = self.mappings[4].forward(signal)
 
-        signal = self.rotors[3].backward(signal)
-        signal = self.rotors[2].backward(signal)
-        signal = self.rotors[1].backward(signal)
-        signal = self.rotors[0].backward(signal)
+        signal = self.mappings[3].backward(signal)
+        signal = self.mappings[2].backward(signal)
+        signal = self.mappings[1].backward(signal)
+        signal = self.mappings[0].backward(signal)
 
-        return as_symbol(signal)
+        result = as_symbol(signal)
+
+        return result.lower() if was_lower else result
 
 
 cfg = EnigmaConfig(
-    jumpers=['AB', 'CD', 'EF'],
+    jumpers='AD CN ET FL GI JV KZ PU QY WX'.split(),
     reflector=REFLECTOR_B,
-    left_rotor=ROTOR_IV,
-    middle_rotor=ROTOR_II,
-    right_rotor=ROTOR_I,
+    rotors=[ROTOR_I, ROTOR_IV, ROTOR_III],
+    rings='PZH',
 )
 
 
-cfg.set_key('CAT')
-for sym in 'TESTINGTESTINGTESTINGTESTING':
+cfg.set_key('QWE')
+cfg.translate('R')
+cfg.translate('T')
+cfg.translate('Z')
+cfg.set_key('RTZ')
+k = 1
+for sym in """XAACH ENXAA CHENX
+ISTGE RETTE TXDUR QGEBU
+ENDEL TENEI NSATZ DERHI
+LFSKR AEFTE KONNT EDIEB
+EDROH UNGAB GEWEN DETUN
+DDIER ETTUN GDERS TADTG
+EGENX EINSX AQTXN ULLXN
+ULLXU HRSIQ ERGES TELLT
+WERDE NX""".replace(' ', '').replace('\n', ''):
     print(cfg.translate(sym), end='')
-print('\n', cfg.rotors[3].left[0], cfg.rotors[2].left[0], cfg.rotors[1].left[0], sep='')
+    if k == 5:
+        print(' ', end='')
+        k = 1
+    else:
+        k += 1
+print('\n', cfg.mappings[3].labels[0], cfg.mappings[2].labels[0], cfg.mappings[1].labels[0], sep='')
