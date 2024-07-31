@@ -16,15 +16,14 @@ def as_symbol(signal: int) -> str:
 class SubstitutionDevice(ABC):
     left: str = SYMBOLS
     right: str
-    offset: int = 0
 
     def forward(self, signal: int) -> int:
-        symbol = self.right[(signal + self.offset) % ALPHABET_SIZE]
-        return (self.left.find(symbol) + self.offset) % ALPHABET_SIZE
+        symbol = self.right[signal]
+        return self.left.find(symbol)
 
     def backward(self, signal: int) -> int:
-        symbol = self.left[(signal - self.offset) % ALPHABET_SIZE]
-        return (self.right.find(symbol) - self.offset) % ALPHABET_SIZE
+        symbol = self.left[signal]
+        return self.right.find(symbol)
 
 
 class Plugboard(SubstitutionDevice):
@@ -42,12 +41,14 @@ class Plugboard(SubstitutionDevice):
 class Rotor(SubstitutionDevice):
     def __init__(self, wiring: str, notch: str) -> None:
         self.right = wiring.strip().upper()
-        self.notch = as_signal(notch)
+        self.notch = notch
 
-    def advance(self, delta: int = 1) -> bool:
-        self.offset = (self.offset + delta) % ALPHABET_SIZE
-        carry = self.notch == self.offset
-        return carry
+    def is_carry(self) -> bool:
+        return self.notch == self.left[0]
+
+    def advance(self) -> None:
+        self.left = self.left[1:] + self.left[0]
+        self.right = self.right[1:] + self.right[0]
 
 
 class Reflector(SubstitutionDevice):
@@ -75,7 +76,7 @@ class EnigmaConfig:
     right_rotor: tuple[str, str] = field(repr=False, kw_only=True)
     middle_rotor: tuple[str, str] = field(repr=False, kw_only=True)
     left_rotor: tuple[str, str] = field(repr=False, kw_only=True)
-    reflector: str = field(repr=False)
+    reflector: str = field(repr=False, kw_only=True)
     substitution_devices: list[SubstitutionDevice] = field(init=False)
 
     def __post_init__(self) -> None:
@@ -88,44 +89,56 @@ class EnigmaConfig:
         ]
 
     def set_key(self, key: str) -> None:
-        for r, symbol in enumerate(key, 1):
-            self.rotors[r].offset = as_signal(symbol)
+        for r, symbol in enumerate(self.rotors[1:-1], 1):
+            move = as_signal(key[-r])
+            for n in range(move):
+                self.rotors[r].advance()
 
-    def _advance(self, delta: int = 1) -> None:
-        carry = self.rotors[3].advance(delta)
-        if carry:
-            carry = self.rotors[2].advance(delta)
-        if carry:
-            self.rotors[1].advance(delta)
+    def _advance(self) -> None:
+        if self.rotors[1].is_carry() and self.rotors[2].is_carry():
+            self.rotors[1].advance()
+            self.rotors[2].advance()
+            self.rotors[3].advance()
+        elif self.rotors[2].is_carry():  # double step anomaly of middle rotor
+            self.rotors[1].advance()
+            self.rotors[2].advance()
+            self.rotors[3].advance()
+        elif self.rotors[1].is_carry():
+            self.rotors[1].advance()
+            self.rotors[2].advance()
+        else:
+            self.rotors[1].advance()
 
     def translate(self, symbol: str) -> str:
         signal = as_signal(symbol)
-        reflector = -1
 
         self._advance()
 
-        for subst in self.rotors[:reflector]:
-            signal = subst.forward(signal)
+        signal = self.rotors[0].forward(signal)
+        signal = self.rotors[1].forward(signal)
+        signal = self.rotors[2].forward(signal)
+        signal = self.rotors[3].forward(signal)
 
-        signal = self.rotors[reflector].forward(signal)
+        signal = self.rotors[4].reflect(signal)
 
-        for subst in reversed(self.rotors[:reflector]):
-            signal = subst.backward(signal)
+        signal = self.rotors[3].backward(signal)
+        signal = self.rotors[2].backward(signal)
+        signal = self.rotors[1].backward(signal)
+        signal = self.rotors[0].backward(signal)
 
         return as_symbol(signal)
 
 
 cfg = EnigmaConfig(
-    jumpers=['AR', 'GK', 'OX'],
-    right_rotor=ROTOR_III,
+    jumpers=['AB', 'CD', 'EF'],
+    reflector=REFLECTOR_B,
+    left_rotor=ROTOR_IV,
     middle_rotor=ROTOR_II,
-    left_rotor=ROTOR_I,
-    reflector=REFLECTOR_A
+    right_rotor=ROTOR_I,
 )
 
 
-cfg.set_key('AAZ')
-for ch in 'YEKWYHONUTWLBUKSBVVKQTBSHOQRYJMUOIADDCGZRO':
-    print(cfg.translate(ch), end='')
-print()
-print(''.join(as_symbol(o.offset) for o in cfg.rotors[1:-1]))
+cfg.set_key('CAT')
+for sym in 'TESTINGTESTINGTESTINGTESTING':
+    print(cfg.translate(sym), end='')
+print('\n', cfg.rotors[3].left[0], cfg.rotors[2].left[0], cfg.rotors[1].left[0], sep='')
