@@ -150,33 +150,25 @@ class EnigmaConfig:
         return result.lower() if was_lower else result
 
 
+def numbers_to_symbols(numbers: str) -> str:
+    s = [SYMBOLS[int(n) - 1] for n in numbers.split()]
+    return ''.join(s)
+
+
 cfg = EnigmaConfig(
-    jumpers='AD CN ET FL GI JV KZ PU QY WX'.split(),
+    jumpers='AV BS CG DL FU HZ IN KM OW RX'.split(),
     reflector=REFLECTOR_B,
-    rotors=[ROTOR_I, ROTOR_IV, ROTOR_III],
-    rings='PZH',
+    rotors=[ROTOR_II, ROTOR_IV, ROTOR_V],
+    rings=numbers_to_symbols('02 21 12'),
 )
 
 
-cfg.set_key('QWE')
-cfg.translate('R')
-cfg.translate('T')
-cfg.translate('Z')
-cfg.set_key('RTZ')
-k = 1
-for sym in """XAACH ENXAA CHENX
-ISTGE RETTE TXDUR QGEBU
-ENDEL TENEI NSATZ DERHI
-LFSKR AEFTE KONNT EDIEB
-EDROH UNGAB GEWEN DETUN
-DDIER ETTUN GDERS TADTG
-EGENX EINSX AQTXN ULLXN
-ULLXU HRSIQ ERGES TELLT
-WERDE NX""".replace(' ', '').replace('\n', ''):
-    print(cfg.translate(sym), end='')
-    if k == 5:
-        print(' ', end='')
-        k = 1
-    else:
-        k += 1
+cfg.set_key('BLA')
+for sym in """EDPUD NRGYS ZRCXN UYTPO MRMBO FKTBZ
+REZKM LXLVE FGUEY SIOZV EQMIK UBPMM YLKLT TDEIS 
+MDICA GYKUA CTCDO MOHWX MUUIA UBSTS LRNBZ SZWNR 
+FXWFY SSXJZ VIJHI DISHP RKLKA YUPAD TXQSP INQMA 
+TLPIF SVKDA SCTAC DPBOP VHJK-""".replace(' ', '').replace('\n', ''):
+    plain = cfg.translate(sym)
+    print(' ' if plain == 'X' else 'CH' if plain == 'Q' else plain, end='')
 print('\n', cfg.mappings[3].labels[0], cfg.mappings[2].labels[0], cfg.mappings[1].labels[0], sep='')
