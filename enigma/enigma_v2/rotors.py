@@ -1,12 +1,12 @@
 from collections import deque
 from typing import Self
 
-from .basics import ALPHABET_SIZE, to_signals, to_symbols, as_signal
+from .basics import SYMBOLS, ALPHABET_SIZE, to_signals, to_symbols, as_signal
 
 
 class Rotor:
     def __init__(self, wiring: list[int], notches: list[int], mark: int) -> None:
-        self.left = deque(range(ALPHABET_SIZE))
+        self.left = deque(SYMBOLS)
         self.right = deque(wiring)
         self.notches = notches
         self.mark = mark
