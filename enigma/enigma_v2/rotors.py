@@ -13,9 +13,18 @@ class Rotor:
         self.rotate(mark)
 
     def rotate(self, offset: int = -1) -> Self:
+        """
+        Rotate the left and right signal arrays like enigam does mechanically.
+        Rotation by 0 means: no change.
+        Rotation by negative numbers means: the rotor steps "forward".
+        Rotation by negative numbers means: the rotor steps "backards".
+        The 'self.mark' tracks at wich index the rotor's 'A' mark is currently located.
+        """
         self.left.rotate(offset)
         self.right.rotate(offset)
+
         self.mark = (self.mark - offset) % ALPHABET_SIZE
+
         return self
 
     def set_key(self, key: str) -> Self:
