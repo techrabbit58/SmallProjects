@@ -58,7 +58,7 @@ class RotorStencil:
         return new_rotor
 
 
-rotors: dict[str, RotorStencil] = {
+rotor_stencils: dict[str, RotorStencil] = {
     'I': RotorStencil('EKMFLGDQVZNTOWYHXUSPAIBRCJ', 'Q'),
     'II': RotorStencil('AJDKSIRUXBLHWTMCQGZNPYFVOE', 'E'),
     'III': RotorStencil('BDFHJLCPRTXVZNYEIWGAKMUSQO', 'V'),

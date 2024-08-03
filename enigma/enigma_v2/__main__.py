@@ -1,47 +1,10 @@
-from . import plugboard
-from .basics import SYMBOLS, as_symbol, as_signal
-from .reflectors import reflectors
-from .rotors import rotors, Rotor
+from .enigma import EnigmaM3
 
-jumpers = plugboard.populate('AN EZ HK IJ LR MQ OT PV SW UX')
-barrels = [
-    rotors['III'].set_ring('01').create().set_key('U'),
-    rotors['VI'].set_ring('08').create().set_key('Z'),
-    rotors['VIII'].set_ring('13').create().set_key('V'),
-]
-reflections = reflectors['B']
+enigma = EnigmaM3('B', 'III VI VIII', '01 08 13').set_jumpers('AN EZ HK IJ LR MQ OT PV SW UX')
 
-cryptext = 'STEU EREJ TANA FJOR DJAN STAN DORT QUAA ACCC VIER NEUN NEUN ZWOF AHRT ZWON ULSM XXSC HARN HORS THCO'
+enigma.set_key('UZV')
 
-
-def rotate(rotary: list[Rotor]) -> None:
-    left, middle, right = rotary[0], rotary[1], rotary[2]
-    if middle.is_at_notch():
-        middle.rotate()
-        left.rotate()
-    elif right.is_at_notch():
-        middle.rotate()
-    right.rotate()
-
-
-plain = []
-for s in cryptext:
-    s = s.upper()
-    if s not in SYMBOLS:
-        plain.append(s)
-    else:
-        rotate(barrels)
-        signal = as_signal(s)
-        signal = jumpers(signal)
-        for r in reversed(barrels):
-            i = r.right[signal]
-            signal = r.left.index(i)
-        signal = reflections[signal]
-        for r in barrels:
-            i = r.left[signal]
-            signal = r.right.index(i)
-        signal = jumpers(signal)
-        plain.append(as_symbol(signal))
+cryptext = 'YKAE NZAP MSCH ZBFO CUVM RMDP YCOF HADZ IZME FXTH FLOL PZLF GGBO TGOX GRET DWTJ IQHL MXVJ WKZU ASTR'
 
 print(cryptext)
-print(''.join(plain))
+print(''.join(enigma.convert(s) for s in cryptext))
