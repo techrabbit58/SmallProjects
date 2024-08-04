@@ -1,7 +1,7 @@
 import pytest
 
 from .reflectors import reflectors
-from .basics import as_symbol, as_signal
+from .symbols import as_symbol, as_signal
 
 
 @pytest.mark.parametrize('choice, actual, expected', [

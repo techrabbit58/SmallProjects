@@ -1,6 +1,6 @@
 import pytest
 
-from .basics import to_symbols, as_symbol, ALPHABET_SIZE
+from .symbols import to_symbols, as_symbol, ALPHABET_SIZE
 from .rotors import rotor_stencils
 
 defaults = [

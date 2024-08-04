@@ -1,10 +1,12 @@
 from .enigma import EnigmaM3
 
-enigma = EnigmaM3('B', 'III VI VIII', '01 08 13').set_jumpers('AN EZ HK IJ LR MQ OT PV SW UX')
+enigma = EnigmaM3('A', 'II I III', '24 13 22').set_jumpers('AM FI NV PS TU WZ')
 
-enigma.set_key('UZV')
+enigma.set_key('ABL')
 
-cryptext = 'YKAE NZAP MSCH ZBFO CUVM RMDP YCOF HADZ IZME FXTH FLOL PZLF GGBO TGOX GRET DWTJ IQHL MXVJ WKZU ASTR'
+cryptext = ('GCDSE AHUGW TQGRK VLFGX UCALX VYMIG '
+            'MMNMF DXTGN VHVRM MEVOU YFZSL RHDRR '
+            'XFJWC FHUHM UNZEF RDISI KBGPM YVXUZ')
 
 print(cryptext)
 print(''.join(enigma.convert(s) for s in cryptext))

@@ -1,8 +1,7 @@
-from collections.abc import Callable
 from typing import Self
 
-from . import plugboard
-from .basics import SYMBOLS, as_signal, as_symbol
+from .symbols import SYMBOLS, as_signal, as_symbol
+from .plugboard import Plugboard
 from .reflectors import reflectors, Reflector
 from .rotors import rotor_stencils, Rotor
 
@@ -10,16 +9,16 @@ from .rotors import rotor_stencils, Rotor
 class EnigmaM3:
     reflector: Reflector
     wheels: list[Rotor]
-    plugboard: Callable[[int], int]
+    plugboard: Plugboard
 
     def __init__(self, reflector: str, rotor_pack: str, rings: str) -> None:
         self.reflector = reflectors[reflector]
         ring_list = rings.split()
         self.wheels = [rotor_stencils[r].set_ring(ring_list[i]).create() for i, r in enumerate(rotor_pack.split())]
-        self.plugboard = plugboard.populate('')
+        self.plugboard = Plugboard()
 
     def set_jumpers(self, jumpers: str) -> Self:
-        self.plugboard = plugboard.populate(jumpers)
+        self.plugboard = Plugboard(jumpers)
         return self
 
     def set_key(self, key: str) -> Self:
@@ -37,13 +36,12 @@ class EnigmaM3:
         right.rotate()
 
     def convert(self, symbol: str) -> str:
-        symbol = symbol.upper()
         if symbol not in SYMBOLS:
             return symbol
         else:
             self._rotate()
             signal = as_signal(symbol)
-            signal = self.plugboard(signal)
+            signal = self.plugboard[signal]
             for r in reversed(self.wheels):
                 i = r.right[signal]
                 signal = r.left.index(i)
@@ -51,5 +49,5 @@ class EnigmaM3:
             for r in self.wheels:
                 i = r.left[signal]
                 signal = r.right.index(i)
-            signal = self.plugboard(signal)
+            signal = self.plugboard[signal]
             return as_symbol(signal)

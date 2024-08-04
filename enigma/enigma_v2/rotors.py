@@ -1,7 +1,7 @@
 from collections import deque
 from typing import Self
 
-from .basics import ALPHABET_SIZE, to_signals, to_symbols, as_signal
+from .symbols import ALPHABET_SIZE, to_signals, to_symbols, as_signal
 
 
 class Rotor:
@@ -18,7 +18,7 @@ class Rotor:
         Rotation by 0 means: no change.
         Rotation by negative numbers means: the rotor steps "forward".
         Rotation by negative numbers means: the rotor steps "backards".
-        The 'self.mark' tracks at wich index the rotor's 'A' mark is currently located.
+        The 'self.mark' tracks at which index the rotor's 'A' mark is currently located.
         """
         self.left.rotate(offset)
         self.right.rotate(offset)
