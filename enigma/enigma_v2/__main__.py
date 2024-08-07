@@ -1,12 +1,10 @@
-from .enigma import EnigmaM3
+from .enigma import EnigmaA27
 
-enigma = EnigmaM3('A', 'II I III', '24 13 22').set_jumpers('AM FI NV PS TU WZ')
+enigma = EnigmaA27('III I II', '26 17 16 13')
 
-enigma.set_key('ABL')
+enigma.set_key('JEZA')
 
-cryptext = ('GCDSE AHUGW TQGRK VLFGX UCALX VYMIG '
-            'MMNMF DXTGN VHVRM MEVOU YFZSL RHDRR '
-            'XFJWC FHUHM UNZEF RDISI KBGPM YVXUZ')
+cryptext = 'QSZVI DVMPN EXACM RWWXU IYOTY NGVVX DZ---'
 
 print(cryptext)
 print(''.join(enigma.convert(s) for s in cryptext))

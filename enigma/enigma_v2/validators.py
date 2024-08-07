@@ -1,5 +1,5 @@
 from .reflectors import reflectors
-from .rotors import m3_rotor_stencils
+from .rotors import m3_rotor_stencils, a27_rotor_stencils
 from .symbols import NUMERIC_RING_SETTINGS, SYMBOLS
 
 
@@ -32,3 +32,16 @@ def ensure_valid_m3_rotor(r: str) -> str:
     if r not in m3_rotor_stencils:
         raise ValueError(f'rotor "{r}" is not compatible with Enigma I or Enigma M3 (valid are: "I" ... "VIII")')
     return r
+
+
+def ensure_valid_a27_rotor(r: str) -> str:
+    if r not in a27_rotor_stencils:
+        raise ValueError(f'rotor "{r}" is not compatible with Enigma I or Enigma M3 (valid are: "I" ... "VIII")')
+    return r
+
+
+def ensure_valid_key(key: str) -> str:
+    for s in key:
+        if s not in SYMBOLS:
+            raise ValueError(f'invalid key "{key}": only symbols "A" ... "Z" are valid key symbols')
+    return key
