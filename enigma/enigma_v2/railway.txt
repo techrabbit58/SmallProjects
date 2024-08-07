@@ -1,7 +1,0 @@
-wheel                wiring                            notch  window
-          Symbols    ABCDE FGHIJ KLMNO PQRST UVWXYZ
-Railway - ETW        QWERT ZUIOA SDFGH JKPYX CVBNML
-Railway - I          JGDQO XUSCA MIFRV TPNEW KBLZYH    V      N
-Railway - II         NTZPS FBOKM WRCJD IVLAE YUXHGQ    M      E
-Railway - III        JVIUB HTCDY AKEQZ POSGX NRMWFL    G      Y
-Railway - UKW        QYHOG NECVP UZTFD JAXWM KISRBL    -      -

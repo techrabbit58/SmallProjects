@@ -1,9 +1,13 @@
 from typing import Self
 
-from .symbols import SYMBOLS, as_signal, as_symbol
 from .plugboard import Plugboard
 from .reflectors import reflectors, Reflector
-from .rotors import rotor_stencils, Rotor
+from .rotors import m3_rotor_stencils, Rotor
+from .symbols import SYMBOLS, as_signal, as_symbol
+from .validators import (
+    ensure_valid_mil_reflector, ensure_valid_ring_setting,
+    ensure_valid_jumpers, ensure_valid_m3_rotor
+)
 
 
 class EnigmaM3:
@@ -12,13 +16,16 @@ class EnigmaM3:
     plugboard: Plugboard
 
     def __init__(self, reflector: str, rotor_pack: str, rings: str) -> None:
-        self.reflector = reflectors[reflector]
+        self.reflector = reflectors[ensure_valid_mil_reflector(reflector)]
         ring_list = rings.split()
-        self.wheels = [rotor_stencils[r].set_ring(ring_list[i]).create() for i, r in enumerate(rotor_pack.split())]
+        self.wheels = [
+            m3_rotor_stencils[ensure_valid_m3_rotor(r)].set_ring(ensure_valid_ring_setting(ring_list[i])).create()
+            for i, r in enumerate(rotor_pack.split())
+        ]
         self.plugboard = Plugboard()
 
     def set_jumpers(self, jumpers: str) -> Self:
-        self.plugboard = Plugboard(jumpers)
+        self.plugboard = Plugboard(ensure_valid_jumpers(jumpers))
         return self
 
     def set_key(self, key: str) -> Self:

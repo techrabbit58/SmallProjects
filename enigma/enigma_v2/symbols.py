@@ -2,6 +2,7 @@ from collections.abc import Iterable
 
 SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 ALPHABET_SIZE = len(SYMBOLS)
+NUMERIC_RING_SETTINGS = {f'{i:02d}' for i, _ in enumerate(SYMBOLS, 1)}
 
 
 def as_signal(symbol: str) -> int:

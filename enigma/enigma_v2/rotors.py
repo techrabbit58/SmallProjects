@@ -40,9 +40,9 @@ class Rotor:
 
 
 class RotorStencil:
-    def __init__(self, wiring: str, notches: str) -> None:
+    def __init__(self, wiring: str, turnovers: str) -> None:
         self.wiring = to_signals(wiring)
-        self.notches = to_signals(notches)
+        self.turnovers = to_signals(turnovers)
         self.ring = 0
 
     def set_ring(self, position: str) -> Self:
@@ -52,13 +52,13 @@ class RotorStencil:
 
     def create(self) -> Rotor:
         offset = self.ring
-        new_notches = [(n - self.ring) % ALPHABET_SIZE for n in self.notches]
+        new_notches = [(n - self.ring) % ALPHABET_SIZE for n in self.turnovers]
         new_rotor = Rotor(self.wiring, new_notches, offset)
         self.ring = 0  # reset factory to ring default after each new rotor instance created
         return new_rotor
 
 
-rotor_stencils: dict[str, RotorStencil] = {
+m3_rotor_stencils: dict[str, RotorStencil] = {
     'I': RotorStencil('EKMFLGDQVZNTOWYHXUSPAIBRCJ', 'Q'),
     'II': RotorStencil('AJDKSIRUXBLHWTMCQGZNPYFVOE', 'E'),
     'III': RotorStencil('BDFHJLCPRTXVZNYEIWGAKMUSQO', 'V'),
