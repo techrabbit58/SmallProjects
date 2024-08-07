@@ -63,7 +63,7 @@ class EnigmaM3:
 class EnigmaA27:
     """The Enigma K variant used by the german railway """
     def __init__(self, rotor_pack: str, rings: str) -> None:
-        self.entry = a27_rotor_stencils['ETW'].create()
+        self.entry = Plugboard('AQ BW CE DR ET FZ GU HI IO JA KS LD MF NG OH PJ QK RP SY TX UC VV WB XN YM ZL')
         ring_list = rings.split()
         self.reflector = a27_rotor_stencils['UKW'].set_ring(ensure_valid_ring_setting(ring_list[0])).create()
         self.wheels = [
@@ -93,7 +93,7 @@ class EnigmaA27:
         else:
             self._rotate()
             signal = as_signal(symbol)
-            signal = self.entry.right.index(signal)
+            signal = self.entry[signal]
             for r in reversed(self.wheels):
                 i = r.right[signal]
                 signal = r.left.index(i)
@@ -102,5 +102,5 @@ class EnigmaA27:
             for r in self.wheels:
                 i = r.left[signal]
                 signal = r.right.index(i)
-            signal = self.entry.right.index(signal)
+            signal = self.entry[signal]
             return as_symbol(signal)
