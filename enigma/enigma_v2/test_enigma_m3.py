@@ -1,6 +1,6 @@
 import textwrap
 
-from enigma.enigma_v2.enigma import EnigmaM3
+from .enigma import EnigmaM3
 
 
 def test_with_authentic_cryptogram_sharnhorst():
