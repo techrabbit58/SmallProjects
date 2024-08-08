@@ -60,20 +60,20 @@ class RotorStencil:
 
 # rotor wirings and turnovers for the Luftwaffe/Heer Enigma I and Kriegsmarine Enigma M3
 m3_rotor_stencils: dict[str, RotorStencil] = {
-    'I': RotorStencil('EKMFLGDQVZNTOWYHXUSPAIBRCJ', 'Q'),
-    'II': RotorStencil('AJDKSIRUXBLHWTMCQGZNPYFVOE', 'E'),
-    'III': RotorStencil('BDFHJLCPRTXVZNYEIWGAKMUSQO', 'V'),
-    'IV': RotorStencil('ESOVPZJAYQUIRHXLNFTGKDCMWB', 'J'),
-    'V': RotorStencil('VZBRGITYUPSDNHLXAWMJQOFECK', 'Z'),
-    'VI': RotorStencil('JPGVOUMFYQBENHZRDKASXLICTW', 'ZM'),
-    'VII': RotorStencil('NZJHGRCXMYSWBOUFAIVLPEKQDT', 'ZM'),
-    'VIII': RotorStencil('FKQHTLXOCBJSPDZRAMEWNIUYGV', 'ZM'),
+    'I': RotorStencil('EKMFLGDQVZNTOWYHXUSPAIBRCJ', 'Q'),  # Enigma I, Enigma M3
+    'II': RotorStencil('AJDKSIRUXBLHWTMCQGZNPYFVOE', 'E'),  # Enigma I, Enigma M3
+    'III': RotorStencil('BDFHJLCPRTXVZNYEIWGAKMUSQO', 'V'),  # Enigma I, Enigma M3
+    'IV': RotorStencil('ESOVPZJAYQUIRHXLNFTGKDCMWB', 'J'),  # Enigma I, Enigma M3
+    'V': RotorStencil('VZBRGITYUPSDNHLXAWMJQOFECK', 'Z'),  # Enigma I, Enigma M3
+    'VI': RotorStencil('JPGVOUMFYQBENHZRDKASXLICTW', 'ZM'),  # Enigma M3
+    'VII': RotorStencil('NZJHGRCXMYSWBOUFAIVLPEKQDT', 'ZM'),  # Enigma M3
+    'VIII': RotorStencil('FKQHTLXOCBJSPDZRAMEWNIUYGV', 'ZM'),  # Enigma M3
 }
 
 # rotor wirings and turnovers for the Deutsche Reichsbahn Enigma K Variant A27
 rocket_rotor_stencils: dict[str, RotorStencil] = {
-    'I': RotorStencil('JGDQOXUSCAMIFRVTPNEWKBLZYH', 'Q'),
-    'II': RotorStencil('NTZPSFBOKMWRCJDIVLAEYUXHGQ', 'E'),
-    'III': RotorStencil('JVIUBHTCDYAKEQZPOSGXNRMWFL', 'V'),
-    'UKW': RotorStencil('QYHOGNECVPUZTFDJAXWMKISRBL', ''),
+    'I': RotorStencil('JGDQOXUSCAMIFRVTPNEWKBLZYH', 'Q'),  # railway enigma "Rocket"
+    'II': RotorStencil('NTZPSFBOKMWRCJDIVLAEYUXHGQ', 'E'),  # railway enigma "Rocket"
+    'III': RotorStencil('JVIUBHTCDYAKEQZPOSGXNRMWFL', 'V'),  # railway enigma "Rocket"
+    'UKW': RotorStencil('QYHOGNECVPUZTFDJAXWMKISRBL', ''),  # railway enigma "Rocket"
 }
