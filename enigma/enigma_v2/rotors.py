@@ -40,9 +40,9 @@ class Rotor:
 
 
 class RotorStencil:
-    def __init__(self, wiring: str, turnovers: str) -> None:
+    def __init__(self, wiring: str, notches: str) -> None:
         self.wiring = to_signals(wiring)
-        self.turnovers = to_signals(turnovers)
+        self.notches = to_signals(notches)
         self.ring = 0
 
     def set_ring(self, position: str) -> Self:
@@ -52,7 +52,7 @@ class RotorStencil:
 
     def create(self) -> Rotor:
         offset = self.ring
-        new_notches = [(n - self.ring) % ALPHABET_SIZE for n in self.turnovers]
+        new_notches = [(n - self.ring) % ALPHABET_SIZE for n in self.notches]
         new_rotor = Rotor(self.wiring, new_notches, offset)
         self.ring = 0  # reset factory to ring default after each new rotor instance created
         return new_rotor
@@ -71,10 +71,9 @@ m3_rotor_stencils: dict[str, RotorStencil] = {
 }
 
 # rotor wirings and turnovers for the Deutsche Reichsbahn Enigma K Variant A27
-a27_rotor_stencils: dict[str, RotorStencil] = {
-    'ETW': RotorStencil('QWERTZUIOASDFGHJKPYXCVBNML', ''),
-    'I': RotorStencil('EVLPKUDJHTGSZFRABWYICOXNMQ', 'Y'),
-    'II': RotorStencil('HXMQKGJTSCZFLBERNAWYIDOVPU', 'E'),
-    'III': RotorStencil('JHDBSKYPZNMVXURECLIGQOAWTF', 'N'),
-    'UKW': RotorStencil('DNSAJQIPGEXRWBVHFLCZYOMKUT', ''),
+rocket_rotor_stencils: dict[str, RotorStencil] = {
+    'I': RotorStencil('JGDQOXUSCAMIFRVTPNEWKBLZYH', 'Q'),
+    'II': RotorStencil('NTZPSFBOKMWRCJDIVLAEYUXHGQ', 'E'),
+    'III': RotorStencil('JVIUBHTCDYAKEQZPOSGXNRMWFL', 'V'),
+    'UKW': RotorStencil('QYHOGNECVPUZTFDJAXWMKISRBL', ''),
 }

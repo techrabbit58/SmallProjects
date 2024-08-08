@@ -2,7 +2,7 @@ from typing import Self
 
 from .plugboard import Plugboard
 from .reflectors import reflectors, Reflector
-from .rotors import m3_rotor_stencils, Rotor, a27_rotor_stencils
+from .rotors import m3_rotor_stencils, Rotor, rocket_rotor_stencils
 from .symbols import SYMBOLS, as_signal, as_symbol
 from .validators import (
     ensure_valid_mil_reflector, ensure_valid_ring_setting, ensure_valid_key,
@@ -60,14 +60,14 @@ class EnigmaM3:
             return as_symbol(signal)
 
 
-class EnigmaA27:
-    """The Enigma K variant used by the german railway """
+class EnigmaRocket:
+    """The Enigma variant used by the german railway, as reverse engineered by Bletchley Park"""
     def __init__(self, rotor_pack: str, rings: str) -> None:
-        self.entry = Plugboard('AQ BW CE DR ET FZ GU HI IO JA KS LD MF NG OH PJ QK RP SY TX UC VV WB XN YM ZL')
+        self.entry = 'QWERTZUIOASDFGHJKPYXCVBNML'
         ring_list = rings.split()
-        self.reflector = a27_rotor_stencils['UKW'].set_ring(ensure_valid_ring_setting(ring_list[0])).create()
+        self.reflector = rocket_rotor_stencils['UKW'].set_ring(ensure_valid_ring_setting(ring_list[0])).create()
         self.wheels = [
-            a27_rotor_stencils[ensure_valid_a27_rotor(r)].set_ring(ensure_valid_ring_setting(ring_list[i])).create()
+            rocket_rotor_stencils[ensure_valid_a27_rotor(r)].set_ring(ensure_valid_ring_setting(ring_list[i])).create()
             for i, r in enumerate(rotor_pack.split(), 1)
         ]
 
@@ -92,8 +92,7 @@ class EnigmaA27:
             return symbol
         else:
             self._rotate()
-            signal = as_signal(symbol)
-            signal = self.entry[signal]
+            signal = self.entry.find(symbol)
             for r in reversed(self.wheels):
                 i = r.right[signal]
                 signal = r.left.index(i)
@@ -102,5 +101,4 @@ class EnigmaA27:
             for r in self.wheels:
                 i = r.left[signal]
                 signal = r.right.index(i)
-            signal = self.entry[signal]
-            return as_symbol(signal)
+            return self.entry[signal]

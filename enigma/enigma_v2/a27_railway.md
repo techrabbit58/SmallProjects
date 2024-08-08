@@ -1,4 +1,4 @@
-# The Wiring of the Enigma A27 Wheels
+# The True Wiring of the Enigma A27 Wheels
 
 _(which is the german railway variant of Enigma K)_
 
