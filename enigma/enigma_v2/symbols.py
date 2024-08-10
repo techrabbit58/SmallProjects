@@ -23,3 +23,11 @@ def to_signals(wiring: str) -> list[int]:
 def to_symbols(signals: Iterable[int]) -> str:
     """Translate a whole list of ordinals back to a string of the corresponding symbols."""
     return ''.join(as_symbol(n) for n in signals)
+
+
+def number_string_to_symbols(numbers: str) -> str:
+    return ''.join(as_symbol(int(digits) - 1) for digits in numbers.split())
+
+
+def symbols_to_number_string(symbols: str) -> str:
+    return ' '.join(f'{as_signal(symbol) + 1:02d}' for symbol in symbols)

@@ -1,11 +1,13 @@
 from .enigma import EnigmaRocket
 from .procedures import casual_conversion
+from .symbols import number_string_to_symbols, symbols_to_number_string
 
-enigma = EnigmaRocket('III I II', '26 17 16 13')
-
-enigma.set_key('JEZA')
-
-cryptext = 'DEUTS QETRU PPENS INDJE TZTIN ENGLA ND---'
+# cryptext = 'DEUTS QETRU PPENS INDJE TZTIN ENGLA ND---'
 # cryptext = 'QSZVI DVMPN EXACM RWWXU IYOTY NGVVX DZ---'
 
-print(casual_conversion(enigma, 'JEZA', 'Deutsqe Truppen sind jetzt in England.'))
+enigma = EnigmaRocket('III I II', symbols_to_number_string('ZQPM'))
+print('ring setting:', symbols_to_number_string('ZQPM'))
+
+key = 'JEZA'
+casual_text = 'Ukrainische Truppen sind jetzt in der russischen Region Kursk.'
+print(casual_conversion(enigma, key, casual_text))
