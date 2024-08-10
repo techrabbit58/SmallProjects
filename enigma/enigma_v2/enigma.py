@@ -1,4 +1,4 @@
-from typing import Self
+from typing import Self, Protocol
 
 from .plugboard import Plugboard
 from .reflectors import reflectors, Reflector
@@ -8,6 +8,15 @@ from .validators import (
     ensure_valid_mil_reflector, ensure_valid_ring_setting, ensure_valid_key,
     ensure_valid_jumpers, ensure_valid_m3_rotor, ensure_valid_a27_rotor
 )
+
+
+class Enigma(Protocol):
+
+    def set_key(self, key: str) -> Self:
+        ...
+
+    def convert(self, symbol: str) -> str:
+        ...
 
 
 class EnigmaM3:
