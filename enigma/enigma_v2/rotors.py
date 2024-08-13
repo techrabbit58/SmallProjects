@@ -59,7 +59,7 @@ class RotorStencil:
 
 
 # rotor wirings and turnovers for the Luftwaffe/Heer Enigma I and Kriegsmarine Enigma M3
-m3_rotor_stencils: dict[str, RotorStencil] = {
+m_rotor_stencils: dict[str, RotorStencil] = {
     'I': RotorStencil('EKMFLGDQVZNTOWYHXUSPAIBRCJ', 'Q'),  # Enigma I, Enigma M3
     'II': RotorStencil('AJDKSIRUXBLHWTMCQGZNPYFVOE', 'E'),  # Enigma I, Enigma M3
     'III': RotorStencil('BDFHJLCPRTXVZNYEIWGAKMUSQO', 'V'),  # Enigma I, Enigma M3
@@ -68,6 +68,8 @@ m3_rotor_stencils: dict[str, RotorStencil] = {
     'VI': RotorStencil('JPGVOUMFYQBENHZRDKASXLICTW', 'ZM'),  # Enigma M3
     'VII': RotorStencil('NZJHGRCXMYSWBOUFAIVLPEKQDT', 'ZM'),  # Enigma M3
     'VIII': RotorStencil('FKQHTLXOCBJSPDZRAMEWNIUYGV', 'ZM'),  # Enigma M3
+    'Beta': RotorStencil('LEYJVCNIXWPBQMDRTAKZGFUHOS', ''),  # Enigma M4
+    'Gamma': RotorStencil('FSOKANUERHMBTIYCWLQPZXVGJD', ''),  # Enigma M4
 }
 
 # rotor wirings and turnovers for the Deutsche Reichsbahn Enigma K Variant A27

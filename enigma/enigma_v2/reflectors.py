@@ -34,4 +34,6 @@ reflectors: dict[str, Reflector] = {
     'A': Reflector('EJMZALYXVBWFCRQUONTSPIKHGD'),
     'B': Reflector('YRUHQSLDPXNGOKMIEBFZCWVJAT'),
     'C': Reflector('FVPJIAOYEDRZXWGCTKUQSBNMHL'),
+    'Bruno': Reflector('ENKQAUYWJICOPBLMDXZVFTHRGS'),
+    'Cäsar': Reflector('RDOBJNTKVEHMLFCWZAXGYIPSUQ'),
 }

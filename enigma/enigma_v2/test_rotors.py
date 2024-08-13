@@ -1,7 +1,7 @@
 import pytest
 
 from .symbols import to_symbols, as_symbol, ALPHABET_SIZE
-from .rotors import m3_rotor_stencils
+from .rotors import m_rotor_stencils
 
 defaults = [
     ('I', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'EKMFLGDQVZNTOWYHXUSPAIBRCJ', 'Q'),
@@ -17,7 +17,7 @@ defaults = [
 
 @pytest.mark.parametrize('rotor, left, right, notches', defaults)
 def test_rotor_default_settings(rotor, left, right, notches):
-    actual = m3_rotor_stencils[rotor].create()
+    actual = m_rotor_stencils[rotor].create()
     assert to_symbols(actual.left) == left
     assert to_symbols(actual.right) == right
     assert to_symbols(actual.notches) == notches
@@ -25,7 +25,7 @@ def test_rotor_default_settings(rotor, left, right, notches):
 
 @pytest.mark.parametrize('rotor, left, right, notches', defaults)
 def test_rotor_overwrite_default_with_default(rotor, left, right, notches):
-    actual = m3_rotor_stencils[rotor].set_ring('01').create().set_key('A')
+    actual = m_rotor_stencils[rotor].set_ring('01').create().set_key('A')
     assert to_symbols(actual.left) == left
     assert to_symbols(actual.right) == right
     assert to_symbols(actual.notches) == notches
@@ -47,7 +47,7 @@ def test_rotor_overwrite_default_with_default(rotor, left, right, notches):
     ('VIII', 'A', '02', 'ZABCDEFGHIJKLMNOPQRSTUVWXY', 'VFKQHTLXOCBJSPDZRAMEWNIUYG', 'YL'),
 ])
 def test_rotor_key_ring_setup(rotor, key, ring, left, right, notches):
-    actual = m3_rotor_stencils[rotor].set_ring(ring).create()
+    actual = m_rotor_stencils[rotor].set_ring(ring).create()
     actual.set_key(key)
     assert to_symbols(actual.left) == left
     assert to_symbols(actual.right) == right
@@ -66,14 +66,14 @@ def test_rotor_key_ring_setup(rotor, key, ring, left, right, notches):
     ('VII', 'L', True, 'M', 'B'),
 ])
 def test_rotor_can_step_forward(rotor, key, expect_notch, expect_left, expect_right):
-    actual = m3_rotor_stencils[rotor].create().set_key(key).rotate()
+    actual = m_rotor_stencils[rotor].create().set_key(key).rotate()
     assert actual.is_at_notch() == expect_notch
     assert as_symbol(actual.left[0]) == expect_left
     assert as_symbol(actual.right[0]) == expect_right
 
 
 def test_same_rotor_different_keys():
-    actual = m3_rotor_stencils['VIII'].set_ring('05').create()
+    actual = m_rotor_stencils['VIII'].set_ring('05').create()
 
     actual.set_key('X')
     assert as_symbol(actual.left[0]) == 'T'
@@ -83,7 +83,7 @@ def test_same_rotor_different_keys():
 
 
 def test_same_rotor_different_key_many_steps():
-    actual = m3_rotor_stencils['III'].set_ring('05').create()
+    actual = m_rotor_stencils['III'].set_ring('05').create()
 
     actual.set_key('X')
 

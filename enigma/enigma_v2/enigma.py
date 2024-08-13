@@ -2,7 +2,7 @@ from typing import Self, Protocol
 
 from .plugboard import Plugboard
 from .reflectors import reflectors, Reflector
-from .rotors import m3_rotor_stencils, Rotor, rocket_rotor_stencils
+from .rotors import m_rotor_stencils, Rotor, rocket_rotor_stencils
 from .symbols import SYMBOLS, as_signal, as_symbol
 from .validators import (
     ensure_valid_mil_reflector, ensure_valid_ring_setting, ensure_valid_key,
@@ -28,7 +28,7 @@ class EnigmaM3:
         self.reflector = reflectors[ensure_valid_mil_reflector(reflector)]
         ring_list = rings.split()
         self.wheels = [
-            m3_rotor_stencils[ensure_valid_m3_rotor(r)].set_ring(ensure_valid_ring_setting(ring_list[i])).create()
+            m_rotor_stencils[ensure_valid_m3_rotor(r)].set_ring(ensure_valid_ring_setting(ring_list[i])).create()
             for i, r in enumerate(rotor_pack.split())
         ]
         self.plugboard = Plugboard()
