@@ -58,6 +58,15 @@ class RotorStencil:
         return new_rotor
 
 
+def rotate(left: Rotor, middle: Rotor, right: Rotor) -> None:
+    if middle.is_at_notch():
+        middle.rotate()
+        left.rotate()
+    elif right.is_at_notch():
+        middle.rotate()
+    right.rotate()
+
+
 # rotor wirings and turnovers for the Luftwaffe/Heer Enigma I and Kriegsmarine Enigma M3
 m_rotor_stencils: dict[str, RotorStencil] = {
     'I': RotorStencil('EKMFLGDQVZNTOWYHXUSPAIBRCJ', 'Q'),  # Enigma I, Enigma M3

@@ -1,12 +1,25 @@
-from .reflectors import reflectors
-from .rotors import m_rotor_stencils, rocket_rotor_stencils
+import functools
+from collections.abc import Callable
+
 from .symbols import NUMERIC_RING_SETTINGS, SYMBOLS
 
 
-def ensure_valid_mil_reflector(r: str) -> str:
+m3_reflectors = 'A B C'
+m4_reflectors = 'Bruno Cäsar'
+
+
+def _ensure_valid_reflector(r: str, enigma: str, reflectors: list[str]) -> str:
     if r not in reflectors:
-        raise ValueError(f'reflector "{r}" is not compatible with Enigma I or Enigma M3 (valid are: "A", "B", "C")')
+        raise ValueError(f'reflector "{r}" is not compatible with {enigma} (valid are: {", ".join(reflectors)})')
     return r
+
+
+def _reflector_checker(enigma: str, reflectors: str) -> Callable[[str], str]:
+    return functools.partial(_ensure_valid_reflector, enigma=enigma, reflectors=reflectors.split())
+
+
+ensure_valid_i_m3_reflector = _reflector_checker('Enigma I or Enigma M3', m3_reflectors)
+ensure_valid_m4_reflector = _reflector_checker('Enigma M4', m4_reflectors)
 
 
 def ensure_valid_ring_setting(s: str) -> str:
@@ -28,16 +41,26 @@ def ensure_valid_jumpers(j: str) -> str:
     return j
 
 
-def ensure_valid_m3_rotor(r: str) -> str:
-    if r not in m_rotor_stencils:
-        raise ValueError(f'rotor "{r}" is not compatible with Enigma I or Enigma M3 (valid are: "I" ... "VIII")')
+i_rotors = 'I II III IV V'
+m3_rotors = 'I II III IV V VI VII VIII'
+m4_rotors = 'I II III IV V VI VII VIII Beta Gamma'
+rocket_rotors = 'I II III'
+
+
+def _rotor_checker(enigma: str, rotors: str) -> Callable[[str], str]:
+    return functools.partial(_ensure_valid_rotor, enigma=enigma, rotors=rotors.split())
+
+
+def _ensure_valid_rotor(r: str, enigma: str, rotors: list[str]) -> str:
+    if r not in rotors:
+        raise ValueError(f'rotor "{r}" is not compatible with {enigma} (valid are: {", ".join(rotors)})')
     return r
 
 
-def ensure_valid_a27_rotor(r: str) -> str:
-    if r not in rocket_rotor_stencils:
-        raise ValueError(f'rotor "{r}" is not compatible with Enigma I or Enigma M3 (valid are: "I" ... "VIII")')
-    return r
+ensure_valid_i_rotor = _rotor_checker('Enigma I', i_rotors)
+ensure_valid_m3_rotor = _rotor_checker('Enigma M3', m3_rotors)
+ensure_valid_m4_rotor = _rotor_checker('Enigma M4', m4_rotors)
+ensure_valid_rocket_rotor = _rotor_checker('Enigma Rocket', rocket_rotors)
 
 
 def ensure_valid_key(key: str) -> str:
@@ -45,3 +68,9 @@ def ensure_valid_key(key: str) -> str:
         if s not in SYMBOLS:
             raise ValueError(f'invalid key "{key}": only symbols "A" ... "Z" are valid key symbols')
     return key
+
+
+def ensure_rotors_are_unique(rotors: list[str]) -> list[str]:
+    if len(set(rotors)) != len(rotors):
+        raise ValueError(f'invalid rortor set: "{rotors}" does contain duplicates')
+    return rotors
