@@ -1,6 +1,5 @@
 import base64
 import string
-from itertools import pairwise
 
 from .enigma import Enigma
 
@@ -33,7 +32,7 @@ def base64_decrypt(enigma: Enigma, key: str, text: str) -> str:
     return base64.b64decode(''.join(result).encode()).decode()
 
 
-def in_groups(text: str, group_size: int = 5) -> str:
+def in_groups(text: str, *, group_size: int = 5) -> str:
     groups = []
     single_group = []
 

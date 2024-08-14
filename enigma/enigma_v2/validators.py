@@ -72,5 +72,5 @@ def ensure_valid_key(key: str) -> str:
 
 def ensure_rotors_are_unique(rotors: list[str]) -> list[str]:
     if len(set(rotors)) != len(rotors):
-        raise ValueError(f'invalid rortor set: "{rotors}" does contain duplicates')
+        raise ValueError(f'invalid rotor set: "{rotors}" has duplicates')
     return rotors
