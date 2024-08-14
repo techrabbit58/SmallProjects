@@ -1,12 +1,14 @@
-from .enigma import EnigmaI
+from .enigma import EnigmaM4
 from .procedures import base64_encrypt, base64_decrypt, in_groups
 
 # cryptext = 'DEUTS QETRU PPENS INDJE TZTIN ENGLA ND---'
 # cryptext = 'QSZVI DVMPN EXACM RWWXU IYOTY NGVVX DZ---'
 
-enigma = EnigmaI('C', 'III V I', '17 16 13').set_jumpers('AB CD EF GH JK MN OP QR TU XZ')
+enigma = EnigmaM4(
+    'Cäsar', 'Gamma III V I', '01 17 16 13'
+).set_jumpers('AB CD EF GH JK MN OP QR TU XZ')
 
-key = 'QEV'
+key = 'AQEV'
 casual_text = 'Deutsche Truppen sind jetzt in England.'
 print(casual_text)
 

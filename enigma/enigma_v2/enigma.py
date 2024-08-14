@@ -6,7 +6,8 @@ from .rotors import m_rotor_stencils, Rotor, rocket_rotor_stencils, rotate
 from .symbols import SYMBOLS, as_signal, as_symbol
 from .validators import (
     ensure_valid_i_m3_reflector, ensure_valid_ring_setting, ensure_valid_key, ensure_rotors_are_unique,
-    ensure_valid_jumpers, ensure_valid_m3_rotor, ensure_valid_rocket_rotor, ensure_valid_i_rotor
+    ensure_valid_jumpers, ensure_valid_m3_rotor, ensure_valid_rocket_rotor, ensure_valid_i_rotor,
+    ensure_valid_m4_rotor, ensure_valid_m4_reflector
 )
 
 
@@ -51,22 +52,37 @@ class EnigmaM3:
             return symbol
         else:
             rotate(*self.wheels)
-            signal = as_signal(symbol)
-            signal = self.plugboard[signal]
-            for r in reversed(self.wheels):
-                i = r.right[signal]
-                signal = r.left.index(i)
-            signal = self.reflector[signal]
-            for r in self.wheels:
-                i = r.left[signal]
-                signal = r.right.index(i)
-            signal = self.plugboard[signal]
-            return as_symbol(signal)
+            return self._scramble(symbol)
+
+    def _scramble(self, symbol: str) -> str:
+        signal = as_signal(symbol)
+        signal = self.plugboard[signal]
+        for r in reversed(self.wheels):
+            i = r.right[signal]
+            signal = r.left.index(i)
+        signal = self.reflector[signal]
+        for r in self.wheels:
+            i = r.left[signal]
+            signal = r.right.index(i)
+        signal = self.plugboard[signal]
+        return as_symbol(signal)
 
 
 class EnigmaI(EnigmaM3):
     ensure_valid_rotor = ensure_valid_i_rotor
     ensure_valid_reflector = ensure_valid_i_m3_reflector
+
+
+class EnigmaM4(EnigmaM3):
+    ensure_valid_rotor = ensure_valid_m4_rotor
+    ensure_valid_reflector = ensure_valid_m4_reflector
+
+    def convert(self, symbol: str) -> str:
+        if symbol not in SYMBOLS:
+            return symbol
+        else:
+            rotate(*self.wheels[1:])  # other than I and M3: "greek" wheel does not rotate automatically
+            return self._scramble(symbol)
 
 
 class EnigmaRocket:
