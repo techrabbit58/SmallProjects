@@ -6,6 +6,7 @@ def test_with_authentic_cryptogram_turing_treatise():
     reference:
     http://wiki.franklinheath.co.uk/index.php/Enigma/Sample_Messages#Turing.27s_Treatise.2C_1940
     Message included in a document written by Alan Turing for new codebreaker recruits at Bletchley Park.
+    The reflector wheel is "settable" for ring and key, but cannot be replaced (only one "Umkehrwalze".)
     """
     enigma = EnigmaRocket('III I II', '26 17 16 13')
 

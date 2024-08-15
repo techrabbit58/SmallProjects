@@ -6,9 +6,9 @@ from .rotors import m_rotor_stencils, Rotor, rocket_rotor_stencils, rotate, tirp
 from .symbols import SYMBOLS
 from .validators import (
     ensure_valid_ring_setting, ensure_valid_symbols, ensure_rotors_are_unique,
-    ensure_valid_jumpers, ensure_valid_m3_rotor, ensure_valid_rocket_rotor, ensure_valid_i_rotor,
-    ensure_valid_m4_rotor, ensure_valid_m4_reflector, ensure_valid_t_rotor, ensure_valid_m3_reflector,
-    ensure_valid_i_reflector
+    ensure_valid_jumpers, ensure_valid_m3_rotor, ensure_valid_rocket_rotor,
+    ensure_valid_i_rotor, ensure_valid_m4_rotor, ensure_valid_m4_reflector,
+    ensure_valid_t_rotor, ensure_valid_m3_reflector, ensure_valid_i_reflector
 )
 
 
@@ -52,9 +52,8 @@ class EnigmaM3:
     def convert(self, symbol: str) -> str:
         if symbol not in SYMBOLS:
             return symbol
-        else:
-            rotate(*self.wheels)
-            return self._scramble(symbol)
+        rotate(*self.wheels)
+        return self._scramble(symbol)
 
     def _scramble(self, symbol: str) -> str:
         signal = self.entry.find(symbol)
@@ -82,9 +81,8 @@ class EnigmaM4(EnigmaM3):
     def convert(self, symbol: str) -> str:
         if symbol not in SYMBOLS:
             return symbol
-        else:
-            rotate(*self.wheels[1:])  # other than I and M3: "greek" wheel does not rotate automatically
-            return self._scramble(symbol)
+        rotate(*self.wheels[1:])  # other than I and M3: "greek" wheel does not rotate automatically
+        return self._scramble(symbol)
 
 
 class EnigmaRocket:
@@ -112,26 +110,30 @@ class EnigmaRocket:
 
     def convert(self, symbol: str) -> str:
         if symbol not in SYMBOLS:
-            pass
-        elif symbol == '/':  # marks a manual rotation by one place of the reflector wheel
-            self.wheels[0].rotate()
-            symbol = ''
-        else:
-            rotate(*self.wheels)
-            signal = self.entry.find(symbol)
-            for r in reversed(self.wheels):
-                i = r.right[signal]
-                signal = r.left.index(i)
-            i = self.reflector.right[signal]
-            signal = self.reflector.left.index(i)
-            for r in self.wheels:
-                i = r.left[signal]
-                signal = r.right.index(i)
-            symbol = self.entry[signal]
-        return symbol
+            return symbol
+        rotate(*self.wheels)
+        return self._scramble(symbol)
+
+    def _scramble(self, symbol) -> str:
+        signal = self.entry.find(symbol)
+        for r in reversed(self.wheels):
+            i = r.right[signal]
+            signal = r.left.index(i)
+        i = self.reflector.right[signal]
+        signal = self.reflector.left.index(i)
+        for r in self.wheels:
+            i = r.left[signal]
+            signal = r.right.index(i)
+        return self.entry[signal]
 
 
 class EnigmaT(EnigmaRocket):
     entry = ensure_valid_symbols('KZROUQHYAIGBLWVSTDXFPNMCJE')
     ensure_valid_rotor = ensure_valid_t_rotor
     stencils = tirpitz_rotor_stencils
+
+    def convert(self, symbol: str) -> str:
+        if symbol == '/':
+            self.reflector.rotate()  # reflector: do manual rotation by one on each '/' (only for Enigma T)
+            return symbol
+        return super().convert(symbol)
