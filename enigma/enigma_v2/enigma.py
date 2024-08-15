@@ -116,8 +116,7 @@ class EnigmaRocket:
         for r in reversed(self.wheels):
             i = r.right[signal]
             signal = r.left.index(i)
-        i = self.reflector.right[signal]
-        signal = self.reflector.left.index(i)
+        signal = self.reflector[signal]
         for r in self.wheels:
             i = r.left[signal]
             signal = r.right.index(i)

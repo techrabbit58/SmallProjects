@@ -35,6 +35,10 @@ class Rotor:
     def is_at_notch(self) -> bool:
         return self.left[0] in self.notches
 
+    def __getitem__(self, signal: int) -> int:
+        i = self.right[signal]
+        return self.left.index(i)
+
     def __str__(self) -> str:
         return f'{to_symbols(self.left)!r}\n{to_symbols(self.right)!r}\n{to_symbols(self.notches)!r}'
 
