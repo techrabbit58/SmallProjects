@@ -63,9 +63,9 @@ ensure_valid_m4_rotor = _rotor_checker('Enigma M4', m4_rotors)
 ensure_valid_rocket_rotor = _rotor_checker('Enigma Rocket', rocket_rotors)
 
 
-def ensure_valid_key(key: str) -> str:
+def ensure_valid_symbols(key: str, symbols: str = SYMBOLS) -> str:
     for s in key:
-        if s not in SYMBOLS:
+        if s not in symbols:
             raise ValueError(f'invalid key "{key}": only symbols "A" ... "Z" are valid key symbols')
     return key
 

@@ -7,7 +7,7 @@ enigma = EnigmaM4(
 
 key = 'QQEX'
 
-casual_text = 'Bräsige Seemöwen heißen meißtens Jürgen.'
+casual_text = 'Bräsige Seelöwen heißen meistens Jürgen.'
 print(casual_text)
 
 ciphertext = in_groups(base64_encrypt(enigma, key, casual_text), group_size=4)
