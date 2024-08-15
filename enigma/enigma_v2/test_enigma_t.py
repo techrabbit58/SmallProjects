@@ -1,4 +1,4 @@
-from .scramblingdevice import EnigmaT
+from .enigma import EnigmaT
 
 
 def test_with_authentic_cryptogram_tirpitz():

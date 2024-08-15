@@ -18,8 +18,8 @@ def _reflector_checker(enigma: str, reflectors: str) -> Callable[[str], str]:
     return functools.partial(_ensure_valid_reflector, enigma=enigma, reflectors=reflectors.split())
 
 
-ensure_valid_i_reflector = _reflector_checker('Enigma I or Enigma M3', i_reflectors)
-ensure_valid_m3_reflector = _reflector_checker('Enigma I or Enigma M3', m3_reflectors)
+ensure_valid_i_reflector = _reflector_checker('Enigma I', i_reflectors)
+ensure_valid_m3_reflector = _reflector_checker('Enigma M3', m3_reflectors)
 ensure_valid_m4_reflector = _reflector_checker('Enigma M4', m4_reflectors)
 
 

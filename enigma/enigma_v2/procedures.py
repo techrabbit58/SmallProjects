@@ -1,7 +1,7 @@
 import base64
 import string
 
-from .scramblingdevice import ScramblingDevice
+from .enigma import ScramblingDevice
 
 
 def base64_encrypt(enigma: ScramblingDevice, key: str, text: str) -> str:

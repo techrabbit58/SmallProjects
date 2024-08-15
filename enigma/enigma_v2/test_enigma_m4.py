@@ -1,6 +1,6 @@
 import textwrap
 
-from .scramblingdevice import EnigmaM4
+from .enigma import EnigmaM4
 
 
 def test_with_authentic_cryptogram_u264():

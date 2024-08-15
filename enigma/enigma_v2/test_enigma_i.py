@@ -1,6 +1,6 @@
 import textwrap
 
-from .scramblingdevice import EnigmaI
+from .enigma import EnigmaI
 
 
 def test_with_authentic_cryptogram_instruction_manual():
