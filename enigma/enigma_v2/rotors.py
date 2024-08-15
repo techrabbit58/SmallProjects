@@ -81,10 +81,22 @@ m_rotor_stencils: dict[str, RotorStencil] = {
     'Gamma': RotorStencil('FSOKANUERHMBTIYCWLQPZXVGJD', ''),  # Enigma M4
 }
 
-# rotor wirings and turnovers for the Deutsche Reichsbahn Enigma K Variant A27
+# rotor wirings and turnovers for the Deutsche Reichsbahn Enigma (named "Rocket" at Bletchley Park)
 rocket_rotor_stencils: dict[str, RotorStencil] = {
     'I': RotorStencil('JGDQOXUSCAMIFRVTPNEWKBLZYH', 'Q'),  # railway enigma "Rocket"
     'II': RotorStencil('NTZPSFBOKMWRCJDIVLAEYUXHGQ', 'E'),  # railway enigma "Rocket"
     'III': RotorStencil('JVIUBHTCDYAKEQZPOSGXNRMWFL', 'V'),  # railway enigma "Rocket"
     'UKW': RotorStencil('QYHOGNECVPUZTFDJAXWMKISRBL', ''),  # railway enigma "Rocket"
+}
+
+tirpitz_rotor_stencils: dict[str, RotorStencil] = {
+    'I': RotorStencil('GEKPBTAUMOCNILJDXZYFHWVQSR', 'EKQWZ'),  # Enigma T ("Tirpitz")
+    'II': RotorStencil('UPHZLWEQMTDJXCAKSOIGVBYFNR', 'FLRWZ'),  # Enigma T ("Tirpitz")
+    'III': RotorStencil('QUDLYRFEKONVZAXWHMGPJBSICT', 'EKQWZ'),  # Enigma T ("Tirpitz")
+    'IV': RotorStencil('CIWTBKXNRESPFLYDAGVHQUOJZM', 'FLRWZ'),  # Enigma T ("Tirpitz")
+    'V': RotorStencil('UAXGISNJBVERDYLFZWTPCKOHMQ', 'CFKRY'),  # Enigma T ("Tirpitz")
+    'VI': RotorStencil('XFUZGALVHCNYSEWQTDMRBKPIOJ', 'EIMQX'),  # Enigma T ("Tirpitz")
+    'VII': RotorStencil('BJVFTXPLNAYOZIKWGDQERUCHSM', 'CFKRY'),  # Enigma T ("Tirpitz")
+    'VIII': RotorStencil('YMTPNZHWKODAJXELUQVGCBISFR', 'EIMQX'),  # Enigma T ("Tirpitz")
+    'UKW': RotorStencil('GEKPBTAUMOCNILJDXZYFHWVQSR', ''),  # Enigma T ("Tirpitz")
 }

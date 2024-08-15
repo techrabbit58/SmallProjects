@@ -4,7 +4,7 @@ from collections.abc import Callable
 from .symbols import NUMERIC_RING_SETTINGS, SYMBOLS
 
 
-m3_reflectors = 'A B C'
+m3_reflectors = i_reflectors = 'A B C'
 m4_reflectors = 'Bruno Cäsar'
 
 
@@ -18,7 +18,8 @@ def _reflector_checker(enigma: str, reflectors: str) -> Callable[[str], str]:
     return functools.partial(_ensure_valid_reflector, enigma=enigma, reflectors=reflectors.split())
 
 
-ensure_valid_i_m3_reflector = _reflector_checker('Enigma I or Enigma M3', m3_reflectors)
+ensure_valid_i_reflector = _reflector_checker('Enigma I or Enigma M3', i_reflectors)
+ensure_valid_m3_reflector = _reflector_checker('Enigma I or Enigma M3', m3_reflectors)
 ensure_valid_m4_reflector = _reflector_checker('Enigma M4', m4_reflectors)
 
 
@@ -41,10 +42,10 @@ def ensure_valid_jumpers(j: str) -> str:
     return j
 
 
-i_rotors = 'I II III IV V'
-m3_rotors = 'I II III IV V VI VII VIII'
-m4_rotors = 'I II III IV V VI VII VIII Beta Gamma'
 rocket_rotors = 'I II III'
+i_rotors = ' '.join((rocket_rotors, 'IV V'))
+t_rotors = m3_rotors = ' '.join((i_rotors, 'VI VII VIII'))
+m4_rotors = ' '.join((m3_rotors, 'Beta Gamma'))
 
 
 def _rotor_checker(enigma: str, rotors: str) -> Callable[[str], str]:
@@ -61,6 +62,7 @@ ensure_valid_i_rotor = _rotor_checker('Enigma I', i_rotors)
 ensure_valid_m3_rotor = _rotor_checker('Enigma M3', m3_rotors)
 ensure_valid_m4_rotor = _rotor_checker('Enigma M4', m4_rotors)
 ensure_valid_rocket_rotor = _rotor_checker('Enigma Rocket', rocket_rotors)
+ensure_valid_t_rotor = _rotor_checker('Enigma T', t_rotors)
 
 
 def ensure_valid_symbols(key: str, symbols: str = SYMBOLS) -> str:

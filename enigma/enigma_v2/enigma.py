@@ -2,12 +2,13 @@ from typing import Self, Protocol
 
 from .plugboard import Plugboard
 from .reflectors import reflectors, Reflector
-from .rotors import m_rotor_stencils, Rotor, rocket_rotor_stencils, rotate
+from .rotors import m_rotor_stencils, Rotor, rocket_rotor_stencils, rotate, tirpitz_rotor_stencils
 from .symbols import SYMBOLS
 from .validators import (
-    ensure_valid_i_m3_reflector, ensure_valid_ring_setting, ensure_valid_symbols, ensure_rotors_are_unique,
+    ensure_valid_ring_setting, ensure_valid_symbols, ensure_rotors_are_unique,
     ensure_valid_jumpers, ensure_valid_m3_rotor, ensure_valid_rocket_rotor, ensure_valid_i_rotor,
-    ensure_valid_m4_rotor, ensure_valid_m4_reflector
+    ensure_valid_m4_rotor, ensure_valid_m4_reflector, ensure_valid_t_rotor, ensure_valid_m3_reflector,
+    ensure_valid_i_reflector
 )
 
 
@@ -26,7 +27,7 @@ class EnigmaM3:
     wheels: list[Rotor]
     plugboard: Plugboard
     ensure_valid_rotor = ensure_valid_m3_rotor
-    ensure_valid_reflector = ensure_valid_i_m3_reflector
+    ensure_valid_reflector = ensure_valid_m3_reflector
 
     def __init__(self, reflector: str, rotor_pack: str, rings: str) -> None:
         self.reflector = reflectors[self.ensure_valid_reflector(reflector)]
@@ -71,7 +72,7 @@ class EnigmaM3:
 
 class EnigmaI(EnigmaM3):
     ensure_valid_rotor = ensure_valid_i_rotor
-    ensure_valid_reflector = ensure_valid_i_m3_reflector
+    ensure_valid_reflector = ensure_valid_i_reflector
 
 
 class EnigmaM4(EnigmaM3):
@@ -90,12 +91,13 @@ class EnigmaRocket:
     """The Enigma variant used by the german railway, as reverse engineered by Bletchley Park"""
     entry = ensure_valid_symbols('QWERTZUIOASDFGHJKPYXCVBNML')
     ensure_valid_rotor = ensure_valid_rocket_rotor
+    stencils = rocket_rotor_stencils
 
     def __init__(self, rotor_pack: str, rings: str) -> None:
         ring_list = rings.split()
-        self.reflector = rocket_rotor_stencils['UKW'].set_ring(ensure_valid_ring_setting(ring_list[0])).create()
+        self.reflector = self.stencils['UKW'].set_ring(ensure_valid_ring_setting(ring_list[0])).create()
         self.wheels = [
-            rocket_rotor_stencils[
+            self.stencils[
                 self.ensure_valid_rotor(r)
             ].set_ring(ensure_valid_ring_setting(ring_list[i])).create()
             for i, r in enumerate(ensure_rotors_are_unique(rotor_pack.split()), 1)
@@ -110,7 +112,10 @@ class EnigmaRocket:
 
     def convert(self, symbol: str) -> str:
         if symbol not in SYMBOLS:
-            return symbol
+            pass
+        elif symbol == '/':
+            self.wheels[0].rotate()
+            symbol = ''
         else:
             rotate(*self.wheels)
             signal = self.entry.find(symbol)
@@ -122,4 +127,11 @@ class EnigmaRocket:
             for r in self.wheels:
                 i = r.left[signal]
                 signal = r.right.index(i)
-            return self.entry[signal]
+            symbol = self.entry[signal]
+        return symbol
+
+
+class EnigmaT(EnigmaRocket):
+    entry = ensure_valid_symbols('KZROUQHYAIGBLWVSTDXFPNMCJE')
+    ensure_valid_rotor = ensure_valid_t_rotor
+    stencils = tirpitz_rotor_stencils

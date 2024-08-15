@@ -1,9 +1,7 @@
-from .enigma import EnigmaM4
+from .enigma import EnigmaT
 from .procedures import base64_encrypt, base64_decrypt, in_groups
 
-enigma = EnigmaM4(
-    'Bruno', 'Gamma III VIII I', '01 17 16 13'
-).set_jumpers('BX CH EU DG JK MP NO FQ TR AZ')
+enigma = EnigmaT('IV VIII V', '09 17 16 13')
 
 key = 'QQEX'
 
