@@ -113,7 +113,7 @@ class EnigmaRocket:
     def convert(self, symbol: str) -> str:
         if symbol not in SYMBOLS:
             pass
-        elif symbol == '/':
+        elif symbol == '/':  # marks a manual rotation by one place of the reflector wheel
             self.wheels[0].rotate()
             symbol = ''
         else:
