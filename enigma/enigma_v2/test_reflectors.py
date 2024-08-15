@@ -11,6 +11,10 @@ from .symbols import as_symbol, as_signal
     ('B', 'X', 'J'),
     ('C', 'E', 'I'),
     ('C', 'F', 'A'),
+    ('Bruno', 'B', 'N'),
+    ('Bruno', 'R', 'X'),
+    ('Cäsar', 'F', 'N'),
+    ('Cäsar', 'D', 'B'),
 ])
 def test_reflector(choice, actual, expected):
     reflector = reflectors[choice]
