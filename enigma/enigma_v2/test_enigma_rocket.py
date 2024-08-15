@@ -1,4 +1,4 @@
-from .enigma import EnigmaRocket
+from .scramblingdevice import EnigmaRocket
 
 
 def test_with_authentic_cryptogram_turing_treatise():

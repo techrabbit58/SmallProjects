@@ -1,4 +1,4 @@
-from .enigma import EnigmaT
+from .scramblingdevice import EnigmaT
 from .procedures import base64_encrypt, base64_decrypt, in_groups
 
 enigma = EnigmaT('IV VIII V', '09 17 16 13')

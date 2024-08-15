@@ -1,4 +1,4 @@
-from typing import Self, Protocol
+from typing import Self, Protocol, TypeAlias
 
 from .plugboard import Plugboard
 from .reflectors import reflectors, Reflector
@@ -12,7 +12,7 @@ from .validators import (
 )
 
 
-class Enigma(Protocol):
+class ScramblingDevice(Protocol):
 
     def set_key(self, key: str) -> Self:
         ...
@@ -52,21 +52,7 @@ class EnigmaM3:
     def convert(self, symbol: str, *, first_rotor: int = 0) -> str:
         if symbol not in SYMBOLS:
             return symbol
-        return self._scramble(symbol, first_rotor)
-
-    def _scramble(self, symbol: str, first_rotor) -> str:
-        rotate(*self.wheels[first_rotor:])
-        signal = self.entry.find(symbol)
-        signal = self.plugboard[signal]
-        for r in reversed(self.wheels):
-            i = r.right[signal]
-            signal = r.left.index(i)
-        signal = self.reflector[signal]
-        for r in self.wheels:
-            i = r.left[signal]
-            signal = r.right.index(i)
-        signal = self.plugboard[signal]
-        return self.entry[signal]
+        return _scramble(self, symbol, first_rotor)
 
 
 class EnigmaI(EnigmaM3):
@@ -84,6 +70,7 @@ class EnigmaM4(EnigmaM3):
 
 class EnigmaRocket:
     """The Enigma variant used by the german railway, as reverse engineered by Bletchley Park"""
+    plugboard = Plugboard()  # no plugboard, emulated by this zero-conversion plugboard
     entry = ensure_valid_symbols('QWERTZUIOASDFGHJKPYXCVBNML')
     ensure_valid_rotor = ensure_valid_rocket_rotor
     stencils = rocket_rotor_stencils
@@ -108,19 +95,7 @@ class EnigmaRocket:
     def convert(self, symbol: str, *, first_rotor: int = 0) -> str:
         if symbol not in SYMBOLS:
             return symbol
-        return self._scramble(symbol, first_rotor)
-
-    def _scramble(self, symbol: str, first_rotor: int) -> str:
-        rotate(*self.wheels[first_rotor:])
-        signal = self.entry.find(symbol)
-        for r in reversed(self.wheels):
-            i = r.right[signal]
-            signal = r.left.index(i)
-        signal = self.reflector[signal]
-        for r in self.wheels:
-            i = r.left[signal]
-            signal = r.right.index(i)
-        return self.entry[signal]
+        return _scramble(self, symbol, first_rotor)
 
 
 class EnigmaT(EnigmaRocket):
@@ -133,3 +108,21 @@ class EnigmaT(EnigmaRocket):
             self.reflector.rotate()  # reflector: do manual rotation by one on each '/' (only for Enigma T)
             return symbol
         return super().convert(symbol)
+
+
+Enigma: TypeAlias = EnigmaI | EnigmaM3 | EnigmaM4 | EnigmaRocket | EnigmaT
+
+
+def _scramble(enigma: Enigma, symbol: str, first_rotor) -> str:
+    rotate(*enigma.wheels[first_rotor:])
+    signal = enigma.entry.find(symbol)
+    signal = enigma.plugboard[signal]
+    for r in reversed(enigma.wheels):
+        i = r.right[signal]
+        signal = r.left.index(i)
+    signal = enigma.reflector[signal]
+    for r in enigma.wheels:
+        i = r.left[signal]
+        signal = r.right.index(i)
+    signal = enigma.plugboard[signal]
+    return enigma.entry[signal]
