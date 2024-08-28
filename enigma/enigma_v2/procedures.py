@@ -1,10 +1,10 @@
 import base64
 import string
 
-from .enigma import ScramblingDevice
+from .enigma import Enigma
 
 
-def base64_encrypt(enigma: ScramblingDevice, key: str, text: str) -> str:
+def base64_encrypt(enigma: Enigma, key: str, text: str) -> str:
     enigma.set_key(key)
 
     result = []
@@ -17,7 +17,7 @@ def base64_encrypt(enigma: ScramblingDevice, key: str, text: str) -> str:
     return ''.join(result)
 
 
-def base64_decrypt(enigma: ScramblingDevice, key: str, text: str) -> str:
+def base64_decrypt(enigma: Enigma, key: str, text: str) -> str:
     enigma.set_key(key)
 
     result = []

@@ -1,8 +1,8 @@
-from typing import Self, Protocol, TypeAlias
+from typing import Self, Protocol
 
 from .plugboard import Plugboard
-from .reflectors import reflectors, Reflector
-from .rotors import m_rotor_stencils, Rotor, rocket_rotor_stencils, rotate, tirpitz_rotor_stencils
+from .reflectors import Reflector, reflectors
+from .rotors import Rotor, m_rotor_stencils, rocket_rotor_stencils, rotate, tirpitz_rotor_stencils
 from .symbols import SYMBOLS
 from .validators import (
     ensure_valid_ring_setting, ensure_valid_symbols, ensure_rotors_are_unique,
@@ -12,19 +12,24 @@ from .validators import (
 )
 
 
-class ScramblingDevice(Protocol):
+class Enigma(Protocol):
+    def set_key(self, key: str) -> Self: ...
+    def convert(self, symbol: str) -> str: ...
 
-    def set_key(self, key: str) -> Self:
-        ...
 
-    def convert(self, symbol: str) -> str:
-        ...
+class EnigmaVariant(Protocol):
+    entry: str
+    first_rotor: int
+    plugboard: Plugboard
+    wheels: list[Rotor]
+    reflector: Reflector | Rotor
 
 
 class EnigmaM3:
     entry: str = ensure_valid_symbols('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
     reflector: Reflector
     wheels: list[Rotor]
+    first_rotor: int = 0
     plugboard: Plugboard
     ensure_valid_rotor = ensure_valid_m3_rotor
     ensure_valid_reflector = ensure_valid_m3_reflector
@@ -49,10 +54,10 @@ class EnigmaM3:
             self.wheels[i].set_key(symbol)
         return self
 
-    def convert(self, symbol: str, *, first_rotor: int = 0) -> str:
+    def convert(self, symbol: str) -> str:
         if symbol not in SYMBOLS:
             return symbol
-        return _scramble(self, symbol, first_rotor)
+        return _scramble(self, symbol)
 
 
 class EnigmaI(EnigmaM3):
@@ -61,17 +66,19 @@ class EnigmaI(EnigmaM3):
 
 
 class EnigmaM4(EnigmaM3):
+    first_rotor = 1
     ensure_valid_rotor = ensure_valid_m4_rotor
     ensure_valid_reflector = ensure_valid_m4_reflector
 
-    def convert(self, symbol: str, *, first_rotor: int = 0) -> str:
-        return super().convert(symbol, first_rotor=1)  # "greek" wheel does not rotate automatically
+    def convert(self, symbol: str) -> str:
+        return super().convert(symbol)  # "greek" wheel does not rotate automatically
 
 
 class EnigmaRocket:
     """The Enigma variant used by the german railway, as reverse engineered by Bletchley Park"""
-    plugboard = Plugboard()  # no plugboard, emulated by this zero-conversion plugboard
-    entry = ensure_valid_symbols('QWERTZUIOASDFGHJKPYXCVBNML')
+    plugboard: Plugboard = Plugboard()  # no plugboard, emulated by this zero-conversion plugboard
+    entry: str = ensure_valid_symbols('QWERTZUIOASDFGHJKPYXCVBNML')
+    first_rotor: int = 0
     ensure_valid_rotor = ensure_valid_rocket_rotor
     stencils = rocket_rotor_stencils
 
@@ -92,29 +99,27 @@ class EnigmaRocket:
             self.wheels[i].set_key(symbol)
         return self
 
-    def convert(self, symbol: str, *, first_rotor: int = 0) -> str:
+    def convert(self, symbol: str) -> str:
         if symbol not in SYMBOLS:
             return symbol
-        return _scramble(self, symbol, first_rotor)
+        return _scramble(self, symbol)
 
 
 class EnigmaT(EnigmaRocket):
     entry = ensure_valid_symbols('KZROUQHYAIGBLWVSTDXFPNMCJE')
     ensure_valid_rotor = ensure_valid_t_rotor
     stencils = tirpitz_rotor_stencils
+    first_rotor = 0
 
-    def convert(self, symbol: str, *, first_rotor: int = 0) -> str:
+    def convert(self, symbol: str) -> str:
         if symbol == '/':
             self.reflector.rotate()  # reflector: do manual rotation by one on each '/' (only for Enigma T)
             return symbol
         return super().convert(symbol)
 
 
-Enigma: TypeAlias = EnigmaI | EnigmaM3 | EnigmaM4 | EnigmaRocket | EnigmaT
-
-
-def _scramble(enigma: Enigma, symbol: str, first_rotor) -> str:
-    rotate(*enigma.wheels[first_rotor:])
+def _scramble(enigma: EnigmaVariant, symbol: str) -> str:
+    rotate(*enigma.wheels[enigma.first_rotor:])
     signal = enigma.entry.find(symbol)
     signal = enigma.plugboard[signal]
     for r in reversed(enigma.wheels):
