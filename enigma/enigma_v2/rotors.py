@@ -3,6 +3,8 @@ from typing import Self
 
 from .symbols import ALPHABET_SIZE, to_signals, to_symbols, as_signal
 
+NO_NOTCHES = ''
+
 
 class Rotor:
     def __init__(self, wiring: list[int], notches: list[int], mark: int) -> None:
@@ -81,8 +83,8 @@ m_rotor_stencils: dict[str, RotorStencil] = {
     'VI': RotorStencil('JPGVOUMFYQBENHZRDKASXLICTW', 'ZM'),  # Enigma M3
     'VII': RotorStencil('NZJHGRCXMYSWBOUFAIVLPEKQDT', 'ZM'),  # Enigma M3
     'VIII': RotorStencil('FKQHTLXOCBJSPDZRAMEWNIUYGV', 'ZM'),  # Enigma M3
-    'Beta': RotorStencil('LEYJVCNIXWPBQMDRTAKZGFUHOS', ''),  # Enigma M4
-    'Gamma': RotorStencil('FSOKANUERHMBTIYCWLQPZXVGJD', ''),  # Enigma M4
+    'Beta': RotorStencil('LEYJVCNIXWPBQMDRTAKZGFUHOS', NO_NOTCHES),  # Enigma M4
+    'Gamma': RotorStencil('FSOKANUERHMBTIYCWLQPZXVGJD', NO_NOTCHES),  # Enigma M4
 }
 
 # rotor wirings and turnovers for the Deutsche Reichsbahn Enigma (named "Rocket" at Bletchley Park)
@@ -90,7 +92,7 @@ rocket_rotor_stencils: dict[str, RotorStencil] = {
     'I': RotorStencil('JGDQOXUSCAMIFRVTPNEWKBLZYH', 'Q'),  # railway enigma "Rocket"
     'II': RotorStencil('NTZPSFBOKMWRCJDIVLAEYUXHGQ', 'E'),  # railway enigma "Rocket"
     'III': RotorStencil('JVIUBHTCDYAKEQZPOSGXNRMWFL', 'V'),  # railway enigma "Rocket"
-    'UKW': RotorStencil('QYHOGNECVPUZTFDJAXWMKISRBL', ''),  # railway enigma "Rocket"
+    'UKW': RotorStencil('QYHOGNECVPUZTFDJAXWMKISRBL', NO_NOTCHES),  # railway enigma "Rocket"
 }
 
 tirpitz_rotor_stencils: dict[str, RotorStencil] = {
@@ -102,5 +104,5 @@ tirpitz_rotor_stencils: dict[str, RotorStencil] = {
     'VI': RotorStencil('XFUZGALVHCNYSEWQTDMRBKPIOJ', 'EIMQX'),  # Enigma T ("Tirpitz")
     'VII': RotorStencil('BJVFTXPLNAYOZIKWGDQERUCHSM', 'CFKRY'),  # Enigma T ("Tirpitz")
     'VIII': RotorStencil('YMTPNZHWKODAJXELUQVGCBISFR', 'EIMQX'),  # Enigma T ("Tirpitz")
-    'UKW': RotorStencil('GEKPBTAUMOCNILJDXZYFHWVQSR', ''),  # Enigma T ("Tirpitz")
+    'UKW': RotorStencil('GEKPBTAUMOCNILJDXZYFHWVQSR', NO_NOTCHES),  # Enigma T ("Tirpitz")
 }

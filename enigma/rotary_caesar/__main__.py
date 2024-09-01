@@ -32,7 +32,7 @@ class CaesarWheel:
 
 
 def main():
-    wheel = CaesarWheel(index_of('C'))
+    wheel = CaesarWheel(index_of('N'))
 
     message = 'Meet me by the rose bushes tonight.'
     print(message)
