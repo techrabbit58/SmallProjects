@@ -1,4 +1,4 @@
-from typing import Self, Protocol
+from typing import Protocol
 
 from .plugboard import Plugboard
 from .reflectors import Reflector, reflectors
@@ -13,7 +13,7 @@ from .validators import (
 
 
 class Enigma(Protocol):
-    def set_key(self, key: str) -> Self: ...
+    def set_key(self, key: str) -> "Enigma": ...
     def convert(self, symbol: str) -> str: ...
 
 
@@ -45,11 +45,11 @@ class EnigmaM3:
         ]
         self.plugboard = Plugboard()
 
-    def set_jumpers(self, jumpers: str) -> Self:
+    def set_jumpers(self, jumpers: str) -> "EnigmaM3":
         self.plugboard = Plugboard(ensure_valid_jumpers(jumpers))
         return self
 
-    def set_key(self, key: str) -> Self:
+    def set_key(self, key: str) -> "EnigmaM3":
         for i, symbol in enumerate(ensure_valid_symbols(key, self.entry)):
             self.wheels[i].set_key(symbol)
         return self
@@ -92,7 +92,7 @@ class EnigmaRocket:
             for i, r in enumerate(ensure_rotors_are_unique(rotor_pack.split()), 1)
         ]
 
-    def set_key(self, key: str) -> Self:
+    def set_key(self, key: str) -> "EnigmaRocket":
         ensure_valid_symbols(key, self.entry)
         self.reflector.set_key(key[0])
         for i, symbol in enumerate(key[1:]):

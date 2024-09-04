@@ -1,5 +1,4 @@
 from collections import deque
-from typing import Self
 
 from .symbols import ALPHABET_SIZE, to_signals, to_symbols, as_signal
 
@@ -14,12 +13,12 @@ class Rotor:
         self.mark = mark
         self.rotate(mark)
 
-    def rotate(self, offset: int = -1) -> Self:
+    def rotate(self, offset: int = -1) -> "Rotor":
         """
-        Rotate the left and right signal arrays like enigam does mechanically.
+        Rotate the left and right signal arrays like enigma does mechanically.
         Rotation by 0 means: no change.
         Rotation by negative numbers means: the rotor steps "forward".
-        Rotation by negative numbers means: the rotor steps "backards".
+        Rotation by negative numbers means: the rotor steps "backwards".
         The 'self.mark' tracks at which index the rotor's 'A' mark is currently located.
         """
         self.left.rotate(offset)
@@ -29,7 +28,7 @@ class Rotor:
 
         return self
 
-    def set_key(self, key: str) -> Self:
+    def set_key(self, key: str) -> "Rotor":
         signal = as_signal(key)
         self.rotate(self.mark - signal)
         return self
@@ -51,7 +50,7 @@ class RotorStencil:
         self.notches = to_signals(notches)
         self.ring = 0
 
-    def set_ring(self, position: str) -> Self:
+    def set_ring(self, position: str) -> "RotorStencil":
         """Adjust the ring position of the stencil before creating the next new rotor instance."""
         self.ring = int(position) - 1
         return self
@@ -73,7 +72,7 @@ def rotate(left: Rotor, middle: Rotor, right: Rotor) -> None:
     right.rotate()
 
 
-# rotor wirings and turnovers for the Luftwaffe/Heer Enigma I and Kriegsmarine Enigma M3
+# rotor wiring and turnovers for the Luftwaffe/Heer Enigma I and Kriegsmarine Enigma M3
 m_rotor_stencils: dict[str, RotorStencil] = {
     'I': RotorStencil('EKMFLGDQVZNTOWYHXUSPAIBRCJ', 'Q'),  # Enigma I, Enigma M3
     'II': RotorStencil('AJDKSIRUXBLHWTMCQGZNPYFVOE', 'E'),  # Enigma I, Enigma M3
@@ -87,7 +86,7 @@ m_rotor_stencils: dict[str, RotorStencil] = {
     'Gamma': RotorStencil('FSOKANUERHMBTIYCWLQPZXVGJD', NO_NOTCHES),  # Enigma M4
 }
 
-# rotor wirings and turnovers for the Deutsche Reichsbahn Enigma (named "Rocket" at Bletchley Park)
+# rotor wiring and turnovers for the Deutsche Reichsbahn Enigma (named "Rocket" at Bletchley Park)
 rocket_rotor_stencils: dict[str, RotorStencil] = {
     'I': RotorStencil('JGDQOXUSCAMIFRVTPNEWKBLZYH', 'Q'),  # railway enigma "Rocket"
     'II': RotorStencil('NTZPSFBOKMWRCJDIVLAEYUXHGQ', 'E'),  # railway enigma "Rocket"
