@@ -1,4 +1,4 @@
-from .caesar import Caesar, Rot13, Atbash
+from .caesar import Caesar, Rot13, Atbash, MonoalphabeticCipher
 
 
 def test_caesar():
@@ -34,4 +34,16 @@ def test_atbash():
     assert cryptotext == 'Nvvg nv yb gsv ilhv yfhsvh glmrtsg.'
 
     plaintext = ''.join(wheel.translate(c) for c in cryptotext)
+    assert message == plaintext
+
+
+def test_monoalphabetic():
+    wheel = MonoalphabeticCipher('MICHAELKOSTUVWXYZBDFGJNPQR')  # MICHAELKOHLHAAS
+
+    message = 'Meet me by the rose bushes tonight.'
+
+    cryptotext = ''.join(wheel.encrypt(c) for c in message)
+    assert cryptotext == 'Vaaf va iq fka bxda igdkad fxwolkf.'
+
+    plaintext = ''.join(wheel.decrypt(c) for c in cryptotext)
     assert message == plaintext
