@@ -1,6 +1,4 @@
-import itertools
 import random
-from itertools import pairwise
 
 BLANK = 0
 
