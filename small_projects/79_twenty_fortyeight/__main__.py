@@ -1,4 +1,6 @@
+import itertools
 import random
+from itertools import pairwise
 
 BLANK = 0
 
@@ -38,15 +40,40 @@ def render_board(board: dict[tuple[int, int], int]) -> tuple[str, int]:
     return '\n'.join(labels), score
 
 
-def execute_the_move(game_board: dict[tuple[int, int], int], move: str) -> dict[tuple[int, int], int]:
-    return game_board
+def execute_the_move(board: dict[tuple[int, int], int], move: str) -> dict[tuple[int, int], int]:
+    tubes = {
+        'W': [[(col, row) for row in range(4)] for col in range(4)],
+        'A': [[(col, row) for col in range(4)] for row in range(4)],
+        'S': [[(col, row) for row in range(3, -1, -1)] for col in range(4)],
+        'D': [[(col, row) for col in range(3, -1, -1)] for row in range(4)],
+    }
+
+    next_board = {}
+    for positions in tubes[move]:
+        streak = []
+        for position in positions:
+            tile = board[position]
+            if tile != 0:
+                streak.append(tile)
+        while len(streak) < 4:
+            streak.append(BLANK)
+        for i in range(3):
+            if streak[i] == streak[i + 1]:
+                streak[i] *= 2
+                for j in range(i + 1, 3):
+                    streak[j] = streak[j + 1]
+                streak[3] = BLANK
+        for i in range(4):
+            next_board[positions[i]] = streak[i]
+
+    return next_board
 
 
 def prepare_for_next_move(board: dict[tuple[int, int], int]) -> bool:
     free_pos, is_game_over = [], False
 
     for position, value in board.items():
-        if value == 0:
+        if value == BLANK:
             free_pos.append(position)
 
     if len(free_pos) == 1:
