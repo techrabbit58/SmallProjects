@@ -2,6 +2,13 @@ import random
 
 BLANK = 0
 
+_strip_selectors = {
+    'W': [[(col, row) for row in range(4)] for col in range(4)],
+    'A': [[(col, row) for col in range(4)] for row in range(4)],
+    'S': [[(col, row) for row in range(3, -1, -1)] for col in range(4)],
+    'D': [[(col, row) for col in range(3, -1, -1)] for row in range(4)],
+}
+
 
 def ask_for_player_move() -> str:
     print('Enter your move: (WASD or Q to quit)')
@@ -12,13 +19,13 @@ def ask_for_player_move() -> str:
             print()
             return 'Q'
 
-        if move in {'W', 'A', 'S', 'D', 'Q'}:
+        if move == 'Q' or move in _strip_selectors:
             return move
 
         print('You must enter one of "W", "A", "S" or "D", or "Q". Please try again.')
 
 
-def new_board() -> dict[tuple[int, int], int]:
+def initialize() -> dict[tuple[int, int], int]:
     board = {(col, row): BLANK for col in range(4) for row in range(4)}
     positions = random.choices(list(board), k=2)
     for p in positions:
@@ -26,7 +33,7 @@ def new_board() -> dict[tuple[int, int], int]:
     return board
 
 
-def render_board(board: dict[tuple[int, int], int]) -> tuple[str, int]:
+def render(board: dict[tuple[int, int], int]) -> tuple[str, int]:
     labels, score = [], 0
     for row in range(4):
         line = ['|']
@@ -38,33 +45,53 @@ def render_board(board: dict[tuple[int, int], int]) -> tuple[str, int]:
     return '\n'.join(labels), score
 
 
-def execute_the_move(board: dict[tuple[int, int], int], move: str) -> dict[tuple[int, int], int]:
-    tubes = {
-        'W': [[(col, row) for row in range(4)] for col in range(4)],
-        'A': [[(col, row) for col in range(4)] for row in range(4)],
-        'S': [[(col, row) for row in range(3, -1, -1)] for col in range(4)],
-        'D': [[(col, row) for col in range(3, -1, -1)] for row in range(4)],
-    }
-
+def execute(board: dict[tuple[int, int], int], move: str) -> dict[tuple[int, int], int]:
     next_board = {}
-    for positions in tubes[move]:
-        streak = []
-        for position in positions:
-            tile = board[position]
-            if tile != 0:
-                streak.append(tile)
-        while len(streak) < 4:
-            streak.append(BLANK)
-        for i in range(3):
-            if streak[i] == streak[i + 1]:
-                streak[i] *= 2
-                for j in range(i + 1, 3):
-                    streak[j] = streak[j + 1]
-                streak[3] = BLANK
-        for i in range(4):
-            next_board[positions[i]] = streak[i]
+    for selection in _strip_selectors[move]:
+        strip = extract_nonblank(board, selection)
+        fill_strip_tail_with_blanks(strip, length=4)
+        agglomerate(strip, length=4)
+        copy_strip_to_board(next_board, selection, strip, length=4)
 
     return next_board
+
+
+def copy_strip_to_board(
+        board: dict[tuple[int, int], int],
+        selection: list[tuple[int, int]],
+        strip: list[int],
+        *, length: int) -> None:
+    for i in range(length):
+        board[selection[i]] = strip[i]
+
+
+def agglomerate(strip: list[int], *, length: int) -> None:
+    """
+    Let numbers fall 'down' towards index 0 as far as possible and combine equal neighbors.
+    As a result, all numbers in the strip are unique, and all blank tiles are at the highest
+    index of the strip.
+    """
+    highest = length - 1
+    for i in range(highest):
+        if strip[i] == strip[i + 1]:
+            strip[i] *= 2
+            for j in range(i + 1, highest):
+                strip[j] = strip[j + 1]
+            strip[highest] = BLANK
+
+
+def extract_nonblank(board: dict[tuple[int, int], int], selection: list[tuple[int, int]]):
+    strip = []
+    for tile in selection:
+        value = board[tile]
+        if value != BLANK:
+            strip.append(value)
+    return strip
+
+
+def fill_strip_tail_with_blanks(strip: list[int], *, length: int) -> None:
+    while len(strip) < length:
+        strip.append(BLANK)
 
 
 def prepare_for_next_move(board: dict[tuple[int, int], int]) -> bool:
@@ -83,10 +110,10 @@ def prepare_for_next_move(board: dict[tuple[int, int], int]) -> bool:
 
 def main():
 
-    game_board = new_board()
+    game_board = initialize()
 
     while True:
-        print('{}\nScore: {}'.format(*render_board(game_board)))
+        print('{}\nScore: {}'.format(*render(game_board)))
 
         move = ask_for_player_move()
 
@@ -94,11 +121,11 @@ def main():
             print('Thank you for playing.')
             break
 
-        game_board = execute_the_move(game_board, move)
+        game_board = execute(game_board, move)
         game_over = prepare_for_next_move(game_board)
 
         if game_over:
-            print('{}\nScore: {}'.format(*render_board(game_board)))
+            print('{}\nScore: {}'.format(*render(game_board)))
             print('Game over.')
             break
 
