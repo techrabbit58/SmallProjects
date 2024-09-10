@@ -27,14 +27,17 @@ def ask_for_player_move() -> str:
 
 def initialize() -> dict[tuple[int, int], int]:
     board = {(col, row): BLANK for col in range(4) for row in range(4)}
+
     positions = random.choices(list(board), k=2)
     for p in positions:
         board[p] = 2
+
     return board
 
 
 def render(board: dict[tuple[int, int], int]) -> tuple[str, int]:
     labels, score = [], 0
+
     for row in range(4):
         line = ['|']
         for col in range(4):
@@ -42,25 +45,28 @@ def render(board: dict[tuple[int, int], int]) -> tuple[str, int]:
             score += label
             line.append(f'{label:^5d}|' if label != 0 else '     |')
         labels.append(''.join(line))
+
     return '\n'.join(labels), score
 
 
 def execute(board: dict[tuple[int, int], int], move: str) -> dict[tuple[int, int], int]:
     next_board = {}
+
     for selection in _strip_selectors[move]:
         strip = extract_nonblank(board, selection)
-        fill_strip_tail_with_blanks(strip, length=4)
+        append_blanks(strip, length=4)
         agglomerate(strip, length=4)
-        copy_strip_to_board(next_board, selection, strip, length=4)
+        copy(next_board, selection, strip, length=4)
 
     return next_board
 
 
-def copy_strip_to_board(
+def copy(
         board: dict[tuple[int, int], int],
         selection: list[tuple[int, int]],
         strip: list[int],
         *, length: int) -> None:
+
     for i in range(length):
         board[selection[i]] = strip[i]
 
@@ -72,6 +78,7 @@ def agglomerate(strip: list[int], *, length: int) -> None:
     index of the strip.
     """
     highest = length - 1
+
     for i in range(highest):
         if strip[i] == strip[i + 1]:
             strip[i] *= 2
@@ -82,14 +89,16 @@ def agglomerate(strip: list[int], *, length: int) -> None:
 
 def extract_nonblank(board: dict[tuple[int, int], int], selection: list[tuple[int, int]]):
     strip = []
+
     for tile in selection:
         value = board[tile]
         if value != BLANK:
             strip.append(value)
+
     return strip
 
 
-def fill_strip_tail_with_blanks(strip: list[int], *, length: int) -> None:
+def append_blanks(strip: list[int], *, length: int) -> None:
     while len(strip) < length:
         strip.append(BLANK)
 
@@ -105,6 +114,7 @@ def prepare_for_next_move(board: dict[tuple[int, int], int]) -> bool:
         is_game_over = True
 
     board[random.choice(free_pos)] = 2
+
     return is_game_over
 
 
@@ -122,9 +132,9 @@ def main():
             break
 
         game_board = execute(game_board, move)
-        game_over = prepare_for_next_move(game_board)
+        is_game_over = prepare_for_next_move(game_board)
 
-        if game_over:
+        if is_game_over:
             print('{}\nScore: {}'.format(*render(game_board)))
             print('Game over.')
             break
