@@ -54,9 +54,9 @@ def execute(board: dict[tuple[int, int], int], move: str) -> dict[tuple[int, int
 
     for selection in _strip_selectors[move]:
         strip = extract_nonblank(board, selection)
-        append_blanks(strip, length=4)
-        agglomerate(strip, length=4)
-        copy(next_board, selection, strip, length=4)
+        append_blanks(strip)
+        agglomerate(strip)
+        copy(next_board, selection, strip)
 
     return next_board
 
@@ -65,13 +65,13 @@ def copy(
         board: dict[tuple[int, int], int],
         selection: list[tuple[int, int]],
         strip: list[int],
-        *, length: int) -> None:
+        *, length: int = 4) -> None:
 
     for i in range(length):
         board[selection[i]] = strip[i]
 
 
-def agglomerate(strip: list[int], *, length: int) -> None:
+def agglomerate(strip: list[int], *, length: int = 4) -> None:
     """
     Let numbers fall 'down' towards index 0 as far as possible and combine equal neighbors.
     As a result, all numbers in the strip are unique, and all blank tiles are at the highest
@@ -98,7 +98,7 @@ def extract_nonblank(board: dict[tuple[int, int], int], selection: list[tuple[in
     return strip
 
 
-def append_blanks(strip: list[int], *, length: int) -> None:
+def append_blanks(strip: list[int], *, length: int = 4) -> None:
     while len(strip) < length:
         strip.append(BLANK)
 
