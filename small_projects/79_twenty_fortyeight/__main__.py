@@ -1,12 +1,21 @@
 import random
+from typing import TypeAlias, NamedTuple
 
 BLANK = 0
 
-_strip_selectors = {
-    'W': [[(col, row) for row in range(4)] for col in range(4)],
-    'A': [[(col, row) for col in range(4)] for row in range(4)],
-    'S': [[(col, row) for row in range(3, -1, -1)] for col in range(4)],
-    'D': [[(col, row) for col in range(3, -1, -1)] for row in range(4)],
+
+class Position(NamedTuple):
+    col: int
+    row: int
+
+
+Board: TypeAlias = dict[Position, int]
+
+_strip_selectors: dict[str, list[list[Position]]] = {
+    'W': [[Position(col, row) for row in range(4)] for col in range(4)],
+    'A': [[Position(col, row) for col in range(4)] for row in range(4)],
+    'S': [[Position(col, row) for row in range(3, -1, -1)] for col in range(4)],
+    'D': [[Position(col, row) for col in range(3, -1, -1)] for row in range(4)],
 }
 
 
@@ -25,8 +34,11 @@ def ask_for_player_move() -> str:
         print('You must enter one of "W", "A", "S" or "D", or "Q". Please try again.')
 
 
-def initialize() -> dict[tuple[int, int], int]:
-    board = {(col, row): BLANK for col in range(4) for row in range(4)}
+def initialize() -> Board:
+    """
+    Create a new game board and randomly place two twos.
+    """
+    board = {Position(col, row): BLANK for col in range(4) for row in range(4)}
 
     positions = random.choices(list(board), k=2)
     for p in positions:
@@ -35,13 +47,18 @@ def initialize() -> dict[tuple[int, int], int]:
     return board
 
 
-def render(board: dict[tuple[int, int], int]) -> tuple[str, int]:
+def render(board: Board) -> tuple[str, int]:
+    """
+    Create a new screen image for the TTY.
+    At the same time, add up all non-blank values giving the current game score.
+    Return both the screen image (a text) and the score (a number).
+    """
     labels, score = [], 0
 
     for row in range(4):
         line = ['|']
         for col in range(4):
-            label = board[(col, row)]
+            label = board[Position(col, row)]
             score += label
             line.append(f'{label:^5d}|' if label != 0 else '     |')
         labels.append(''.join(line))
@@ -49,24 +66,33 @@ def render(board: dict[tuple[int, int], int]) -> tuple[str, int]:
     return '\n'.join(labels), score
 
 
-def execute(board: dict[tuple[int, int], int], move: str) -> dict[tuple[int, int], int]:
+def execute(current_board: Board, move: str) -> tuple[Board, bool]:
+    """
+    Perform the current move.
+    Check if the move did change something.
+    Return both the new board status, and an indicator that the board has changed.
+    """
     next_board = {}
 
     for selection in _strip_selectors[move]:
-        strip = extract_nonblank(board, selection)
+        strip = extract_nonblank(current_board, selection)
         append_blanks(strip)
         agglomerate(strip)
         copy(next_board, selection, strip)
 
-    return next_board
+    has_changed = next_board != current_board
+
+    return next_board, has_changed
 
 
 def copy(
-        board: dict[tuple[int, int], int],
-        selection: list[tuple[int, int]],
+        board: Board,
+        selection: list[Position],
         strip: list[int],
         *, length: int = 4) -> None:
-
+    """
+    Copy a streak of length "length" to the boad's appropriate selection of tile positions.
+    """
     for i in range(length):
         board[selection[i]] = strip[i]
 
@@ -87,7 +113,12 @@ def agglomerate(strip: list[int], *, length: int = 4) -> None:
             strip[highest] = BLANK
 
 
-def extract_nonblank(board: dict[tuple[int, int], int], selection: list[tuple[int, int]]):
+def extract_nonblank(board: Board, selection: list[Position]):
+    """
+    Gather only the numbers from the board's selected tiles, skip the blank tiles and copy the numbers
+    to a new strip.
+    Return the new strip.
+    """
     strip = []
 
     for tile in selection:
@@ -99,11 +130,17 @@ def extract_nonblank(board: dict[tuple[int, int], int], selection: list[tuple[in
 
 
 def append_blanks(strip: list[int], *, length: int = 4) -> None:
+    """Bring the strip to length "length" by filling in BLANK values at the end."""
     while len(strip) < length:
         strip.append(BLANK)
 
 
-def prepare_for_next_move(board: dict[tuple[int, int], int]) -> bool:
+def prepare_for_next_move(board: Board) -> bool:
+    """
+    Add one more two to the board, to a random tile.
+    The game is over if the board hasn't space left after inserting the new two.
+    Return the "game over" status to the caller.
+    """
     free_pos, is_game_over = [], False
 
     for position, value in board.items():
@@ -125,16 +162,18 @@ def main():
     while True:
         print('{}\nScore: {}'.format(*render(game_board)))
 
-        move = ask_for_player_move()
+        move = ask_for_player_move()  # get next move: W, A, S, D or Q
 
-        if move == 'Q':
+        if move == 'Q':  # user quits by intent
             print('Thank you for playing.')
             break
 
-        game_board = execute(game_board, move)
-        is_game_over = prepare_for_next_move(game_board)
+        game_board, has_changed = execute(game_board, move)  # update the board according to the current move
+        # "has_changed" is true only if the move did realy change someting
 
-        if is_game_over:
+        is_game_over = has_changed and prepare_for_next_move(game_board)  # add neww two only if something has changed
+
+        if is_game_over:  # the game is over if - after this move - no tile is left for a new two
             print('{}\nScore: {}'.format(*render(game_board)))
             print('Game over.')
             break
