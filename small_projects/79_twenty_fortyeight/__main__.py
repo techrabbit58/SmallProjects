@@ -1,5 +1,5 @@
 import random
-from typing import TypeAlias, NamedTuple
+from typing import TypeAlias, NamedTuple, Literal, cast
 
 BLANK = 0
 
@@ -10,8 +10,9 @@ class Position(NamedTuple):
 
 
 Board: TypeAlias = dict[Position, int]
+Move: TypeAlias = Literal['W', 'A', 'S', 'D', 'Q']
 
-_strip_selectors: dict[str, list[list[Position]]] = {
+_strip_selectors: dict[Move, list[list[Position]]] = {
     'W': [[Position(col, row) for row in range(4)] for col in range(4)],
     'A': [[Position(col, row) for col in range(4)] for row in range(4)],
     'S': [[Position(col, row) for row in range(3, -1, -1)] for col in range(4)],
@@ -19,7 +20,7 @@ _strip_selectors: dict[str, list[list[Position]]] = {
 }
 
 
-def ask_for_player_move() -> str:
+def ask_for_player_move() -> Move:
     print('Enter your move: (WASD or Q to quit)')
     while True:
         try:
@@ -29,7 +30,7 @@ def ask_for_player_move() -> str:
             return 'Q'
 
         if move == 'Q' or move in _strip_selectors:
-            return move
+            return cast(Move, move)
 
         print('You must enter one of "W", "A", "S" or "D", or "Q". Please try again.')
 
@@ -66,7 +67,7 @@ def render(board: Board) -> tuple[str, int]:
     return '\n'.join(labels), score
 
 
-def execute(current_board: Board, move: str) -> tuple[Board, bool]:
+def execute(current_board: Board, move: Move) -> tuple[Board, bool]:
     """
     Perform the current move.
     Check if the move did change something.
