@@ -63,26 +63,41 @@ def main(prog: str) -> None:
             print('Bye!')
             return
 
-        print('Press Ctrl-C to stop the prime generator.')
-        print('...', end='', flush=True)
+        generate_primes(number)
+
+
+def generate_primes(number: int) -> None:
+    width, _ = shutil.get_terminal_size((80, 20))
+
+    print('Press Ctrl-C to stop the prime generator.')
+    print('...', end='', flush=True)  # the procedure starts thinking about the first prime to render ...
+
+    current_column = 0
+    while True:
+        try:
+            if is_prime(number):
+                current_column = show_next_prime(current_column, number, width)
+            number += 1
+        except KeyboardInterrupt:
+            print('\b\b\b\b\b     ')  # overwrite the last comma and elipsis with blanks
+            break
+
+
+def show_next_prime(current_column: int, number: int, width: int) -> int:
+    text = f'{number}, ...'
+
+    # write the rendered number, comma and ellipsis to the current line
+    if current_column + len(text) < width:  # write number, comma, ellipsis if the number fits into the current line
+        print(f'\b\b\b{text}', end='', flush=True)
+        current_column -= 3
+    else:  # if not, remove the ellipsis and start a new line before writing the new number
+        print(f'\b\b\b\b    \n{text}', end='', flush=True)
         current_column = 0
-        width, _ = shutil.get_terminal_size((80, 20))
-        while True:
-            try:
-                if is_prime(number):
-                    text = f'{number}, ...'
-                    if current_column + len(text) < width:
-                        print(f'\b\b\b{text}', end='', flush=True)
-                        current_column -= 3
-                    else:
-                        print(f'\b\b\b\b    \n{text}', end='', flush=True)
-                        current_column = 0
-                    current_column += len(text)
-                    time.sleep(.1)
-                number += 1
-            except KeyboardInterrupt:
-                print('\b\b\b\b\b     ')
-                break
+
+    current_column += len(text)
+    time.sleep(1./16.)  # an artificial delay
+
+    return current_column
 
 
 if __name__ == '__main__':
