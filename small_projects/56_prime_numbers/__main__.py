@@ -1,42 +1,24 @@
 import math
 import shutil
-import textwrap
 import time
+from argparse import Namespace, ArgumentParser, ArgumentTypeError
 
 
-def intro(prog: str):
-    return textwrap.dedent(
-        f"""
-        {prog}
-        Find all prime numbers greater or equal to a given positive integer number (0 <= number).
-        """
-    ).strip()
+def non_negative_integer(s: str) -> int:
+    n = int(s)
+    if n < 0:
+        raise ArgumentTypeError('the number must be greater or equal zero')
+    return n
 
 
-def get_response() -> int:
-    while True:
-        print('Enter a non-negative number to start a new primes search (or [Q]UIT to quit):')
-
-        try:
-            response = input('> ').strip().upper()
-        except KeyboardInterrupt:
-            print()
-            response = ''
-
-        if response == '':
-            continue
-
-        if response in {'Q', 'QUIT'}:
-            return -1
-
-        try:
-            number = int(response)
-            if number < 0:
-                raise ValueError()
-            return number
-
-        except ValueError:
-            print(f'"{response}" cannot be processed. Please enter a non-negative integer.')
+def get_args(prog: str) -> Namespace:
+    parser = ArgumentParser(
+        prog=prog,
+        description='Find all prime numbers greater or equal to a given positive integer number (0 <= number).')
+    parser.add_argument(
+        'number', type=non_negative_integer,
+        help='the non-negative number from which to start generating primes')
+    return parser.parse_args()
 
 
 def is_prime(n: int) -> bool:
@@ -54,16 +36,8 @@ def is_prime(n: int) -> bool:
 
 
 def main(prog: str) -> None:
-    print(intro(prog))
-
-    while True:
-        number = get_response()
-
-        if number < 0:
-            print('Bye!')
-            return
-
-        generate_primes(number)
+    args = get_args(prog)
+    generate_primes(args.number)
 
 
 def generate_primes(number: int) -> None:
@@ -72,7 +46,7 @@ def generate_primes(number: int) -> None:
     print('Press Ctrl-C to stop the prime generator.')
     print('...', end='', flush=True)  # the procedure starts thinking about the first prime to render ...
 
-    current_column = 0
+    current_column = 3
     while True:
         try:
             if is_prime(number):
@@ -95,7 +69,7 @@ def show_next_prime(current_column: int, number: int, width: int) -> int:
         current_column = 0
 
     current_column += len(text)
-    time.sleep(1./16.)  # an artificial delay
+    time.sleep(1./50.)  # an artificial delay
 
     return current_column
 
