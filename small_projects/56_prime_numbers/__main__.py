@@ -35,9 +35,21 @@ def is_prime(n: int) -> bool:
     return True
 
 
-def main(prog: str) -> None:
-    args = get_args(prog)
-    generate_primes(args.number)
+def show_next_prime(current_column: int, number: int, width: int) -> int:
+    text = f'{number}, ...'
+
+    # write the rendered number, comma and ellipsis to the current line
+    if current_column + len(text) < width:  # write number, comma, ellipsis if the number fits into the current line
+        print(f'\b\b\b{text}', end='', flush=True)
+        current_column -= 3
+    else:  # if not, remove the ellipsis and start a new line before writing the new number
+        print(f'\b\b\b\b    \n{text}', end='', flush=True)
+        current_column = 0
+
+    current_column += len(text)
+    time.sleep(1./50.)  # an artificial delay
+
+    return current_column
 
 
 def generate_primes(number: int) -> None:
@@ -57,21 +69,9 @@ def generate_primes(number: int) -> None:
             break
 
 
-def show_next_prime(current_column: int, number: int, width: int) -> int:
-    text = f'{number}, ...'
-
-    # write the rendered number, comma and ellipsis to the current line
-    if current_column + len(text) < width:  # write number, comma, ellipsis if the number fits into the current line
-        print(f'\b\b\b{text}', end='', flush=True)
-        current_column -= 3
-    else:  # if not, remove the ellipsis and start a new line before writing the new number
-        print(f'\b\b\b\b    \n{text}', end='', flush=True)
-        current_column = 0
-
-    current_column += len(text)
-    time.sleep(1./50.)  # an artificial delay
-
-    return current_column
+def main(prog: str) -> None:
+    args = get_args(prog)
+    generate_primes(args.number)
 
 
 if __name__ == '__main__':
