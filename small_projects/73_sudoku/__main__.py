@@ -34,7 +34,7 @@ def rendered_grid(puzzle: list[str]) -> str:
 def info() -> str:
     return textwrap.dedent("""
             Enter your move, or RESET, NEW, UNDO, or QUIT.
-            For example, a move looks like "B4 9" to set the cell B4 to the value 9.
+            For example, a move looks like "B4 9".
         """)
 
 
