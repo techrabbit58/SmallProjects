@@ -75,10 +75,6 @@ def get_cell_position(cell: str) -> int:
     return COLUMN_INDEX.find(cell[0]) + 9 * (int(cell[1]) - 1)
 
 
-def is_impossible_move(this: str, other: str) -> bool:
-    return this == other or this in DIGITS
-
-
 def main():
     print(intro())
 
@@ -104,7 +100,12 @@ def main():
             case (cell_specification, new_value):  # this shall alter the grid
                 position = get_cell_position(cell_specification)
                 old_value = puzzle[position]
-                if is_impossible_move(old_value, new_value):
+                original_value = original[position]
+                if original_value in DIGITS:
+                    print('Original values cannot be overridden.')
+                    continue
+                if new_value == old_value:
+                    print('No change.')
                     continue
                 # TODO: elaborate business logic
                 print(cell_specification, '=', position, ':', old_value, '=>', new_value)
