@@ -96,19 +96,18 @@ def main():
                 pass
             case ('Q', _):
                 print('Bye!')
-                sys.exit()
+                break
             case (cell_specification, new_value):  # this shall alter the grid
                 position = get_cell_position(cell_specification)
                 old_value = puzzle[position]
                 original_value = original[position]
                 if original_value in DIGITS:
                     print('Original values cannot be overridden.')
-                    continue
-                if new_value == old_value:
+                elif new_value == old_value:
                     print('No change.')
-                    continue
-                # TODO: elaborate business logic
-                print(cell_specification, '=', position, ':', old_value, '=>', new_value)
+                else:
+                    # TODO: elaborate business logic
+                    puzzle[position] = new_value
 
         print(rendered_grid(puzzle))
 
