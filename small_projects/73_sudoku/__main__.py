@@ -6,6 +6,13 @@ from pathlib import Path
 from typing import Final
 
 
+COMMANDS: Final[list[str]] = 'RESET NEW UNDO QUIT'.split()
+COLUMN_INDEX: Final[str] = 'ABCDEFGHI'
+COLUMNS: Final[set[str]] = set(COLUMN_INDEX)
+ROWS: Final[set[str]] = set('123456789')
+DIGITS: Final[set[str]] = ROWS
+
+
 def intro() -> str:
     return textwrap.dedent("""
         P l a y  S u d o k u !
@@ -38,11 +45,6 @@ def info() -> str:
         """)
 
 
-COMMANDS: Final[list[str]] = 'RESET NEW UNDO QUIT'.split()
-COLUMNS: Final[set[str]] = set('ABCDEFGHI')
-ROWS: Final[set[str]] = set('123456789')
-DIGITS = ROWS
-
 def get_response() -> tuple[str, str]:
     while True:
         try:
@@ -69,6 +71,14 @@ def new_puzzle() -> list[str]:
         return list(random.choice(fd.read().strip().splitlines()))
 
 
+def get_cell_position(cell: str) -> int:
+    return COLUMN_INDEX.find(cell[0]) + 9 * (int(cell[1]) - 1)
+
+
+def is_impossible_move(this: str, other: str) -> bool:
+    return this == other or this in DIGITS
+
+
 def main():
     print(intro())
 
@@ -91,8 +101,13 @@ def main():
             case ('Q', _):
                 print('Bye!')
                 sys.exit()
-            case (cell, value):  # this command shall alter the grid
-                print(cell, value)
+            case (cell_specification, new_value):  # this shall alter the grid
+                position = get_cell_position(cell_specification)
+                old_value = puzzle[position]
+                if is_impossible_move(old_value, new_value):
+                    continue
+                # TODO: elaborate business logic
+                print(cell_specification, '=', position, ':', old_value, '=>', new_value)
 
         print(rendered_grid(puzzle))
 
