@@ -5,6 +5,7 @@ import textwrap
 from pathlib import Path
 from typing import Final
 
+from unicodedata import digit
 
 COMMANDS: Final[list[str]] = 'RESET NEW UNDO QUIT'.split()
 COLUMN_INDEX: Final[str] = 'ABCDEFGHI'
@@ -75,6 +76,39 @@ def get_cell_position(cell: str) -> int:
     return COLUMN_INDEX.find(cell[0]) + 9 * (int(cell[1]) - 1)
 
 
+def rows_are_solved(puzzle: list[str]) -> bool:
+    for row in range(9):
+        all_digits = DIGITS.copy()
+        for col in range(9):
+            position = row * 9 + col
+            all_digits.discard(puzzle[position])
+        if len(all_digits) != 0:
+            return False
+
+    return True
+
+
+def columns_are_solved(puzzle: list[str]) -> bool:
+    for col in range(9):
+        all_digits = DIGITS.copy()
+        for row in range(9):
+            position = row * 9 + col
+            all_digits.discard(puzzle[position])
+        if len(all_digits) != 0:
+            return False
+
+    return True
+
+
+def boxes_are_solved(puzzle: list[str]) -> bool:
+    # TODO: create "all boxes solved" criteria
+    return False
+
+
+def is_solved(puzzle: list[str]) -> bool:
+    return all((rows_are_solved(puzzle), columns_are_solved(puzzle), boxes_are_solved(puzzle)))
+
+
 def main():
     print(intro())
 
@@ -84,8 +118,7 @@ def main():
     print(rendered_grid(puzzle))
     print(info())
 
-    while True:  # command loop
-
+    while not is_solved(puzzle):  # command loop
         match get_response():
             case ('R', _):
                 puzzle = original.copy()
@@ -110,6 +143,8 @@ def main():
                     puzzle[position] = new_value
 
         print(rendered_grid(puzzle))
+
+    print('Congratulations! You solved it.')
 
 
 main()
