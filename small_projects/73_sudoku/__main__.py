@@ -5,7 +5,9 @@ import textwrap
 from pathlib import Path
 from typing import Final
 
-from unicodedata import digit
+PUZZLE_SIZE: Final[int] = 9
+NUM_BOXES: Final[int] = PUZZLE_SIZE
+BOX_SIZE: Final[int] = 3
 
 COMMANDS: Final[list[str]] = 'RESET NEW UNDO QUIT'.split()
 COLUMN_INDEX: Final[str] = 'ABCDEFGHI'
@@ -73,14 +75,15 @@ def new_puzzle() -> list[str]:
 
 
 def get_cell_position(cell: str) -> int:
-    return COLUMN_INDEX.find(cell[0]) + 9 * (int(cell[1]) - 1)
+    return COLUMN_INDEX.find(cell[0]) + PUZZLE_SIZE * (int(cell[1]) - 1)
 
 
 def rows_are_solved(puzzle: list[str]) -> bool:
-    for row in range(9):
+    # TODO: fix the row checker
+    for row in range(PUZZLE_SIZE):
         all_digits = DIGITS.copy()
-        for col in range(9):
-            position = row * 9 + col
+        for col in range(PUZZLE_SIZE):
+            position = row * PUZZLE_SIZE + col
             all_digits.discard(puzzle[position])
         if len(all_digits) != 0:
             return False
@@ -89,10 +92,11 @@ def rows_are_solved(puzzle: list[str]) -> bool:
 
 
 def columns_are_solved(puzzle: list[str]) -> bool:
-    for col in range(9):
+    # TODO: fix the column checker
+    for col in range(PUZZLE_SIZE):
         all_digits = DIGITS.copy()
-        for row in range(9):
-            position = row * 9 + col
+        for row in range(PUZZLE_SIZE):
+            position = row * PUZZLE_SIZE + col
             all_digits.discard(puzzle[position])
         if len(all_digits) != 0:
             return False
@@ -101,8 +105,18 @@ def columns_are_solved(puzzle: list[str]) -> bool:
 
 
 def boxes_are_solved(puzzle: list[str]) -> bool:
-    # TODO: create "all boxes solved" criteria
-    return False
+    # TODO: fix the box checker
+    for box in range(NUM_BOXES):
+        all_digits = DIGITS.copy()
+        anchor = box * BOX_SIZE
+        for row in range(BOX_SIZE):
+            for col in range(BOX_SIZE):
+                position = anchor + row * PUZZLE_SIZE + col
+                all_digits.discard(puzzle[position])
+        if len(all_digits) != 0:
+            return False
+
+    return True
 
 
 def is_solved(puzzle: list[str]) -> bool:
@@ -139,8 +153,9 @@ def main():
                 elif new_value == old_value:
                     print('No change.')
                 else:
-                    # TODO: elaborate business logic
                     puzzle[position] = new_value
+            case _:
+                continue
 
         print(rendered_grid(puzzle))
 
