@@ -118,7 +118,7 @@ def main():
     print(rendered_grid(puzzle))
     print(info())
 
-    while not is_solved(puzzle):  # command loop
+    while True:  # command loop
         match get_response():
             case ('R', _):
                 puzzle = original.copy()
@@ -144,7 +144,9 @@ def main():
 
         print(rendered_grid(puzzle))
 
-    print('Congratulations! You solved it.')
+        if is_solved(puzzle):
+            print('Congratulations! You solved it.')
+            break
 
 
 main()
