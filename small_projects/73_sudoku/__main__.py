@@ -9,7 +9,7 @@ PUZZLE_SIZE: Final[int] = 9
 NUM_BOXES: Final[int] = PUZZLE_SIZE
 BOX_SIZE: Final[int] = 3
 
-COMMANDS: Final[list[str]] = 'RESET NEW UNDO QUIT'.split()
+COMMANDS: Final[list[str]] = 'RESET NEW UNDO QUIT HELP'.split()
 COLUMN_INDEX: Final[str] = 'ABCDEFGHI'
 COLUMNS: Final[set[str]] = set(COLUMN_INDEX)
 ROWS: Final[set[str]] = set('123456789')
@@ -43,7 +43,7 @@ def rendered_grid(puzzle: list[str]) -> str:
 
 def info() -> str:
     return textwrap.dedent("""
-            Enter your move, or RESET, NEW, UNDO, or QUIT.
+            Enter your move, or HELP, RESET, NEW, UNDO, or QUIT.
             For example, a move looks like "B4 9".
         """)
 
@@ -56,9 +56,12 @@ def get_response() -> tuple[str, str]:
             print('^C')
             sys.exit()
 
-        for i, cmd in enumerate(COMMANDS):
+        if not answer:
+            return 'CONTINUE', ''
+
+        for cmd in COMMANDS:
             if cmd.startswith(answer):
-                return cmd[0], ''
+                return cmd, ''
 
         parts = answer.split()
         if len(parts) == 2:
@@ -79,7 +82,6 @@ def get_cell_position(cell: str) -> int:
 
 
 def rows_are_solved(puzzle: list[str]) -> bool:
-    # TODO: fix the row checker
     for row in range(PUZZLE_SIZE):
         all_digits = DIGITS.copy()
         for col in range(PUZZLE_SIZE):
@@ -92,7 +94,6 @@ def rows_are_solved(puzzle: list[str]) -> bool:
 
 
 def columns_are_solved(puzzle: list[str]) -> bool:
-    # TODO: fix the column checker
     for col in range(PUZZLE_SIZE):
         all_digits = DIGITS.copy()
         for row in range(PUZZLE_SIZE):
@@ -105,14 +106,14 @@ def columns_are_solved(puzzle: list[str]) -> bool:
 
 
 def boxes_are_solved(puzzle: list[str]) -> bool:
-    # TODO: fix the box checker
-    for box in range(NUM_BOXES):
-        all_digits = DIGITS.copy()
-        anchor = box * BOX_SIZE
-        for row in range(BOX_SIZE):
+    for box_x in (0, BOX_SIZE, BOX_SIZE * 2):
+        for box_y in (0, BOX_SIZE, BOX_SIZE * 2):
+            all_digits = DIGITS.copy()
+            anchor = box_x + box_y * PUZZLE_SIZE
             for col in range(BOX_SIZE):
-                position = anchor + row * PUZZLE_SIZE + col
-                all_digits.discard(puzzle[position])
+                for row in range(BOX_SIZE):
+                    position = anchor + col + row * PUZZLE_SIZE
+                    all_digits.discard(puzzle[position])
         if len(all_digits) != 0:
             return False
 
@@ -127,23 +128,37 @@ def main():
     print(intro())
 
     original = new_puzzle()
+    # original = list('6543219873729586141987645329654321788.7516493431879265213685749746293851589147326')
     puzzle = original.copy()
 
     print(rendered_grid(puzzle))
     print(info())
 
+    undo_stack = []
+
     while True:  # command loop
-        match get_response():
-            case ('R', _):
+        command = get_response()
+        match command:
+            case ('RESET', _):
                 puzzle = original.copy()
-            case ('N', _):
+            case ('NEW', _):
                 original = new_puzzle()
                 puzzle = original.copy()
-            case ('U', _):
-                pass
-            case ('Q', _):
+            case ('UNDO', _):
+                if undo_stack:
+                    cell_specification, old_value = undo_stack.pop()
+                    position = get_cell_position(cell_specification)
+                    puzzle[position] = old_value
+                else:
+                    print('No change. Undo stack is empty.')
+            case ('QUIT', _):
                 print('Bye!')
                 break
+            case ('HELP', _):
+                print(info())
+                continue
+            case ('CONTINUE', _):
+                pass
             case (cell_specification, new_value):  # this shall alter the grid
                 position = get_cell_position(cell_specification)
                 old_value = puzzle[position]
@@ -154,8 +169,7 @@ def main():
                     print('No change.')
                 else:
                     puzzle[position] = new_value
-            case _:
-                continue
+                    undo_stack.append((cell_specification, old_value))
 
         print(rendered_grid(puzzle))
 
