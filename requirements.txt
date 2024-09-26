@@ -5,3 +5,4 @@ pyfiglet
 pyperclip
 setuptools
 pytest
+pyttsx3
