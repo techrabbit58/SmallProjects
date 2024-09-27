@@ -3,7 +3,7 @@ import time
 from collections.abc import Callable
 
 
-def new_progress_bar(text='', *, width=40, solid='*', space=' ') -> Callable[[int, int], str]:
+def new_progress_bar(text='', *, width=40, solid=chr(9608), space=' ') -> Callable[[int, int], str]:
 
     def render_progress_bar(progress: int, total_work: int) -> str:
         progress = 0 if progress < 0 else progress if progress < total_work else total_work
@@ -30,7 +30,7 @@ def main():
     total_work = 4096
     bar = ''
     dummy_text = 'https://www.example.com/download/very_large_archive.zip'
-    progress_bar = new_progress_bar(dummy_text, solid=chr(9608))
+    progress_bar = new_progress_bar(dummy_text, solid='*')
 
     while progress < total_work:
         print(wipeout(bar), end='', flush=True)
