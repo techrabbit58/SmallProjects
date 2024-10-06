@@ -22,8 +22,9 @@ def main():
     index = random.randrange(len(questions))
     item = questions[index]
     print(item.question)
-    input('Press enter to see the right answer.')
-    print(item.answer)
+    answer = input('Your answer> ').strip()
+    print('You got it!' if answer in item.accept
+          else f'You missed it. The right answer could have been: {random.choice(item.accept)}')
 
 
 main()
