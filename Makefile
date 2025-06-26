@@ -7,7 +7,7 @@ install:
 	pip install ./colterm ./caesarcode ./sevseg
 
 colterm: ./colterm/setup.py ./colterm/colterm/term.py ./colterm/colterm/__init__.py
-	pip install ./colterm -U
+	pip install ./colterm -U --use-pep517
 
 caesarcode: ./caesarcode/setup.py ./caesarcode/caesarcode/caesarcode.py ./caesarcode/caesarcode/__init__.py
 	pip install ./caesarcode -U
@@ -67,3 +67,12 @@ simplecode:
 
 piglatin:
 	python -m small_projects.54_pig_latin
+
+spongecase:
+	python -m small_projects.72_spongecase
+
+guessthenumber:
+	python -m small_projects.31_guess_the_number
+
+gullible:
+	python -m small_projects.32_gullible
