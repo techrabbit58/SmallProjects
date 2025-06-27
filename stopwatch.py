@@ -1,4 +1,4 @@
-import time
+qimport time
 from datetime import datetime, timedelta
 
 import key_stroke
