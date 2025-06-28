@@ -9,7 +9,7 @@ import textwrap
 
 
 def load_sevenletterwords() -> list[str]:
-    with pathlib.Path("sevenletterwords.txt").open() as f:
+    with (pathlib.Path(__file__).parent / pathlib.Path("sevenletterwords.txt")).open() as f:
         words = [word.strip().upper() for word in f.readlines()]
     return words
 

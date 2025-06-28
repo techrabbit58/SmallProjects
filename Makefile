@@ -76,3 +76,6 @@ guessthenumber:
 
 gullible:
 	python -m small_projects.32_gullible
+
+hacking:
+	python -m small_projects.33_hacking
