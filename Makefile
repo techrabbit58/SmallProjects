@@ -79,3 +79,6 @@ gullible:
 
 hacking:
 	python -m small_projects.33_hacking
+
+hangman:
+	python -m small_projects.34_hangman
