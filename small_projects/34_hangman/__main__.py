@@ -17,7 +17,7 @@ goat goose hawk lion lizard llama mole monkey moose mule newt
 otter owl panda parrot pigeon python rabbit ram rat raven rhino
 racoon salmon shark sheep skunk sloth snake stork swan chicken
 tiger toad trout turkey turtle weasel whale wolf zebra fly
-mosquito bonobo squirrel
+mosquito bonobo squirrel gorilla
 """.upper().strip().split()
 
 IMAGES = (
