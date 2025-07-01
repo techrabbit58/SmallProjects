@@ -3,7 +3,7 @@ import string
 import sys
 
 BANNER = """
-H A N G M A N       by Al Sweigert (al@inventwithpython)
+H A N G M A N       by Al Sweigart (al@inventwithpython)
                     *** refactored version ***
 """
 

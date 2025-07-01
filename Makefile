@@ -82,3 +82,6 @@ hacking:
 
 hangman:
 	python -m small_projects.34_hangman
+
+fourinarow:
+	python -m small_projects.30_four_in_a_row
