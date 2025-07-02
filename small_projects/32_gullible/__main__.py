@@ -21,7 +21,8 @@ class App:
         while True:
             print("Computer: Do you want to know how to keep a gullible person busy for hours?")
             response = input("You (Yes or No): ").strip().lower()
-            if "no".startswith(response):
+
+            if response in ("n", "no"):
                 break
             if response not in ("y", "yes"):
                 print("Computer: This is not a valid response. Please try again")
