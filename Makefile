@@ -88,3 +88,6 @@ fourinarow:
 
 fishtank:
 	python -m small_projects.27_fish_tank
+
+forestfire:
+	python -m small_projects.29_forest_fire_sim
