@@ -85,3 +85,6 @@ hangman:
 
 fourinarow:
 	python -m small_projects.30_four_in_a_row
+
+fishtank:
+	python -m small_projects.27_fish_tank

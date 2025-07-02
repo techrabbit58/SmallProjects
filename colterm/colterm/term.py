@@ -14,7 +14,7 @@ import colorama
 
 
 class ColTermError(Exception):
-    """Raised by the code in this get_key module. If "get_key" ever raises
+    """To rise by the code in this get_key module. If "get_key" ever raises
     an exception that isn't ColTermError, you can assume it's caused
     by a bug in the get_key module."""
     pass
