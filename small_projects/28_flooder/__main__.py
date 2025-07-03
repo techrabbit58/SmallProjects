@@ -40,14 +40,14 @@ TILE_TYPES = [
 Location: TypeAlias = tuple[int, int]
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Board:
     width: int
     height: int
-    tiles: dict[Location, str] = field()
+    tiles: dict[Location, int] = field(default_factory=dict, init=False)
 
     @property
-    def first_tile(self) -> str:
+    def first_tile(self) -> int:
         return self.tiles[0, 0]
 
     @property
@@ -72,17 +72,23 @@ def intro() -> None:
     """))
 
 
+def game_loop(*, board: Board, moves_per_game: int) -> None:
+    print(f"{board=}\n{moves_per_game=}\nshapes=", end="")
+    for tt in TILE_TYPES:
+        term.fg(tt.color)
+        print(tt.shape, end="")
+    print("\n")
+
+
 def endcard() -> None:
     term.fg("white")
     print("Thank you for playing.\n")
 
 
-def main(board_width: int, board_height: int, moves_per_game: int) -> None:
+def main(*, board_width: int, board_height: int, moves_per_game: int) -> None:
     intro()
-    for tt in TILE_TYPES:
-        term.fg(tt.color)
-        print(tt.shape, end="")
-    print("\n")
+    board = Board(height=board_height, width=board_width)
+    game_loop(board=board, moves_per_game=moves_per_game)
     endcard()
 
 
