@@ -85,6 +85,7 @@ def neighborship(x: int, y: int) -> Generator[Location]:
 def main():
     forest = make_forest()
 
+    term.hide_cursor()
     term.clear()
 
     while True:
@@ -117,4 +118,7 @@ def main():
 try:
     main()
 except KeyboardInterrupt:
+    term.clear()
+    term.show_cursor()
+    term.deinit()
     sys.exit()
