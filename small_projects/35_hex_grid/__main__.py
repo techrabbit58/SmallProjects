@@ -2,12 +2,11 @@ import argparse
 
 
 def main() -> None:
-
     parser = argparse.ArgumentParser(prog="hexgrid")
-    parser.add_argument("--x_repeat",
+    parser.add_argument("-x", "--x_repeat",
                         metavar="N", type=int, default=19,
                         help="repeat the pattern horizontally N times")
-    parser.add_argument("--y_repeat",
+    parser.add_argument("-y", "--y_repeat",
                         metavar="N", type=int, default=12,
                         help="repeat the pattern vertically N times")
     args = parser.parse_args()
