@@ -1,12 +1,14 @@
-from importlib import resources
-from functools import partial
+def main(x_repeat: int = 19, y_repeat: int = 12) -> None:
 
-open_local_text_file = partial(resources.open_text, __package__)
+    for y in range(y_repeat):
+
+        for x in range(x_repeat):  # Top half
+            print(r"/ \_", end="")
+        print()
+
+        for x in range(x_repeat):  # Bottom half
+            print(r"\_/ ", end="")
+        print()
 
 
-def main() -> None:
-    with open_local_text_file("foo.txt") as fd:
-        print(fd.read())
-
-
-main()
+main(y_repeat=3)
