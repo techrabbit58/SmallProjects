@@ -94,3 +94,6 @@ forestfire:
 
 hexgrid:
 	python -m small_projects.35_hex_grid
+
+flooder:
+	python -m small_projects.28_flooder
