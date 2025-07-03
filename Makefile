@@ -91,3 +91,6 @@ fishtank:
 
 forestfire:
 	python -m small_projects.29_forest_fire_sim
+
+hexgrid:
+	python -m small_projects.35_hex_grid

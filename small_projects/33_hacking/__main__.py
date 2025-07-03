@@ -6,10 +6,14 @@ import pathlib
 import random
 import sys
 import textwrap
+from functools import partial
+from importlib import resources
+
+open_local_text_file = partial(resources.open_text, __package__)
 
 
 def load_sevenletterwords() -> list[str]:
-    with (pathlib.Path(__file__).parent / pathlib.Path("sevenletterwords.txt")).open() as f:
+    with open_local_text_file("sevenletterwords.txt") as f:
         words = [word.strip().upper() for word in f.readlines()]
     return words
 
