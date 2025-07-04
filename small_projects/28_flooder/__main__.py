@@ -143,9 +143,9 @@ def let_player_select() -> str:
 def ask_player(moves_left: int, display_mode: str) -> str:
     term.fg("white")
     print(f"Moves left: {moves_left}")
+    good_responses = set("q")
 
     print("Choose one of ", end="")
-    good_responses = set("q")
     if display_mode == "color":
         for choice in "red green blue yellow cyan purple".split():
             term.fg(choice)
