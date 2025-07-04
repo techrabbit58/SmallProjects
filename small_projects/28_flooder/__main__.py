@@ -80,12 +80,13 @@ class Board:
                 result = False
         return result
 
-    def show(self, display_mode: str):
+    def show(self, display_mode: str, *, finish: bool = False):
         term.fg("white")
         print(Glyph.DOWNRIGHT.value + (Glyph.LEFTRIGHT.value * self.width) + Glyph.DOWNLEFT.value)
         for y in range(self.height):
             term.fg("white")
-            print(Glyph.UPDOWN.value if y > 0 else ">", end="")
+            glyph = ">" if y == 0 and not finish else Glyph.UPDOWN.value
+            print(glyph, end="")
             for x in range(self.width):
                 tile = self.tiles[x, y]
                 term.fg(tile.color)
@@ -208,14 +209,14 @@ def game_loop(*, board: Board, moves_left: int, display_mode: str) -> None:
         message = ""
 
         if board.is_evenly_colored:
-            board.show(display_mode)
+            board.show(display_mode, finish=True)
             message = f"You have won! (Score: {moves_left})\n"
             break
 
         moves_left -= 1
 
         if moves_left == 0:
-            board.show(display_mode)
+            board.show(display_mode, finish=True)
             message = "You ran out of moves!\n"
             break
 
