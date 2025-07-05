@@ -97,3 +97,6 @@ hexgrid:
 
 flooder:
 	python -m small_projects.28_flooder
+
+mazerunner:
+	python -m small_projects.44_maze_runner_2d
