@@ -1,5 +1,11 @@
+import textwrap
+
+
 def intro() -> None:
-    ...
+    print(textwrap.dedent("""
+    Maze Runner 2D, by Al Sweigart (al@inventwithpython.com)
+      *** refactored version ***
+    """))
 
 
 class Maze:
