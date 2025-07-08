@@ -1,5 +1,15 @@
 import textwrap
 from pathlib import Path
+from typing import TypeAlias
+
+Location: TypeAlias = tuple[int, int] | None
+
+# game symbols and .maze file symbols
+WALL = "#"
+EMPTY = " "
+START = "S"
+EXIT = "E"
+PLAYER = "@"
 
 
 def intro() -> None:
@@ -12,12 +22,61 @@ def intro() -> None:
 class Maze:
     def __init__(self) -> None:
         self.is_terminated_game = False
+        self.width = self.height = -1
+        self.player: Location = None
+        self.start: Location = None
+        self.exit: Location = None
+        self.walls: set[Location] = set()
 
     def run(self) -> None:
+        print("The .maze file is OK. The game can be run.")
         self.is_terminated_game = True
 
     def parse(self, maze_text: list[str]) -> None:
-        print(maze_text)
+        self.height = len(maze_text)
+        self.width = len(maze_text[0])
+
+        error = False
+
+        for y, line in enumerate(maze_text):
+            if len(line) != self.width:
+                print(f"Line {y + 1} is too {'long' if len(line) > self.width else 'short'}.")
+                break
+            for x, symbol in enumerate(line):
+                if symbol not in {WALL, EMPTY, START, EXIT}:
+                    print(f"Bad symbol '{symbol}' in line {y + 1} at column {x + 1}.")
+                    error = True
+                    break
+                if y in (0, self.height - 1) and symbol != WALL:
+                    print(f"Line {y + 1} must be all walls, but column {y + 1} is not.")
+                    error = True
+                    break
+                if x in (0, self.width - 1) and symbol != WALL:
+                    print(f"Line {y + 1} must start or end with a wall. Column {x + 1} is not a wall.")
+                    error = True
+                    break
+                if (self.start and symbol == START) or (self.exit and symbol == EXIT):
+                    print(f"'{symbol}' at line {y + 1}, column {x + 1} is a duplicate.")
+                    error = True
+                    break
+                if symbol == WALL:
+                    self.walls.add((x, y))
+                    continue
+                if symbol == START:
+                    self.start = x, y
+                    continue
+                if symbol == EXIT:
+                    self.exit = x, y
+                    continue
+        else:  # The .maze file could be parsed without error.
+            if not error and self.start is None:
+                print("START is missing.")
+            if not error and self.exit is None:
+                print("EXIT is missing.")
+            if not error and self.start is not None and self.exit is not None:
+                self.player = self.start
+
+        self.is_terminated_game = error
 
 
 def setup_dialog() -> Maze | None:
@@ -71,14 +130,19 @@ def finish() -> None:
 
 
 def main():
+    intro()
+
     while True:
-        intro()
         maze = setup_dialog()
-        if maze is None:
+        if maze is None:  # THe player did quit from the setup dialog.
             break
+        if maze.is_terminated_game:  # The maze parser found an error in the .maze file.
+            print("The .maze file has errors and cannot be processed. Try another.")
+            continue
         maze.run()
-        if maze.is_terminated_game:
+        if maze.is_terminated_game:  # The player did quit from the game.
             break
+
     finish()
 
 
