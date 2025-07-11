@@ -2,7 +2,7 @@ import textwrap
 from pathlib import Path
 from typing import TypeAlias
 
-Location: TypeAlias = tuple[int, int] | None
+Place: TypeAlias = tuple[int, int] | None
 
 # game symbols and .maze file symbols
 WALL = "#"
@@ -10,6 +10,8 @@ EMPTY = " "
 START = "S"
 EXIT = "E"
 PLAYER = "@"
+BLOCK = chr(9617)
+DOOR = "X"
 
 
 def intro() -> None:
@@ -19,18 +21,52 @@ def intro() -> None:
     """))
 
 
+def ask_player_for_next_move() -> str:
+    while True:
+        print("                          W")
+        print("Enter direction or QUIT: ASD   Q")
+        move = input("> ").strip().upper()
+        if "QUIT".startswith(move):
+            move = "Q"
+            break
+        if move in {"W", "A", "S", "D"}:
+            break
+        print(f"'{move}' is not a valid command. Try again.")
+        continue
+    return move
+
+
 class Maze:
     def __init__(self) -> None:
         self.is_terminated_game = False
         self.width = self.height = -1
-        self.player: Location = None
-        self.start: Location = None
-        self.exit: Location = None
-        self.walls: set[Location] = set()
+        self.player: Place = None
+        self.start: Place = None
+        self.exit: Place = None
+        self.walls: set[Place] = set()
 
     def run(self) -> None:
-        print("The .maze file is OK. The game can be run.")
-        self.is_terminated_game = True
+        while True:
+            self.show()
+            move = ask_player_for_next_move()
+            if move == "Q":
+                self.is_terminated_game = True
+                break
+            print(f"{move=}")
+
+    def show(self) -> None:
+        print()
+        for y in range(self.height):
+            for x in range(self.width):
+                place = x, y
+                symbol = BLOCK if place in self.walls else EMPTY
+                if place == self.player:
+                    symbol = PLAYER
+                if place == self.exit:
+                    symbol = DOOR
+                print(symbol, end="")
+            print()
+        print()
 
     def parse(self, maze_text: list[str]) -> None:
         self.height = len(maze_text)
@@ -87,7 +123,6 @@ def setup_dialog() -> Maze | None:
             continue
 
         if "QUIT".startswith(response.upper()):
-            print()
             return None
 
         if "LIST".startswith(response.upper()):
@@ -126,7 +161,7 @@ def make_maze(maze_file) -> Maze:
 
 
 def finish() -> None:
-    print("Thank you for playing. Bye!\n")
+    print("\nThank you for playing. Bye!\n")
 
 
 def main():
