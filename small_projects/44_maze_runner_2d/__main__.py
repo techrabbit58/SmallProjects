@@ -13,13 +13,6 @@ PLAYER = "@"
 BLOCK = chr(9617)
 DOOR = "X"
 
-direction = {
-    "W": (0, -1),
-    "A": (-1, 0),
-    "S": (0, 1),
-    "D": (1, 0),
-}
-
 
 def intro() -> None:
     print(textwrap.dedent("""
@@ -43,6 +36,14 @@ def ask_player_for_next_move() -> str:
     return move
 
 
+direction = {
+    "W": (0, -1),
+    "A": (-1, 0),
+    "S": (0, 1),
+    "D": (1, 0),
+}
+
+
 class Maze:
     def __init__(self) -> None:
         self.is_terminated_game = False
@@ -59,7 +60,21 @@ class Maze:
             if answer == "Q":
                 self.is_terminated_game = True
                 break
-            print(f"{direction[answer]=}")
+            new_place = self.move(direction[answer])
+            if new_place == self.player:
+                print("You cannot move in this direction.")
+                continue
+            elif new_place == self.exit:
+                print("You have reached the exit. Good job!")
+                self.player = new_place
+                break
+            elif new_place in self.walls:
+                print("You have hit a wall.")
+                continue
+            else:
+                print("You have reached a branch point.")
+                self.player = new_place
+        self.show()
 
     def show(self) -> None:
         print()
@@ -69,7 +84,7 @@ class Maze:
                 symbol = BLOCK if place in self.walls else EMPTY
                 if place == self.player:
                     symbol = PLAYER
-                if place == self.exit:
+                elif place == self.exit:
                     symbol = DOOR
                 print(symbol, end="")
             print()
@@ -120,6 +135,9 @@ class Maze:
                 self.player = self.start
 
         self.is_terminated_game = error
+
+    def move(self, delta: Place) -> Place:
+        return self.player[0] + delta[0], self.player[1] + delta[1]
 
 
 def setup_dialog() -> Maze | None:
