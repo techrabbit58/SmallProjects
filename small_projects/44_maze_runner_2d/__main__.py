@@ -13,6 +13,13 @@ PLAYER = "@"
 BLOCK = chr(9617)
 DOOR = "X"
 
+direction = {
+    "W": (0, -1),
+    "A": (-1, 0),
+    "S": (0, 1),
+    "D": (1, 0),
+}
+
 
 def intro() -> None:
     print(textwrap.dedent("""
@@ -48,11 +55,11 @@ class Maze:
     def run(self) -> None:
         while True:
             self.show()
-            move = ask_player_for_next_move()
-            if move == "Q":
+            answer = ask_player_for_next_move()
+            if answer == "Q":
                 self.is_terminated_game = True
                 break
-            print(f"{move=}")
+            print(f"{direction[answer]=}")
 
     def show(self) -> None:
         print()
