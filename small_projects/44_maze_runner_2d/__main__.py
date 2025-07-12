@@ -60,17 +60,17 @@ class Maze:
             if answer == "Q":
                 self.is_terminated_game = True
                 break
-            new_place = self.move(direction[answer])
+            delta = direction[answer]
+            new_place = self.move(delta)
             if new_place == self.player:
                 print("You cannot move in this direction.")
-                continue
             elif new_place == self.exit:
                 print("You have reached the exit. Good job!")
                 self.player = new_place
                 break
-            elif new_place in self.walls:
+            elif (new_place[0] + delta[0], new_place[1] + delta[1]) in self.walls:
                 print("You have hit a wall.")
-                continue
+                self.player = new_place
             else:
                 print("You have reached a branch point.")
                 self.player = new_place
@@ -137,7 +137,24 @@ class Maze:
         self.is_terminated_game = error
 
     def move(self, delta: Place) -> Place:
-        return self.player[0] + delta[0], self.player[1] + delta[1]
+        old_place, new_place = self.player, (self.player[0] + delta[0], self.player[1] + delta[1])
+        while True:
+            if new_place in self.walls:
+                new_place = old_place
+                break
+            if self.empty_neighbors(new_place) > 2:
+                break
+            old_place, new_place = new_place, (new_place[0] + delta[0], new_place[1] + delta[1])
+
+        return new_place
+
+    def empty_neighbors(self, place: Place) -> int:
+        neighbors = 0
+        for delta in direction.values():
+            if (place[0] + delta[0], place[1] + delta[1]) in self.walls:
+                continue
+            neighbors += 1
+        return neighbors
 
 
 def setup_dialog() -> Maze | None:
