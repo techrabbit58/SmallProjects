@@ -2,7 +2,6 @@
 NOTE: This program requires the sevenletterwords.txt file. The original
 file can be downloaded from https://inventwithpython.com
 """
-import pathlib
 import random
 import sys
 import textwrap
