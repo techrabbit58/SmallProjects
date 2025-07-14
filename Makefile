@@ -100,3 +100,6 @@ flooder:
 
 mazerunner:
 	python -m small_projects.44_maze_runner_2d
+
+diceroller:
+	python -m small_projects.46_dice_roll_simulator

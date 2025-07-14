@@ -1,6 +1,7 @@
 import textwrap
 from pathlib import Path
 from typing import TypeAlias
+from importlib import resources
 
 Place: TypeAlias = tuple[int, int] | None
 
@@ -158,6 +159,8 @@ class Maze:
 
 
 def setup_dialog() -> Maze | None:
+    path = resources.files(__package__)
+
     while True:
         print("Enter the filename of a .maze file (or LIST or QUIT).")
         response = input("> ").strip()
@@ -168,7 +171,7 @@ def setup_dialog() -> Maze | None:
             return None
 
         if "LIST".startswith(response.upper()):
-            catalog = list(Path().glob("*.maze"))
+            catalog = list(Path(str(path)).glob("*.maze"))
             if len(catalog) == 0:
                 print("No .maze files.")
                 print()
@@ -180,13 +183,14 @@ def setup_dialog() -> Maze | None:
             continue
 
         # At this point, the response shall be treated as a filename.
-        maze_file = Path(adjust_filename(response))
-        if not maze_file.exists():
-            print(f"The file '{maze_file.name}' does not exist. Try again.")
+        maze_file = adjust_filename(response)
+        maze_path = Path(str(path)) / maze_file
+        if not maze_path.exists():
+            print(f"The file '{maze_path.name}' does not exist. Try again.")
             continue
 
         # At this point we know, the .maze file exists and can now be loaded.
-        return make_maze(maze_file)
+        return make_maze(maze_path)
 
 
 def adjust_filename(response):
