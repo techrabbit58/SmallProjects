@@ -103,3 +103,6 @@ mazerunner:
 
 diceroller:
 	python -m small_projects.46_dice_roll_simulator
+
+ninetynine:
+	python -m small_projects.50_ninety_nine_bottles
