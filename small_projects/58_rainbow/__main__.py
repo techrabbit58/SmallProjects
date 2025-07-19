@@ -5,7 +5,7 @@ from colterm import term
 colors = "red yellow green blue cyan purple".split()
 
 
-def show_rainbow(indent: int) -> None:
+def show(indent: int) -> None:
     print(" " * indent, end="")
     for color in colors:
         term.fg(color)
@@ -32,7 +32,7 @@ def main() -> None:
 
     while not is_terminated:
         try:
-            show_rainbow(indent)
+            show(indent)
             indent, is_indent_increasing = advance(indent, is_indent_increasing)
         except KeyboardInterrupt:
             is_terminated = True
