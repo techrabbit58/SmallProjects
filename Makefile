@@ -106,3 +106,6 @@ diceroller:
 
 ninetynine:
 	python -m small_projects.50_ninety_nine_bottles
+
+rainbow:
+	python -m small_projects.58_rainbow
