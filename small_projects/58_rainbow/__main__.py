@@ -14,6 +14,13 @@ def show_rainbow(indent: int) -> None:
     time.sleep(0.02)
 
 
+def advance_indent(indent: int, is_indent_increasing: bool) -> tuple[int, bool]:
+    indent += 1 if is_indent_increasing else -1
+    if indent == 0 or indent == term.size().columns - 13:
+        is_indent_increasing = not is_indent_increasing
+    return indent, is_indent_increasing
+
+
 def main() -> None:
     indent = 0
     is_indent_increasing = True
@@ -26,9 +33,7 @@ def main() -> None:
     while not is_terminated:
         try:
             show_rainbow(indent)
-            indent += 1 if is_indent_increasing else -1
-            if indent == 0 or indent == term.size().columns - 13:
-                is_indent_increasing = not is_indent_increasing
+            indent, is_indent_increasing = advance_indent(indent, is_indent_increasing)
         except KeyboardInterrupt:
             is_terminated = True
 
