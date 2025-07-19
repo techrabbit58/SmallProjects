@@ -109,3 +109,6 @@ ninetynine:
 
 rainbow:
 	python -m small_projects.58_rainbow
+
+rockpaperscissors:
+	python -m small_projects.59_rock_paper_scissors
