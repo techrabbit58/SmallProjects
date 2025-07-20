@@ -32,14 +32,18 @@ def intro() -> None:
 
 def main() -> None:
     intro()
-    command = ask_player(
-        "Enter the letters of the origin and destination towers, or (Q)uit.\n"
-        "e.g. AB to move a disk from tower A to tower B.",
-        ["Q"] + "AB AC BC BA BC CA CB".split(),
-    )
-    if command == "Q":
-        print("Thanks for playing.")
-    else:
+
+    while True:
+        command = ask_player(
+            "Enter the letters of the origin and destination towers, or (Q)uit.\n"
+            "e.g. AB to move a disk from tower A to tower B.",
+            ["Q"] + "AB AC BC BA BC CA CB".split(),
+        )
+
+        if command == "Q":
+            print("Thanks for playing.")
+            break
+
         print(f"{command=}")
 
 
