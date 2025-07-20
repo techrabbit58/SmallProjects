@@ -112,3 +112,6 @@ rainbow:
 
 rockpaperscissors:
 	python -m small_projects.59_rock_paper_scissors
+
+hanoi:
+	python -m small_projects.77_towers_of_hanoi
