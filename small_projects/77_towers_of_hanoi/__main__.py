@@ -8,7 +8,7 @@ from typing import TypeAlias
 
 TOTAL_DISKS = 5
 COMPLETE_TOWER = list(range(TOTAL_DISKS, 0, -1))
-
+ALL_BLANKS = " " * TOTAL_DISKS
 
 OneTower: TypeAlias = list[int]
 TowerKey: TypeAlias = str
@@ -16,14 +16,18 @@ TowerArrangement: TypeAlias = dict[TowerKey, OneTower]
 
 
 def ask_player(question: str, choices: list[str]) -> str:
-    while True:
-        print(question)
+    choice = ""
+    while not choice:
+        if choice:
+            print(question)
         answer = input("> ").strip()
+        if len(answer) == 0:
+            continue
         choice = answer.upper()
         if choice not in choices:
-            print(f"'{answer}' is not in {list(choices)}. Try again")
+            print(f"'{answer}' is not in {list(choices)}. Try again.")
+            choice = ""
             continue
-        break
     return choice
 
 
@@ -44,15 +48,16 @@ def display_towers(towers: TowerArrangement) -> None:
     for level in range(TOTAL_DISKS, -1, -1):
         for key in "ABC":
             tower = towers[key]
-            if level >= len(tower):
-                spaces = " " * TOTAL_DISKS
-                print(f"{spaces}||{spaces}", end="")
-            else:
-                disk = tower[level]
-                spaces = " " * (TOTAL_DISKS - disk)
-                solid = "@" * disk
-                print(f"{spaces}{solid}_{disk}{solid}{spaces}", end="")
+            disk, mid = (tower[level], str(tower[level]).rjust(2, '_')) \
+                if level < len(tower) \
+                else (0, "||")
+            spaces = ALL_BLANKS[:TOTAL_DISKS - disk]
+            solid = "@" * disk
+            print(f"{spaces}{solid}{mid}{solid}{spaces}", end=" ")
         print()
+    for key in "ABC":
+        print(f"{ALL_BLANKS}{key:>2}{ALL_BLANKS}", end=" ")
+    print("\n")
 
 
 def main() -> None:
@@ -70,10 +75,30 @@ def main() -> None:
         )
 
         if command == "Q":
-            print("Thanks for playing.")
             break
 
-        print(f"{command=}")
+        origin, destination = command
+        origin_tower, destination_tower = towers[origin], towers[destination]
+
+        if not len(origin_tower):
+            print(f"Cannot remove a disk from empty pile {origin}. Try again.\n")
+            continue
+
+        if len(destination_tower) and origin_tower[-1] > destination_tower[-1]:
+            print(f"Cannot move a disk from {origin} to {destination}.")
+            print("The original disk is larger then the topmost destination disk.")
+            print("Try again.\n")
+            continue
+
+        disk = origin_tower.pop()
+        destination_tower.append(disk)
+
+        if COMPLETE_TOWER in (towers["B"], towers["C"]):
+            display_towers(towers)
+            print("You have solved the puzzle. Congratulations.")
+            break
+
+    print("Thanks for playing.\n")
 
 
 main()
