@@ -115,3 +115,6 @@ rockpaperscissors:
 
 hanoi:
 	python -m small_projects.77_towers_of_hanoi
+
+soroban:
+	python -m small_projects.70_soroban
