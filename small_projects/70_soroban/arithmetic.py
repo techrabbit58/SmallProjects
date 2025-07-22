@@ -1,0 +1,1 @@
+VALUES = {c: (10 ** n) for c, n in zip("qwertyzuiop", (9, 8, 7, 6, 5, 4, 4, 3, 2, 1, 0))}
