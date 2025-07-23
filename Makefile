@@ -118,3 +118,6 @@ hanoi:
 
 soroban:
 	python -m small_projects.70_soroban
+
+monte:
+	python -m small_projects.75_three_card_monte
