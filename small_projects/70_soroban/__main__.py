@@ -1,16 +1,26 @@
-import time
-
+from . import interactive
 from . import visual
-from . import arithmetic
 
 
 def main() -> None:
-    n = 9_999_999_990
+    n = 0
+
     while True:
         print(visual.soroban_image(n))
-        print(arithmetic.VALUES)
-        n = (n + 1) % 10_000_000_000
-        time.sleep(.1)
+        result = interactive.ask_player(
+            "Enter a natural number to add or subtract from the soroban.\n"
+            "Enter '0' (zero) to reset the soroban, or 'quit'."
+        )
+
+        if result is None:
+            print("This is not a valid option. Try again.")
+            continue
+
+        if result[0] == 'quit':
+            break
+
+        if isinstance(result[0], int):
+            n = 0 if result[0] == 0 else (10_000_000_000 + n + result[0]) % 10_000_000_000
 
 
 main()

@@ -1,3 +1,7 @@
+BEAD = "O"
+WIRE = "|"
+
+
 def digitize(number: int, *, width: int = 10) -> list[int]:
     digits = [0] * width
     number = abs(number)
@@ -17,10 +21,10 @@ def sorobanize(digits: list[int]) -> tuple[list[int], list[int]]:
 
 def soroban_image(number: int) -> str:
     def prepare(*, height: int) -> list[list[str]]:
-        return [["I"] + (["|"] * width) + ["I"] for _ in range(height)]
+        return [["I"] + ([WIRE] * width) + ["I"] for _ in range(height)]
 
     def glue() -> str:
-        return "\n".join(" ".join(str(n) for n in line) for line in lines)
+        return "\n".join(" ".join(str(k) for k in line) for line in lines)
 
     digits = digitize(number)
     fives, ones = sorobanize(digits)
@@ -30,12 +34,12 @@ def soroban_image(number: int) -> str:
     lines = prepare(height=3)
     for x, n in enumerate(fives, 1):
         y = n * 2
-        lines[y][x] = "O"
+        lines[y][x] = BEAD
     parts += [glue(), separator]
     lines = prepare(height=6)
     for y in range(6):
         for x, n in enumerate(ones, 1):
             if (y - n) not in {0, 1}:
-                lines[y][x] = "O"
+                lines[y][x] = BEAD
     parts += [glue(), f"+={'='.join(str(n) for n in digits)}=+"]
     return "\n".join(parts)

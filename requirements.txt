@@ -6,3 +6,6 @@ pyperclip
 setuptools
 pytest
 pyttsx3
+pyparsing
+key_stroke
+typing_extensions
