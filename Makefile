@@ -121,3 +121,6 @@ soroban:
 
 monte:
 	python -m small_projects.75_three_card_monte
+
+tictactoe:
+	python -m small_projects.76_tic_tac_toe
