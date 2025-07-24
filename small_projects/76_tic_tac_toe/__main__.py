@@ -1,9 +1,14 @@
+from string import Template
+
 X, O, BLANK = "X", "O", " "
 PLAYERS = X, O
-SPACES = set("789456123")
+SPACES = "789456123"
 
 
 class Board:
+    bad_key = Template("'$key' is not a valid Tic-Tac-Toe space")
+    bad_value = Template("'$value' is not a valid Tic-Tac-Toe player")
+
     def __init__(self) -> None:
         self._board = [BLANK] * 9
 
@@ -23,21 +28,21 @@ class Board:
     def __setitem__(self, key: str, value: str) -> None:
         index = "789456123".find(key)
         if index < 0:
-            raise KeyError(f"{key} is not a valid tic-tac-toe space")
+            raise KeyError(self.bad_key.substitute(key=key))
         if value not in PLAYERS:
-            raise ValueError(f"{value} is not a valid tic-tac-toe player")
+            raise ValueError(self.bad_value.substitute(value=value))
         self._board[index] = value
 
     def __getitem__(self, key: str) -> str:
-        index = "789456123".find(key)
+        index = SPACES.find(key)
         if index < 0:
-            raise KeyError(f"{key} is not a valid tic-tac-toe space")
+            raise KeyError(self.bad_key.substitute(key=key))
         return self._board[index]
 
 
 def main() -> None:
     board = Board()
-    board["7"] = O
+    board["1"] = X
     print(board)
     if board["7"] == BLANK:
         print("free")
