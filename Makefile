@@ -124,3 +124,6 @@ monte:
 
 tictactoe:
 	python -m small_projects.76_tic_tac_toe
+
+waterbucket:
+	python -m small_projects.81_water_bucket_puzzle
