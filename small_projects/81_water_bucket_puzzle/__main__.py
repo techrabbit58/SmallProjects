@@ -4,13 +4,14 @@ from . import buckets
 
 
 GOAL = 4
+BUCKET_ARRANGEMENT = {8: 0, 5: 0, 3: 0}
 
 
 def advice(goal: int) -> str:
     return textwrap.dedent(f"""
     The Water Bucket Puzzle
 
-    Try to get {goal}L of water into one of these buckets:
+    Try to get {goal}L of water into one of the buckets:
     
     You can:
     (F)ill one bucket
@@ -28,7 +29,8 @@ def advice(goal: int) -> str:
 def main() -> None:
     print(advice(GOAL))
     desired = GOAL
-    all_buckets = {8: desired, 5: 0, 3: 0}
+    all_buckets = BUCKET_ARRANGEMENT.copy()
+    all_buckets[8] = desired
     print(buckets.render(all_buckets))
     if size := buckets.get_level_match(all_buckets, 4):
         print(f"The {size}L bucket has the desired water level of {desired}L.")
