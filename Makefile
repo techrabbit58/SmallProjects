@@ -127,3 +127,6 @@ tictactoe:
 
 waterbucket:
 	python -m small_projects.81_water_bucket_puzzle
+
+langtonsant:
+	python -m small_projects.39_langtons_ant
