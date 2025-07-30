@@ -6,8 +6,8 @@ from typing import TypeAlias
 
 import colterm.term as term
 
-NUMBER_OF_ANTS = 1
-DELAY = 0.5  # seconds
+NUMBER_OF_ANTS = 10
+DELAY = 0.05  # seconds
 
 ANT_COLOR = "white"  # foreground
 BLACK_TILE = "black"  # background
@@ -64,16 +64,13 @@ class Ant:
         x, y = self.x, self.y
 
         if (x, y) in board.black_tiles:
-            board.next_black_tiles.remove((x, y))
+            self.direction = COUNTER_CLOCKWISE[self.direction]
+            board.next_black_tiles.discard((x, y))
         else:
+            self.direction = CLOCKWISE[self.direction]
             board.next_black_tiles.add((x, y))
 
         board.needs_update.add((x, y))
-
-        if (x, y) in board.black_tiles:
-            self.direction = COUNTER_CLOCKWISE[self.direction]
-        else:
-            self.direction = CLOCKWISE[self.direction]
 
         dx, dy = DELTA[self.direction]
         self.x = (self.x + dx) % board.width
@@ -86,7 +83,7 @@ def refresh_board(board: Board, ants: list[Ant]) -> Board:
     term.hide_cursor()
 
     here_be_ants = {(ant.x, ant.y): ant.direction for ant in ants}
-    board.next_black_tiles = board.black_tiles.copy()
+    board.black_tiles = copy.copy(board.next_black_tiles)
 
     term.fg(ANT_COLOR)
     for x, y in board.needs_update:
@@ -100,7 +97,7 @@ def refresh_board(board: Board, ants: list[Ant]) -> Board:
     term.goto(0, board.height)
     term.fg("reset")
     term.bg("reset")
-    print("Press Ctrl-C to quit.", board.next_black_tiles, end="", flush=True)
+    print("Press Ctrl-C to quit.", end="", flush=True)
 
     term.show_cursor()
     time.sleep(DELAY)
