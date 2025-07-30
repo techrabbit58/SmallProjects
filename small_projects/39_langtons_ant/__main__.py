@@ -15,12 +15,7 @@ WHITE_TILE = "white"  # background
 
 BLANK = " "
 
-NORTH = "N"
-SOUTH = "S"
-EAST = "E"
-WEST = "W"
-
-
+NORTH, SOUTH, EAST, WEST = "NSEW"
 DIRECTIONS = NORTH, SOUTH, EAST, WEST
 
 ANT_IMAGE = dict(zip(DIRECTIONS, "^v><"))
