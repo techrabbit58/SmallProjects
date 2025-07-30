@@ -7,11 +7,13 @@ from typing import TypeAlias
 import colterm.term as term
 
 NUMBER_OF_ANTS = 10
-DELAY = 0.05  # seconds
+DELAY = 0.1  # seconds
 
 ANT_COLOR = "white"  # foreground
 BLACK_TILE = "black"  # background
 WHITE_TILE = "white"  # background
+
+BLANK = " "
 
 NORTH = "N"
 SOUTH = "S"
@@ -89,7 +91,7 @@ def refresh_board(board: Board, ants: list[Ant]) -> Board:
     for x, y in board.needs_update:
         term.bg(BLACK_TILE if (x, y) in board.black_tiles else WHITE_TILE)
         term.goto(x, y)
-        mark = ANT_IMAGE[here_be_ants[x, y]] if (x, y) in here_be_ants else "."
+        mark = ANT_IMAGE[here_be_ants[x, y]] if (x, y) in here_be_ants else BLANK
         print(mark, end="", flush=True)
 
     board.needs_update = set()
@@ -102,7 +104,7 @@ def refresh_board(board: Board, ants: list[Ant]) -> Board:
     term.show_cursor()
     time.sleep(DELAY)
 
-    return copy.copy(board)
+    return board
 
 
 def main() -> None:
