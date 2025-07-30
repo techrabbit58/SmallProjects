@@ -6,7 +6,7 @@ from typing import TypeAlias
 
 import colterm.term as term
 
-NUMBER_OF_ANTS = 10
+NUMBER_OF_ANTS = 1
 DELAY = 0.1  # seconds
 
 ANT_COLOR = "white"  # foreground
@@ -76,7 +76,7 @@ class Ant:
         board.needs_update.add((self.x, self.y))
 
 
-def refresh_board(board: Board, ants: list[Ant]) -> Board:
+def refresh_board(board: Board, ants: list[Ant]) -> None:
     term.hide_cursor()
 
     here_be_ants = {(ant.x, ant.y): ant.direction for ant in ants}
@@ -97,9 +97,6 @@ def refresh_board(board: Board, ants: list[Ant]) -> Board:
     print("Press Ctrl-C to quit.", end="", flush=True)
 
     term.show_cursor()
-    time.sleep(DELAY)
-
-    return board
 
 
 def main() -> None:
@@ -110,9 +107,12 @@ def main() -> None:
     ants = [Ant() for _ in range(NUMBER_OF_ANTS)]
 
     while True:
-        board = refresh_board(board, ants)
+        refresh_board(board, ants)
+
         for ant in ants:
             ant.update(board)
+
+        time.sleep(DELAY)
 
 
 try:
