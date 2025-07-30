@@ -6,27 +6,26 @@ from typing import TypeAlias
 
 import colterm.term as term
 
-SCREEN_WIDTH, SCREEN_HEIGHT = (n - 1 for n in term.size())
+NUMBER_OF_ANTS = 1
+DELAY = 0.5  # seconds
 
-NUMBER_OF_ANTS = 10
-DELAY = 0.1  # seconds
-
-ANT_UP, ANT_DOWN, ANT_LEFT, ANT_RIGHT = "^v<>"
-
-ANT_COLOR = "red"  # foreground
+ANT_COLOR = "white"  # foreground
 BLACK_TILE = "black"  # background
 WHITE_TILE = "white"  # background
 
-NORTH = "north"
-SOUTH = "south"
-EAST = "east"
-WEST = "west"
+NORTH = "N"
+SOUTH = "S"
+EAST = "E"
+WEST = "W"
 
-ANT_IMAGE = dict(zip((NORTH, SOUTH, EAST, WEST), (ANT_UP, ANT_DOWN, ANT_LEFT, ANT_RIGHT)))
-CLOCKWISE = dict(zip((NORTH, SOUTH, EAST, WEST), (EAST, WEST, SOUTH, NORTH)))
-COUNTER_CLOCKWISE = dict(zip((NORTH, SOUTH, EAST, WEST), (WEST, EAST, NORTH, SOUTH)))
 
-DISPLACEMENT = {
+DIRECTIONS = NORTH, SOUTH, EAST, WEST
+
+ANT_IMAGE = dict(zip(DIRECTIONS, "^v><"))
+CLOCKWISE = dict(zip(DIRECTIONS, (EAST, WEST, SOUTH, NORTH)))
+COUNTER_CLOCKWISE = dict(zip(DIRECTIONS, (WEST, EAST, NORTH, SOUTH)))
+
+DELTA = {
     NORTH: (0, -1),
     SOUTH: (0, 1),
     WEST: (-1, 0),
@@ -37,70 +36,92 @@ Location: TypeAlias = tuple[int, int]  # Board locations are tuples: (x, y)
 
 
 @dataclass
+class Board:
+    width: int = term.width() - 1
+    height: int = term.height() - 1
+    black_tiles: set[Location] = field(default_factory=set)
+    next_black_tiles: set[Location] = field(default_factory=set)
+    needs_update: set[Location] = field(default_factory=set)
+
+    def __post_init__(self) -> None:
+        for x in range(self.width):
+            for y in range(self.height):
+                self.needs_update.add((x, y))
+
+
+@dataclass
 class Ant:
     x: int = field(init=False)
     y: int = field(init=False)
     direction: str = field(init=False)
 
     def __post_init__(self) -> None:
-        self.x = random.randint(0, SCREEN_WIDTH - 1)
-        self.y = random.randint(0, SCREEN_HEIGHT - 2)
+        self.x = random.randrange(term.width() - 1)
+        self.y = random.randrange(term.height() - 1)
         self.direction = random.choice((NORTH, SOUTH, EAST, WEST))
 
+    def update(self, board: Board) -> None:
+        x, y = self.x, self.y
 
-@dataclass
-class Board:
-    width: int = SCREEN_WIDTH
-    height: int = SCREEN_HEIGHT
-    tracks: set[Location] = field(default_factory=set)
-    changes: list[Location] = field(default_factory=list)
+        if (x, y) in board.black_tiles:
+            board.next_black_tiles.remove((x, y))
+        else:
+            board.next_black_tiles.add((x, y))
 
-    def show(self, ants: list[Ant]) -> None:
-        for x, y in self.changes:
-            term.goto(x, y)
-            term.bg(BLACK_TILE if (x, y) in self.tracks else WHITE_TILE)
+        board.needs_update.add((x, y))
 
-            for ant in ants:
-                if (x, y) == (ant.x, ant.y):
-                    print(ANT_IMAGE[ant.direction], end="")
-                    break
-            else:
-                print(" ", end="")
+        if (x, y) in board.black_tiles:
+            self.direction = COUNTER_CLOCKWISE[self.direction]
+        else:
+            self.direction = CLOCKWISE[self.direction]
 
-        term.goto(0, SCREEN_HEIGHT)
-        term.bg(WHITE_TILE)
-        print("Press Ctrl-C to quit.", end="", flush=True)
+        dx, dy = DELTA[self.direction]
+        self.x = (self.x + dx) % board.width
+        self.y = (self.y + dy) % board.height
 
-        time.sleep(DELAY)
+        board.needs_update.add((self.x, self.y))
+
+
+def refresh_board(board: Board, ants: list[Ant]) -> Board:
+    term.hide_cursor()
+
+    here_be_ants = {(ant.x, ant.y): ant.direction for ant in ants}
+    board.next_black_tiles = board.black_tiles.copy()
+
+    term.fg(ANT_COLOR)
+    for x, y in board.needs_update:
+        term.bg(BLACK_TILE if (x, y) in board.black_tiles else WHITE_TILE)
+        term.goto(x, y)
+        mark = ANT_IMAGE[here_be_ants[x, y]] if (x, y) in here_be_ants else "."
+        print(mark, end="", flush=True)
+
+    board.needs_update = set()
+
+    term.goto(0, board.height)
+    term.fg("reset")
+    term.bg("reset")
+    print("Press Ctrl-C to quit.", board.next_black_tiles, end="", flush=True)
+
+    term.show_cursor()
+    time.sleep(DELAY)
+
+    return copy.copy(board)
 
 
 def main() -> None:
     term.fg(ANT_COLOR)
-    term.bg(WHITE_TILE)
     term.clear()
 
     board = Board()
     ants = [Ant() for _ in range(NUMBER_OF_ANTS)]
 
     while True:
-        board.show(ants)
-        next_board = copy.copy(board)
-
+        board = refresh_board(board, ants)
         for ant in ants:
-            if (ant.x, ant.y) in board.tracks:
-                ant.direction = CLOCKWISE[ant.direction]
-            else:
-                next_board.tracks.add((ant.x, ant.y))
-                ant.direction = COUNTER_CLOCKWISE[ant.direction]
-            next_board.changes.append((ant.x, ant.y))
-
-            dx, dy = DISPLACEMENT[ant.direction]
-
-            ant.x = (ant.x + dx) % SCREEN_WIDTH
-            ant.y = (ant.y + dy) % SCREEN_HEIGHT
-            next_board.changes.append((ant.x, ant.y))
-
-        board = next_board
+            ant.update(board)
 
 
-main()
+try:
+    main()
+except KeyboardInterrupt:
+    exit()
