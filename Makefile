@@ -130,3 +130,6 @@ waterbucket:
 
 langtonsant:
 	python -m small_projects.39_langtons_ant
+
+jaccuse:
+	python -m small_projects.38_j_accuse
