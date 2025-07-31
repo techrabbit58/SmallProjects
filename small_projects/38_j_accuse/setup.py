@@ -1,9 +1,9 @@
 import random
 import time
 
-ENTER = ""
+ENTER, QUIT = "", "Q"
 
-TIME_TO_SOLVE = 5  # The player has this many seconds time to solve the riddle.
+TIME_TO_SOLVE = 300  # The player has this many seconds time to solve the riddle.
 MAX_ACCUSATIONS = 3  # The player may accuse upt to this number of people.
 
 
@@ -23,8 +23,8 @@ PLACES = [
         BOWLING ALLEY
         VIDEO GAME MUSEUM
         UNIVERSITY LIBRARY
-        ALBINO ALLIGATOR PIT
-        """.strip().split("\n")
+        ALLIGATOR PIT
+    """.strip().split("\n")
 ]
 random.shuffle(PLACES)
 
@@ -65,6 +65,7 @@ random.shuffle(ITEMS)
 assert len(PLACES) == len(SUSPECTS), "even distribution of suspects to places must be possible"
 assert len(PLACES) == len(ITEMS), "even distribution of items to places must be possible"
 assert len(PLACES) == len(PLACE_FIRST_LETTERS), "all places must have unique first letters"
+assert "Q" not in PLACE_FIRST_LETTERS, "a place's first letter may not be \"Q\" for \"Quit\""
 
 LIARS = set(random.sample(SUSPECTS, random.randint(3, 4)))
 CULPRIT = random.choice(SUSPECTS)
