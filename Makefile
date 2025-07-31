@@ -26,7 +26,7 @@ dice_math:
 dice_roller:
 	python -m small_projects.18_dice_roller
 
-digital_clock: sevseg
+digital_clock:
 	python -m small_projects.19_digital_clock
 
 digital_stream:

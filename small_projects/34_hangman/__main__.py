@@ -19,7 +19,7 @@ racoon salmon shark sheep skunk sloth snake stork swan chicken
 tiger toad trout turkey turtle weasel whale wolf zebra fly
 mosquito bonobo squirrel anaconda reindeer grizzly sparrow
 swift starling nightingale larch swallow dolphin anaconda mouse
-opossum mockingbird blackbird
+opossum mockingbird blackbird antilope
 """.upper().strip().split()
 
 IMAGES = (

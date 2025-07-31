@@ -1,9 +1,11 @@
 import signal
-from typing import Never
+from typing import TypeAlias
 
 import pyperclip
 
 from . import piglatin
+
+Never: TypeAlias = None
 
 
 def ctrl_c_handler(*_) -> Never:
