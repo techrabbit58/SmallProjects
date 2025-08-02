@@ -15,6 +15,7 @@ from .setup import (
     MAX_ACCUSATIONS,
     LONGEST_PLACE_NAME_LENGTH,
     COMMANDS,
+    ZOPHIE_CLUES,
 )
 
 Minutes: TypeAlias = int
@@ -165,8 +166,28 @@ class App(Cmd):
         self.known_suspects_and_items.add(local_item)
         self.visited_places[self.current_place] = local_suspect.lower(), local_item.lower()
 
-    def do_JACCUSE(self, a_suspect: str) -> None:
+    def do_ZOPHIE(self, _: str) -> None:
+        suspect, _ = self.suspect_and_item
+        if notification := self.is_offended(suspect):
+            print(notification)
+        elif suspect not in ZOPHIE_CLUES:
+            print(f"\n{suspect} doesn't know anything about ZOPHIE THE CAT.")
+        else:
+            clue= ZOPHIE_CLUES[suspect]
+            print(f"\n{suspect} gives the following clue: {clue}")
+            if clue not in PLACES:
+                self.known_suspects_and_items.add(clue)
+
+    def is_offended(self, suspect: str) -> str | None:
+        return (f"\n{suspect} is offended due to your accusation and will "
+                "not help with your investigation. You better go to another "
+                "place and ask another suspect.") \
+            if suspect in self.accused_suspects else None
+
+    def do_JACCUSE(self, a_suspect: str) -> bool:
         self.accusations_left -= 1
+        # TODO: check if accusition is valid, or if the suspect is not the culprit
+        return False  # Only if the accused suspect is innocent
 
     @property
     def suspect_and_item(self) -> tuple[str, str]:

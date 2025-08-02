@@ -13,7 +13,7 @@ COMMANDS = [
     GOTO, a place, Visit another crime scene
     ITEM, an item, Ask the local suspect for a clue about an item
     SUSPECT, a suspect, Ask the local suspect for a clue about another suspect
-    CULPRIT, , Ask the local suspect if she knows the culprit
+    ZOPHIE, , Ask the local suspect if she knows where ZOPHIE is
     PLACES, , Review your observations at all possible crime scenes
     EXPLORE, , Review the current place's facts
     JACCUSE, a suspect, You accuse a possible culprit. Are you sure?
