@@ -14,24 +14,11 @@ from .setup import (
     CULPRIT,
     MAX_ACCUSATIONS,
     LONGEST_PLACE_NAME_LENGTH,
+    COMMANDS,
 )
 
 Minutes: TypeAlias = int
 Seconds: TypeAlias = int
-
-COMMANDS = [
-    command.strip().upper().split(", ") for command in """
-    HELP, , Know the opportunities
-    QUIT, , Give up
-    GOTO, a place, Visit another crime scene
-    ITEM, an item, Ask the local suspect for a clue about an item
-    SUSPECT, a suspect, Ask the local suspect for a clue about another suspect
-    CULPRIT, , Ask the local suspect if she knows the culprit
-    PLACES, , Review your observations at all possible crime scenes
-    EXPLORE, , Review the current place's facts
-    JACCUSE, a suspect, You accuse a possible culprit. Are you sure?
-    """.strip().split("\n")
-]
 
 
 # noinspection PyPep8Naming
@@ -111,6 +98,15 @@ class App(Cmd):
     def emptyline(self) -> None:
         """Do nothing."""
 
+    def default(self, line: str) -> None:
+        parts = line.upper().strip().split()
+        head, tail = parts[0], parts[1:]
+        command = (list(filter(lambda s: s[0].startswith(head), COMMANDS)) or [["missing", "", ""]])[0]
+        if command[0] == "missing":
+            print(f"\nI do not know how to do that: \"{line}\"")
+        else:
+            print(f"\nThe command \"{command[0]}\" is not yet implemented.")
+
     @staticmethod
     def do_QUIT(_: str) -> bool:
         return True
@@ -140,19 +136,26 @@ class App(Cmd):
 
     def do_GOTO(self, a_place: str) -> None:
         choices = list(filter(lambda s: s.startswith(a_place), PLACES))
-        if len(choices) == 0:
-            print("I do not know where to go. Be more accurate, please.")
-            return
-        if len(choices) > 1:
-            print(f"Your current choice is ambigous: {' or '.join(choices)}?")
-            return
-        next_place = choices[0]
+        match len(choices):
+            case 0:
+                print("I do not know where to go. Be more accurate, please.")
+            case 1:
+                next_place = choices[0]
+                print(self.change_location(next_place))
+                self.do_EXPLORE()
+            case _:
+                print(
+                    f"Your current choice is ambigous: {' or '.join(choices)}?\n"
+                    "Be more accurate, please."
+                )
+
+    def change_location(self, next_place: str) -> str:
         if next_place == self.current_place:
-            print("\nOops! You are already there. No change.")
+            notification = "\nOops! You are already there. No change."
         else:
-            print("\nYou take a TAXI to go to the next place ...")
+            notification = "\nYou take a TAXI to go to the next place ..."
         self.current_place = next_place
-        self.do_EXPLORE()
+        return notification
 
     def do_EXPLORE(self, _: str = None) -> None:
         print(f"\nYou are at the {self.current_place}.")

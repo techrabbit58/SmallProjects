@@ -6,6 +6,20 @@ ENTER, QUIT = "", "Q"
 TIME_TO_SOLVE = 300  # The player has this many seconds time to solve the riddle.
 MAX_ACCUSATIONS = 3  # The player may accuse upt to this number of people.
 
+COMMANDS = [
+    command.strip().upper().split(", ") for command in """
+    HELP, , Know the opportunities
+    QUIT, , Give up
+    GOTO, a place, Visit another crime scene
+    ITEM, an item, Ask the local suspect for a clue about an item
+    SUSPECT, a suspect, Ask the local suspect for a clue about another suspect
+    CULPRIT, , Ask the local suspect if she knows the culprit
+    PLACES, , Review your observations at all possible crime scenes
+    EXPLORE, , Review the current place's facts
+    JACCUSE, a suspect, You accuse a possible culprit. Are you sure?
+    """.strip().split("\n")
+]
+
 
 def get_end_time() -> float:
     start_time = time.time()
