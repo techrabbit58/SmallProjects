@@ -1,10 +1,20 @@
 import random
+import textwrap
 import time
 from cmd import Cmd
 from typing import TypeAlias
 
 from .interaction import intro, ask_player
-from .setup import PLACES, ENTER, get_end_time
+from .setup import (
+    PLACES,
+    ENTER,
+    get_end_time,
+    SUSPECTS,
+    ITEMS,
+    CULPRIT,
+    MAX_ACCUSATIONS,
+    LONGEST_PLACE_NAME_LENGTH,
+)
 
 Minutes: TypeAlias = int
 Seconds: TypeAlias = int
@@ -19,7 +29,7 @@ COMMANDS = [
     CULPRIT, , Ask the local suspect if she knows the culprit
     PLACES, , Review your observations at all possible crime scenes
     EXPLORE, , Review the current place's facts
-    ACCUSE, a suspect, You accuse a possible culprit. Are you sure?
+    JACCUSE, a suspect, You accuse a possible culprit. Are you sure?
     """.strip().split("\n")
 ]
 
@@ -31,13 +41,16 @@ class App(Cmd):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.current_place = random.choice(PLACES)
+        self.visited_places = {}  # place -> (list of suspects, list of items)
+        self.known_suspects_and_items = set()
+        self.accused_suspects = set()  # Accused suspects won't offer clues.
+        self.accusations_left = MAX_ACCUSATIONS
         self.end_time = get_end_time()
 
     def preloop(self) -> None:
         self.do_HELP()
         self.do_EXPLORE()
-        minutes_left, seconds_left = get_remaining_period(self.end_time)
-        print(f"\nTime left: {minutes_left} minutes, {seconds_left} seconds")
+        self.prompt = self.make_prompt()
         super().preloop()
 
     def precmd(self, line: str) -> str:
@@ -52,17 +65,54 @@ class App(Cmd):
         return super().precmd(response)
 
     def postcmd(self, stop: bool, line: str) -> bool:
+        if result := self.is_game_over:
+            print(result)
+            stop = True
         if not stop:
-            minutes_left, seconds_left = get_remaining_period(self.end_time)
-            print(f"\nTime left: {minutes_left} minutes, {seconds_left} seconds")
+            self.prompt = self.make_prompt()
         return super().postcmd(stop, line)
+
+    def make_prompt(self) -> str:
+        minutes_left, seconds_left = self.remaining_period
+        accusations_left = self.accusations_left
+        s = "" if accusations_left == 1 else "s"
+        return "\n".join((
+            f"\nTime left: {minutes_left} minutes, {seconds_left} seconds",
+            f"You have {accusations_left} accusation{s} left.",
+            "> ",
+        ))
+
+    @property
+    def is_game_over(self) -> str | None:
+        """Return a (truthy) notification string if ganme is over, or (falsish) None."""
+        result = []
+        is_lost = False
+        if self.accusations_left == 0:
+            is_lost = True
+            result.append("You have accused too many innocent people.")
+        if self.end_time < time.time():
+            is_lost = True
+            result.append("You have run out of time.")
+        if is_lost:
+            culprit_index = SUSPECTS.index(CULPRIT)
+            place = PLACES[culprit_index]
+            item = ITEMS[culprit_index]
+            result.append(f"The true culprit stood at the {place} with the {item}.")
+            result.append("Several lives now bore the cost of misjudgment")
+            result.append(f"— while {CULPRIT} walks free.")
+            return "\n" + "\n".join(textwrap.wrap(" ".join(result)))
+        else:
+            return None
+
+    def postloop(self) -> None:
+        print("\nThank you for playing.\n")
+        super().postloop()
 
     def emptyline(self) -> None:
         """Do nothing."""
 
     @staticmethod
     def do_QUIT(_: str) -> bool:
-        print("\nThank you for playing.\n")
         return True
 
     @staticmethod
@@ -80,11 +130,13 @@ class App(Cmd):
         for action, advice in actions:
             print(f"   {action:<{field_length + 3}}{advice.capitalize()}")
 
-    @staticmethod
-    def do_PLACES(_: str) -> None:
+    def do_PLACES(self, _: str) -> None:
         print("You should investigate these places carefully:\n")
         for place in sorted(PLACES):
-            print(f"   {place}")
+            info = ""
+            if place in self.visited_places:
+                info = [p.title() for p in self.visited_places[place]]
+            print(f"   {place:<{LONGEST_PLACE_NAME_LENGTH + 3}}{info}")
 
     def do_GOTO(self, a_place: str) -> None:
         choices = list(filter(lambda s: s.startswith(a_place), PLACES))
@@ -104,6 +156,28 @@ class App(Cmd):
 
     def do_EXPLORE(self, _: str = None) -> None:
         print(f"\nYou are at the {self.current_place}.")
+        local_suspect, local_item = self.suspect_and_item
+        print(f"{local_suspect} with the {local_item} is here.")
+        self.known_suspects_and_items.add(local_suspect)
+        self.known_suspects_and_items.add(local_item)
+        self.visited_places[self.current_place] = local_suspect.lower(), local_item.lower()
+
+    def do_JACCUSE(self, a_suspect: str) -> None:
+        self.accusations_left -= 1
+
+    @property
+    def suspect_and_item(self) -> tuple[str, str]:
+        index = PLACES.index(self.current_place)
+        local_suspect = SUSPECTS[index]
+        local_item = ITEMS[index]
+        return local_suspect, local_item
+
+    @property
+    def remaining_period(self) -> tuple[Minutes, Seconds]:
+        now = time.time()
+        time_left = int(self.end_time - now)
+        minutes_left, seconds_left = time_left // 60, time_left % 60
+        return minutes_left, seconds_left
 
 
 def main() -> None:
@@ -112,13 +186,6 @@ def main() -> None:
     print()
     app = App()
     app.cmdloop()
-
-
-def get_remaining_period(end_time: float) -> tuple[Minutes, Seconds]:
-    now = time.time()
-    time_left = int(end_time - now)
-    minutes_left, seconds_left = time_left // 60, time_left % 60
-    return minutes_left, seconds_left
 
 
 try:
