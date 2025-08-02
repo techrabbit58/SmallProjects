@@ -184,7 +184,7 @@ class App(Cmd):
                 "place and ask another suspect.") \
             if suspect in self.accused_suspects else None
 
-    def do_JACCUSE(self, a_suspect: str) -> bool:
+    def do_JACCUSE(self, suspect: str) -> bool:
         self.accusations_left -= 1
         # TODO: check if accusition is valid, or if the suspect is not the culprit
         return False  # Only if the accused suspect is innocent
