@@ -13,8 +13,10 @@ from .setup import (
     ITEMS,
     CULPRIT,
     MAX_ACCUSATIONS,
+    TIME_TO_SOLVE,
     LONGEST_PLACE_NAME_LENGTH,
     COMMANDS,
+    CLUES,
     ZOPHIE_CLUES,
 )
 
@@ -86,8 +88,11 @@ class App(Cmd):
             place = PLACES[culprit_index]
             item = ITEMS[culprit_index]
             result.append(f"The true culprit stood at the {place} with the {item}.")
-            result.append("Several lives now bore the cost of misjudgment")
-            result.append(f"— while {CULPRIT} walks free.")
+            if self.accusations_left != MAX_ACCUSATIONS:
+                result.append("Innocent lives now bore the cost of misjudgment")
+                result.append(f"— while {CULPRIT} walks free.")
+            else:
+                result.append(f"It was {CULPRIT} who catnapped ZOPHIE THE CAT.")
             return "\n" + "\n".join(textwrap.wrap(" ".join(result)))
         else:
             return None
@@ -130,9 +135,7 @@ class App(Cmd):
     def do_PLACES(self, _: str) -> None:
         print("You should investigate these places carefully:\n")
         for place in sorted(PLACES):
-            info = ""
-            if place in self.visited_places:
-                info = [p.title() for p in self.visited_places[place]]
+            info = self.visited_places.get(place, "")
             print(f"   {place:<{LONGEST_PLACE_NAME_LENGTH + 3}}{info}")
 
     def do_GOTO(self, a_place: str) -> None:
@@ -161,10 +164,37 @@ class App(Cmd):
     def do_EXPLORE(self, _: str = None) -> None:
         print(f"\nYou are at the {self.current_place}.")
         local_suspect, local_item = self.suspect_and_item
-        print(f"{local_suspect} with the {local_item} is here.")
+        print(f"{local_suspect} with the {local_item} is here.\n")
         self.known_suspects_and_items.add(local_suspect)
         self.known_suspects_and_items.add(local_item)
-        self.visited_places[self.current_place] = local_suspect.lower(), local_item.lower()
+        self.visited_places[self.current_place] = f"({local_suspect.title()}, {local_item.title()})"
+        if notofication := self.is_offended(local_suspect):
+            print(notofication)
+        else:
+            for suspect_or_item in self.known_suspects_and_items:
+                if suspect_or_item in (local_suspect, local_item):
+                    continue
+                _the_ = "the " if suspect_or_item in ITEMS else ""
+                print(f"You may like to ask {local_suspect} about {_the_}{suspect_or_item}.")
+
+    def do_CLUE(self, thing_being_asked_about: str) -> None:
+        suspect, item = self.suspect_and_item
+        if not thing_being_asked_about:
+            print("What do you want to know? Your question did not cover any item or suspect.")
+            return
+        things_being_asked_about = list(
+            filter(lambda s: s.startswith(thing_being_asked_about), SUSPECTS))
+        things_being_asked_about += list(
+            filter(lambda s: s.startswith(thing_being_asked_about), ITEMS))
+        if len(things_being_asked_about) != 1:
+            print(f"{suspect} says: Your question covered too many or too few things."
+                  f"\nWhere shall I start?")
+            return
+        thing_being_asked_about = things_being_asked_about[0]
+        clue = CLUES[suspect][thing_being_asked_about]
+        print(f"{suspect} gives this clue: {clue}")
+        if clue not in PLACES:
+            self.known_suspects_and_items.add(clue)
 
     def do_ZOPHIE(self, _: str) -> None:
         suspect, _ = self.suspect_and_item
@@ -184,10 +214,23 @@ class App(Cmd):
                 "place and ask another suspect.") \
             if suspect in self.accused_suspects else None
 
-    def do_JACCUSE(self, suspect: str) -> bool:
+    def do_JACCUSE(self, _: str) -> bool:
         self.accusations_left -= 1
-        # TODO: check if accusition is valid, or if the suspect is not the culprit
-        return False  # Only if the accused suspect is innocent
+        suspect, _ = self.suspect_and_item
+        if suspect == CULPRIT:
+            print("\nYou have cracked the case.")
+            print(f"It was {suspect} who had catnapped ZOPHIE THE CAT.")
+            minutes, seconds = self.remaining_period
+            time_taken = TIME_TO_SOLVE - minutes * 60 - seconds
+            minutes, seconds = time_taken // 60, time_taken % 60
+            print(f"You solved it in {minutes} minutes and {seconds} seconds.")
+            return True
+        else:
+            self.accused_suspects.add(suspect)
+            print("\nYou have accused the wrong person.")
+            print(f"{suspect} will not help you with anymore clues.")
+            print("You better go an seek the truth elsewhere.")
+            return False
 
     @property
     def suspect_and_item(self) -> tuple[str, str]:
