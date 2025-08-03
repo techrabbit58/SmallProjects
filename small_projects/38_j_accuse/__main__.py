@@ -74,7 +74,7 @@ class App(Cmd):
 
     @property
     def is_game_over(self) -> str | None:
-        """Return a (truthy) notification string if ganme is over, or (falsish) None."""
+        """Return a (truthy) notification string if ganme is over, or (falsish) None if not."""
         result = []
         is_lost = False
         if self.accusations_left == 0:
@@ -209,7 +209,7 @@ class App(Cmd):
                 self.known_suspects_and_items.add(clue)
 
     def is_offended(self, suspect: str) -> str | None:
-        return (f"\n{suspect} is offended due to your accusation and will "
+        return textwrap.wrap(f"\n{suspect} is offended due to your accusation and will "
                 "not help with your investigation. You better go to another "
                 "place and ask another suspect.") \
             if suspect in self.accused_suspects else None
