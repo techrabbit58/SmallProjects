@@ -89,7 +89,7 @@ fourinarow:
 fishtank:
 	python -m small_projects.27_fish_tank
 
-forestfire:
+forest:
 	python -m small_projects.29_forest_fire_sim
 
 hexgrid:
@@ -133,3 +133,9 @@ langtonsant:
 
 jaccuse:
 	python -m small_projects.38_j_accuse
+
+conway:
+	python -m small_projects.13_conways_game
+
+text2speach:
+	python -m small_projects.74_text_to_speech "Biologists are just a bunch of cells that talk about other cells."
