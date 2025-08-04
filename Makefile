@@ -139,3 +139,6 @@ conway:
 
 text2speach:
 	python -m small_projects.74_text_to_speech "Biologists are just a bunch of cells that talk about other cells."
+
+shining:
+	python -m small_projects.65_shining_carpet
