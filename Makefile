@@ -142,3 +142,6 @@ text2speach:
 
 shining:
 	python -m small_projects.65_shining_carpet
+
+soundmimic:
+	python -m small_projects.71_sound_mimic
