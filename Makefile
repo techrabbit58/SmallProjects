@@ -145,3 +145,6 @@ shining:
 
 soundmimic:
 	python -m small_projects.71_sound_mimic
+
+hourglass:
+	python -m small_projects.36_hourglass
