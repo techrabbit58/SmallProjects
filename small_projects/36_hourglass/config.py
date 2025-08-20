@@ -1,8 +1,9 @@
-PAUSE_LENGTH = 0.2  # seconds
-WIDE_FALL_CHANGE = 50
+PAUSE = 0.2  # seconds
+WIDE_FALL_CHANCE = 50
 
 SCREEN_WIDTH = 79
 SCREEN_HEIGHT = 25
 
 SAND = chr(9617)
 WALL = chr(9608)
+BLANK = " "
