@@ -1,4 +1,4 @@
-PAUSE = 0.2  # seconds
+PAUSE = 0.1  # seconds
 WIDE_FALL_CHANCE = 50
 
 SCREEN_WIDTH = 79
