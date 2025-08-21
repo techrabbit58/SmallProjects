@@ -148,3 +148,6 @@ soundmimic:
 
 hourglass:
 	python -m small_projects.36_hourglass
+
+mondrian:
+	python -m small_projects.47_mondrian_art_generator
