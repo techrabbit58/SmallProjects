@@ -6,15 +6,15 @@ from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
 
 
-def draw_bingo_card(fields, filename="bingo.pdf"):
+def draw_bingo_card(fields: list[list[list[int | None]]], filename: str = "bingo.pdf") -> None:
     c = canvas.Canvas(filename, pagesize=A5)
     width, height = A5
 
-    # Titel
+    # set title
     c.setFont("Helvetica-Bold", 24)
-    c.drawCentredString(width / 2, height - 20 * mm, "Bingo Deluxe")
+    c.drawCentredString(width / 2, height - 20 * mm, "Ninety Balls Bingo")
 
-    # Karten zeichnen
+    # draw cards
     field_width = 9 * 20  # 9 Spalten à 20px
     field_height = 3 * 20  # 3 Zeilen à 20px
     start_y = height - 40 * mm
@@ -28,25 +28,25 @@ def draw_bingo_card(fields, filename="bingo.pdf"):
                 x = x_offset + col * 20
                 y = y_offset - row * 20
 
-                # Hintergrundfarbe
+                # set background color
                 c.setFillColor(colors.whitesmoke)
                 c.rect(x, y, 20, 20, fill=1)
 
-                # Rahmen
-                c.setStrokeColor(colors.darkgray)
+                # draw grid
+                c.setStrokeColor(colors.grey)
                 c.rect(x, y, 20, 20, fill=0)
 
-                # Zahl
+                # insert numbers
                 num = field[col][row]
                 if num:
-                    c.setFont("Helvetica", 10)
+                    c.setFont("Helvetica-Bold", 10)
                     c.setFillColor(colors.black)
                     c.drawCentredString(x + 10, y + 6, str(num))
 
     c.save()
 
 
-def make_shuffled_decades():
+def make_shuffled_decades() -> list[list[int]]:
     decades = [
         list(range(1, 10)), list(range(10, 20)), list(range(20, 30)),
         list(range(30, 40)), list(range(40, 50)), list(range(50, 60)),
@@ -59,7 +59,7 @@ def make_shuffled_decades():
     return decades
 
 
-def partition_decades(decades):
+def partition_decades(decades: list[list[int]]) -> list[list[int]]:
     columns = []
     for i, decade in enumerate(decades):
         columns.append([])
@@ -73,7 +73,7 @@ def partition_decades(decades):
     return columns
 
 
-def generate_distribution_key():
+def generate_distribution_key() -> list[list[int]]:
     groups = [[2] * 9 for _ in range(6)]
     num_singles = [3, 2, 2, 2, 2, 2, 2, 2, 1]
     decade_seq = list(range(1, 8))
@@ -88,12 +88,12 @@ def generate_distribution_key():
     return groups
 
 
-def expand_decade_to_three(part):
+def expand_decade_to_three(part: list[int | None]) -> None:
     while len(part) < 3:
         part.insert(random.randrange(len(part) + 1), None)
 
 
-def distribute_number_groups(decades, key):
+def distribute_number_groups(decades: list[list[int | None]], key) -> list[list[list[int | None]]]:
     fields = []
     for field_index in range(6):
         fields.append([])
@@ -114,5 +114,5 @@ def main():
     all_fields = distribute_number_groups(partitioned_decades, distribution_key)
     draw_bingo_card(all_fields)
 
-if __name__ == "__main__":
-    main()
+
+main()

@@ -153,4 +153,4 @@ mondrian:
 	python -m small_projects.47_mondrian_art_generator
 
 bingo:
-	python small_projects/bingo.py
+	python -m small_projects.99_moc_bingo
