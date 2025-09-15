@@ -1,3 +1,4 @@
+reportlab
 colorama~=0.4.6
 get-key
 key_stroke
