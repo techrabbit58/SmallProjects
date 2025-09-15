@@ -1,7 +1,52 @@
 import random
 
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A5
+from reportlab.lib.units import mm
+from reportlab.pdfgen import canvas
 
-def generate_shuffled_lottery_drums() -> list[list[int]]:
+
+def draw_bingo_card(fields: list[list[list[int | None]]], filename: str = "bingo.pdf") -> None:
+    c = canvas.Canvas(filename, pagesize=A5)
+    width, height = A5
+
+    # set title
+    c.setFont("Helvetica-Bold", 24)
+    c.drawCentredString(width / 2, height - 20 * mm, "Bingo Lotto")
+
+    # draw cards
+    field_width = 9 * 20  # 9 Spalten à 20px
+    field_height = 3 * 20  # 3 Zeilen à 20px
+    start_y = height - 40 * mm
+
+    for i, field in enumerate(fields):
+        x_offset = (width - field_width) / 2
+        y_offset = start_y - i * (field_height + 15)
+
+        for row in range(3):
+            for col in range(9):
+                x = x_offset + col * 20
+                y = y_offset - row * 20
+
+                # set background color
+                c.setFillColor(colors.whitesmoke)
+                c.rect(x, y, 20, 20, fill=1)
+
+                # draw grid
+                c.setStrokeColor(colors.grey)
+                c.rect(x, y, 20, 20, fill=0)
+
+                # insert numbers
+                num = field[col][row]
+                if num:
+                    c.setFont("Helvetica-Bold", 10)
+                    c.setFillColor(colors.black)
+                    c.drawCentredString(x + 10, y + 6, str(num))
+
+    c.save()
+
+
+def make_shuffled_decades() -> list[list[int]]:
     decades = [
         list(range(1, 10)), list(range(10, 20)), list(range(20, 30)),
         list(range(30, 40)), list(range(40, 50)), list(range(50, 60)),
@@ -14,51 +59,73 @@ def generate_shuffled_lottery_drums() -> list[list[int]]:
     return decades
 
 
-def distribute(row: list[int]) -> list[int | None]:
-    distributed_row: list[int | None] = [None] * 9
-    for number in row:
-        decade = 8 if number == 90 else number // 10
-        distributed_row[decade] = number
-    return distributed_row
+def partition_decades(decades: list[list[int]]) -> list[list[int]]:
+    columns = []
+    for i, decade in enumerate(decades):
+        columns.append([])
+        for _ in range(6):
+            columns[i].append([decades[i].pop()])
+        for j in range(6):
+            if len(decades[i]):
+                columns[i][j].append(decades[i].pop())
+                columns[i][j].sort()
+        columns[i].sort(key=len)
+    return columns
 
 
-def pick_a_row(decades: list[list[int]]) -> list[int | None]:
-    candidate_decades = list(range(len(decades)))
-    candidate_decades.sort(key=lambda x: len(decades[x]), reverse=True)
-    candidate_decades = [candidate for candidate in candidate_decades if len(decades[candidate])]
-    random.shuffle(candidate_decades)
-    row, n = [], 5
-    for index in candidate_decades:
-        row.append(decades[index].pop())
-        n -= 1
-        if n == 0:
-            break
-    return distribute(row)
+def generate_distribution_key() -> list[list[int]]:
+    groups = [[2] * 9 for _ in range(6)]
+    num_singles = [3, 2, 2, 2, 2, 2, 2, 2, 1]
+    decade_seq = list(range(1, 8))
+    random.shuffle(decade_seq)
+    decade_seq = [0] + decade_seq + [8]
+    for d in decade_seq:  # decades
+        for g in groups:  # groups
+            if num_singles[d] > 0 and sum(g) > 15:
+                g[d] = 1
+                num_singles[d] -= 1
+    random.shuffle(groups)
+    return groups
 
 
-def pick_all_rows(decades: list[list[int]]) -> list[list[int | None]]:
-    rows = []
-    candidates = list(range(9))
-    for _ in range(18):
-        candidates = [(n + 1) % 9 for n in candidates]
-        row = pick_a_row(decades)
-        rows.append(row)
-    random.shuffle(rows)
-    return rows
+def pick_from_middle_row(fields: list[list[int | None]]) -> list[int]:
+    candidates = []
+    count = 0
+    for decade in range(9):
+        if fields[decade][2]:
+            count += 1
+        elif fields[decade][1]:
+            candidates.append(decade)
+    return random.sample(candidates, k=5 - count)
 
 
-def main() -> None:
-    decades = generate_shuffled_lottery_drums()
-    all_rows = pick_all_rows(decades)
-    for group in range(6):
-        for group_row in range(3):
-            row = all_rows[group * 3 + group_row]
-            print(group + 1, group_row + 1, "--", end=" ")
-            for num in row:
-                print(f"[{num:2}] " if num else "[  ] ", end="")
-            print()
-        print()
+def distribute_number_groups(decades: list[list[int | None]], key) -> list[list[list[int | None]]]:
+    fields = []
+    for field_index in range(6):
+        fields.append([])
+        first_line_picks = random.sample(range(9), k=4)
+        for decade in range(9):
+            size = key[field_index][decade]
+            if size == 1:
+                fields[-1].append(decades[decade].pop(0))
+            else:
+                fields[-1].append(decades[decade].pop())
+            if decade in first_line_picks:
+                fields[-1][-1].insert(0, None)
+            while len(fields[-1][-1]) < 3:
+                fields[-1][-1].append(None)
+        middle_row_picks = pick_from_middle_row(fields[-1])
+        for i in middle_row_picks:
+            fields[-1][i][1], fields[-1][i][2] = fields[-1][i][2], fields[-1][i][1]
+    return fields
 
 
-if __name__ == "__main__":
-    main()
+def main():
+    shuffled_decades = make_shuffled_decades()
+    partitioned_decades = partition_decades(shuffled_decades)
+    distribution_key = generate_distribution_key()
+    all_fields = distribute_number_groups(partitioned_decades, distribution_key)
+    draw_bingo_card(all_fields)
+
+
+main()
