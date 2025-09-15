@@ -12,7 +12,7 @@ def draw_bingo_card(fields: list[list[list[int | None]]], filename: str = "bingo
 
     # set title
     c.setFont("Helvetica-Bold", 24)
-    c.drawCentredString(width / 2, height - 20 * mm, "Ninety Balls Bingo")
+    c.drawCentredString(width / 2, height - 20 * mm, "Bingo Lotto")
 
     # draw cards
     field_width = 9 * 20  # 9 Spalten à 20px
@@ -88,22 +88,35 @@ def generate_distribution_key() -> list[list[int]]:
     return groups
 
 
-def expand_decade_to_three(part: list[int | None]) -> None:
-    while len(part) < 3:
-        part.insert(random.randrange(len(part) + 1), None)
+def pick_from_middle_row(fields: list[list[int | None]]) -> list[int]:
+    candidates = []
+    count = 0
+    for decade in range(9):
+        if fields[decade][2]:
+            count += 1
+        elif fields[decade][1]:
+            candidates.append(decade)
+    return random.sample(candidates, k=5 - count)
 
 
 def distribute_number_groups(decades: list[list[int | None]], key) -> list[list[list[int | None]]]:
     fields = []
     for field_index in range(6):
         fields.append([])
+        first_line_picks = random.sample(range(9), k=4)
         for decade in range(9):
             size = key[field_index][decade]
             if size == 1:
                 fields[-1].append(decades[decade].pop(0))
             else:
                 fields[-1].append(decades[decade].pop())
-            expand_decade_to_three(fields[-1][-1])
+            if decade in first_line_picks:
+                fields[-1][-1].insert(0, None)
+            while len(fields[-1][-1]) < 3:
+                fields[-1][-1].append(None)
+        middle_row_picks = pick_from_middle_row(fields[-1])
+        for i in middle_row_picks:
+            fields[-1][i][1], fields[-1][i][2] = fields[-1][i][2], fields[-1][i][1]
     return fields
 
 
