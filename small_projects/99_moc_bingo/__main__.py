@@ -33,7 +33,7 @@ def partition_decades(decades: list[list[int]]) -> list[list[int]]:
     return columns
 
 
-def generate_distribution_key() -> list[list[int]]:
+def make_distribution_key() -> list[list[int]]:
     groups = [[2] * 9 for _ in range(6)]
     num_singles = [3, 2, 2, 2, 2, 2, 2, 2, 1]
     decade_seq = list(range(1, 8))
@@ -48,7 +48,7 @@ def generate_distribution_key() -> list[list[int]]:
     return groups
 
 
-def pick_from_middle_row(fields: list[list[int | None]]) -> list[int]:
+def where_to_pick_from_middle_row(fields: list[list[int | None]]) -> list[int]:
     candidates = []
     count = 0
     for decade in range(9):
@@ -63,18 +63,18 @@ def distribute_number_groups(decades: list[list[int | None]], key) -> list[list[
     fields = []
     for field_index in range(6):
         fields.append([])
-        first_line_picks = random.sample(range(9), k=4)
+        first_row_picks = random.sample(range(9), k=4)
         for decade in range(9):
             size = key[field_index][decade]
             if size == 1:
                 fields[-1].append(decades[decade].pop(0))
             else:
                 fields[-1].append(decades[decade].pop())
-            if decade in first_line_picks:
+            if decade in first_row_picks:
                 fields[-1][-1].insert(0, None)
             while len(fields[-1][-1]) < 3:
                 fields[-1][-1].append(None)
-        middle_row_picks = pick_from_middle_row(fields[-1])
+        middle_row_picks = where_to_pick_from_middle_row(fields[-1])
         for i in middle_row_picks:
             fields[-1][i][1], fields[-1][i][2] = fields[-1][i][2], fields[-1][i][1]
     return fields
@@ -123,7 +123,7 @@ def draw_bingo_card(fields: list[list[list[int | None]]], filename: str = "bingo
 def main():
     shuffled_decades = make_shuffled_decades()
     partitioned_decades = partition_decades(shuffled_decades)
-    distribution_key = generate_distribution_key()
+    distribution_key = make_distribution_key()
     all_fields = distribute_number_groups(partitioned_decades, distribution_key)
     draw_bingo_card(all_fields)
 

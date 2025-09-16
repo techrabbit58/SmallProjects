@@ -154,3 +154,6 @@ mondrian:
 
 bingo:
 	python -m small_projects.99_moc_bingo
+
+rotating:
+	python -m small_projects.62_rotating_cube
