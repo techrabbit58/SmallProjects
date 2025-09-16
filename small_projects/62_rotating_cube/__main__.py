@@ -5,14 +5,14 @@ import time
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-PAUSE_AMOUNT = 0.1  # pause length (seconds)
+PAUSE = 0.1  # pause length (seconds)
 WIDTH, HEIGHT = 80, 24
 SCALEX = (WIDTH - 4) // 8
 SCALEY = 2 * ((HEIGHT - 4) // 8)  # text cells are twice as tall as they are wide
 TRANSLATEX = (WIDTH - 4) // 2
 TRANSLATEY = (HEIGHT - 4) // 2
 
-LINE_CHAR = chr(9608)
+LINE_CHAR = chr(8226)
 BLANK = " "
 
 X_ROTATE_SPEED = 0.03
@@ -42,14 +42,14 @@ class Vector:
      6------7
 """
 CUBE_CORNERS = [
-    Vector(-1, -1, -1),
-    Vector(1, -1, -1),
-    Vector(-1, -1, 1),
-    Vector(1, -1, 1),
-    Vector(-1, 1, -1),
-    Vector(1, 1, -1),
-    Vector(-1, 1, 1),
-    Vector(1, 1, 1),
+    Vector(-1, -1, -1),     # 0
+    Vector(1, -1, -1),      # 1
+    Vector(-1, -1, 1),      # 2
+    Vector(1, -1, 1),       # 3
+    Vector(-1, 1, -1),      # 4
+    Vector(1, 1, -1),       # 5
+    Vector(-1, 1, 1),       # 6
+    Vector(1, 1, 1),        # 7
 ]
 
 
@@ -77,41 +77,41 @@ def adjust_point(point: Vector) -> tuple[int, int]:
     return int(point.x * SCALEX + TRANSLATEX), int(point.y * SCALEY + TRANSLATEY)
 
 
-def get_points_on_line(ax: int, ay: int, bx: int, by: int) -> list[tuple[int, int]]:
+def get_points_on_line(x1: int, y1: int, x2: int, y2: int) -> set[tuple[int, int]]:
     """
     Find all pixels of a line from point A to point B on the screen by applying
     Bresenham's algorithm.
-    :param ax: The x coordinate of point A
-    :param ay: The y coordinate of point A
-    :param bx: The x coordinate of point B
-    :param by: The y coordinate of point B
+    :param x1: The x coordinate of point A
+    :param y1: The y coordinate of point A
+    :param x2: The x coordinate of point B
+    :param y2: The y coordinate of point B
     :return: A list of 2D points (a.k.a. pixel locations)
     """
-    points: list[tuple[int, int]] = []
-    
-    if (ax == bx and ay == by + 1) or (ay == by and ax == bx + 1):
-        """Trivial result, if both points are direct neighbours."""
-        return [(ax, ay), (bx, by)]
-    
-    is_steep = abs(by - ay) > abs(bx - ax)  # True, if the positive or negative slope is .gt. 45 degrees
+    points: set[tuple[int, int]] = {(x1, y1), (x2, y2)}
+
+    if (x1 == x2 and y1 == y2 + 1) or (y1 == y2 and x1 == x2 + 1):
+        """Has the trivial result, if both points are direct neighbours."""
+        return points
+
+    is_steep = abs(y2 - y1) > abs(x2 - x1)  # True, if the positive or negative slope is .gt. 45 degrees
     if is_steep:  # Adjust slope because Bresenham's does not work for steep lines
-        ax, ay = ay, ax
-        bx, by = by, bx
-        
-    is_reversed = ax > bx  # True if the line goes right to left
+        x1, y1 = y1, x1
+        x2, y2 = y2, x2
+
+    is_reversed = x1 > x2  # True if the line goes right to left
     if is_reversed:
-        ax, bx = bx, ax
-        ay, by = by, ay
-    
-    delta_x = bx - ax
-    delta_y = abs(by - ay)
+        x1, x2 = x2, x1
+        y1, y2 = y2, y1
+
+    delta_x = x2 - x1
+    delta_y = abs(y2 - y1)
     extra_y = int(delta_x / 2)
-    current_y = by if is_reversed else ay
-    y_direction = 1 if ay < by else -1
-    x_range = range(bx, ax - 1, -1) if is_reversed else range(ax, bx + 1)
-    
+    current_y = y2 if is_reversed else y1
+    y_direction = 1 if y1 < y2 else -1
+    x_range = range(x2, x1 - 1, -1) if is_reversed else range(x1, x2 + 1)
+
     for current_x in x_range:
-        points.append((current_x, current_y) if is_steep else (current_y, current_x))
+        points.add((current_y, current_x) if is_steep else (current_x, current_y))
         extra_y -= delta_y
         if is_reversed and extra_y <= 0:
             current_y -= y_direction
@@ -119,7 +119,7 @@ def get_points_on_line(ax: int, ay: int, bx: int, by: int) -> list[tuple[int, in
         if not is_reversed and extra_y < 0:
             current_y += y_direction
             extra_y += delta_x
-    
+
     return points
 
 
@@ -130,7 +130,7 @@ def display_on_screen(cube_points: Iterable[tuple[int, int]]) -> None:
                 print(LINE_CHAR, end="", flush=False)
             else:
                 print(BLANK, end="", flush=False)
-        print()
+        print(flush=False)
     print("Press Ctrl-C to quit.", end="", flush=True)
 
 
@@ -138,6 +138,7 @@ def main() -> None:
     rotation = Vector()
     delta = Vector(X_ROTATE_SPEED, Y_ROTATE_SPEED, Z_ROTATE_SPEED)
     rotated_corners: list[Vector | None] = [None] * 8
+    edges = tuple(zip((0, 1, 3, 2, 0, 1, 2, 3, 4, 5, 7, 6), (1, 3, 2, 0, 4, 5, 6, 7, 5, 7, 6, 4)))
 
     try:
         while True:
@@ -146,17 +147,16 @@ def main() -> None:
             for i, corner in enumerate(CUBE_CORNERS):
                 rotated_corners[i] = rotate_point(corner, rotation)
 
-            cube_points = []
-            for a, b in zip((0, 1, 3, 2, 0, 1, 2, 3, 4, 5, 7, 6), (1, 3, 2, 0, 4, 5, 6, 7, 5, 7, 6, 4)):
-                ax, ay = adjust_point(rotated_corners[a])
-                bx, by = adjust_point(rotated_corners[b])
-                points_on_line = get_points_on_line(ax, ay, bx, by)
-                cube_points.extend(points_on_line)
-            cube_points = tuple(frozenset(cube_points))  # remove duplicate points
+            cube_points = set()
+            for a, b in edges:
+                point_a = adjust_point(rotated_corners[a])
+                point_b = adjust_point(rotated_corners[b])
+                points_on_line = get_points_on_line(*point_a, *point_b)
+                cube_points.update(points_on_line)
 
             display_on_screen(cube_points)
 
-            time.sleep(PAUSE_AMOUNT)
+            time.sleep(PAUSE)
             os.system("cls" if sys.platform == "win32" else "clear")
 
     except KeyboardInterrupt:
