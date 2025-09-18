@@ -163,3 +163,6 @@ royalgame:
 
 snailrace:
 	python -m small_projects.69_snail_race
+
+slidingtiles:
+	python -m small_projects.68_sliding_tile_puzzle
