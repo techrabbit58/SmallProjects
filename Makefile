@@ -160,3 +160,6 @@ rotating:
 
 royalgame:
 	python -m small_projects.63_royal_game_of_ur
+
+snailrace:
+	python -m small_projects.69_snail_race
