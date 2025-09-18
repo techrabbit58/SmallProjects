@@ -207,8 +207,7 @@ def main() -> None:
     print("Thanks for playing.\n")
 
 
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        pass
+try:
+    main()
+except KeyboardInterrupt:
+    pass
