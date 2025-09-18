@@ -46,7 +46,7 @@ def clear_screen(clear: str = "cls" if sys.platform == "win32" else "clear"):
 
 
 def get_intro() -> str:
-    return textwrap.dedent("""
+    return textwrap.dedent(f"""
     The Royal Game of Ur
     
     Two players must move seven tokens from their home to their goal.
@@ -55,7 +55,7 @@ def get_intro() -> str:
     as he got heads. Then the turn changes. The first player who moves 
     all his seven tokens from home to the goal, wins the game.
     
-                X home      X goal
+                {X_PLAYER} home      {X_PLAYER} goal
                   v           ^
     +---+---+---+-v-+       +-^-+---+
     |v<<<<<<<<<<<<< |       | ^<<<< |
@@ -68,7 +68,7 @@ def get_intro() -> str:
     |^<<<<<<<<<<<<< |       | v<<<< |
     +---+---+---+-^-+       +-v-+---+
                   ^           v
-                O home      O goal
+                {O_PLAYER} home      {O_PLAYER} goal
                 
     If a player lands one token on the opponents token in the middle
     track, it sends this token back to the opponent's home. If a token
@@ -77,51 +77,50 @@ def get_intro() -> str:
     """).strip()
 
 
-def get_new_board() -> dict[str, int | str]:
-    board: dict[str, int | str] = {X_HOME: 7, X_GOAL: 0, O_HOME: 7, O_GOAL: 0}
+@dataclass(kw_only=True, frozen=True)
+class Player:
+    name: str
+    home: str
+    track: str
+    goal: str
+
+
+def get_new_board(*, player_o: Player, player_x: Player) -> dict[str, int | str]:
+    board: dict[str, int | str] = {player_x.home: 7, player_x.goal: 0, player_o.home: 7, player_o.goal: 0}
     for label in SPACES:
         board[label] = EMPTY
     return board
 
 
 def render_game_board(board: dict[str, int | str]) -> str:
-    x_home_tokens = ("X" * board[X_HOME]).ljust(7, ".")
-    x_goal_tokens = ("X" * board[X_GOAL]).ljust(7, ".")
-    o_home_tokens = ("O" * board[O_HOME]).ljust(7, ".")
-    o_goal_tokens = ("O" * board[O_GOAL]).ljust(7, ".")
+    x_home_tokens = (X_PLAYER * board[X_HOME]).ljust(7, ".")
+    x_goal_tokens = (X_PLAYER * board[X_GOAL]).ljust(7, ".")
+    o_home_tokens = (O_PLAYER * board[O_HOME]).ljust(7, ".")
+    o_goal_tokens = (O_PLAYER * board[O_GOAL]).ljust(7, ".")
     spaces = ([x_home_tokens, x_goal_tokens] +
               [board[label] for label in SPACES] +
               [o_home_tokens, o_goal_tokens])
     return BOARD_TEMPLATE.format(*spaces)
 
 
-@dataclass(kw_only=True, frozen=True)
-class Context:
-    home: str
-    track: str
-    goal: str
-    opponent: str
-    opponent_home: str
-
-
-def get_valid_moves(board: dict[str, int | str], player: str, flip_tally: int, context: Context) -> list[str]:
+def get_valid_moves(*, board: dict[str, int | str], flip_tally: int, player: Player, opponent: Player) -> list[str]:
     valid_moves = []
 
-    if board[context.home] > 0 and board[context.track[flip_tally]] == EMPTY:
+    if board[player.home] > 0 and board[player.track[flip_tally]] == EMPTY:
         valid_moves.append("home")
 
-    for index, space in enumerate(context.track):
-        if space in ("G", "H") or board[space] != player:
+    for index, space in enumerate(player.track):
+        if space in ("G", "H") or board[space] != player.name:
             continue
         next_index = index + flip_tally
-        if next_index >= len(context.track):
+        if next_index >= len(player.track):
             continue
-        next_space = context.track[next_index]
+        next_space = player.track[next_index]
         if next_space == "G":
             valid_moves.append(space)
             continue
-        if board[next_space] in (EMPTY, context.opponent):
-            if next_space == "l" and board["l"] == context.opponent:
+        if board[next_space] in {EMPTY, opponent.name}:
+            if next_space == "l" and board["l"] == opponent.name:
                 continue
             valid_moves.append(space)
 
@@ -133,18 +132,14 @@ def main() -> None:
     print(get_intro())
     input("\nPress Enter to begin...")
 
-    board = get_new_board()
-    player = O_PLAYER
+    player = Player(name=O_PLAYER, home=O_HOME, track=O_TRACK, goal=O_GOAL)
+    opponent = Player(name=X_PLAYER, home=X_HOME, track=X_TRACK, goal=X_GOAL)
+    board = get_new_board(player_o=player, player_x=opponent)
 
     while True:
-        if player == X_PLAYER:
-            context = Context(home=X_HOME, track=X_TRACK, goal=X_GOAL, opponent=O_PLAYER, opponent_home=O_HOME)
-        else:
-            context = Context(home=O_HOME, track=O_TRACK, goal=O_GOAL, opponent=X_PLAYER, opponent_home=X_HOME)
-
         clear_screen()
         print(render_game_board(board))
-        input(f"Ready player {player}. Press Enter to flip the coins...")
+        print(f"Ready player {player.name}.")
 
         flip_tally = 0
         print("Flips: ", end="", flush=True)
@@ -157,14 +152,14 @@ def main() -> None:
 
         if flip_tally == 0:
             input("No heads. You loose this turn. Press Enter to continue...")
-            player = context.opponent
+            player, opponent = opponent, player
             continue
 
-        valid_moves = get_valid_moves(board, player, flip_tally, context)
+        valid_moves = get_valid_moves(board=board, flip_tally=flip_tally, player=player, opponent=opponent)
 
-        if not valid_moves:
+        if len(valid_moves) <= 1:  # The only available move would be "quit"
             input("No valid moves. You loose this turn. Press Enter to continue...")
-            player = context.opponent
+            player, opponent = opponent, player
             continue
 
         move = None
@@ -182,32 +177,32 @@ def main() -> None:
             break
 
         if move == "home":
-            board[context.home] -= 1
+            board[player.home] -= 1
             next_index = flip_tally
         else:
             board[move] = EMPTY
-            next_index = context.track.index(move) + flip_tally
+            next_index = player.track.index(move) + flip_tally
 
-        moving_onto_goal = (next_index == len(context.track) - 1)
+        moving_onto_goal = (next_index == len(player.track) - 1)
+        next_space = None
         if moving_onto_goal:
-            board[context.goal] += 1
-            if board[context.goal] == 7:
+            board[player.goal] += 1
+            if board[player.goal] == 7:
                 clear_screen()
                 print(render_game_board(board))
-                print(f"Player {player} wins!")
+                print(f"* * *  Player {player.name} wins.  * * *")
                 break
         else:
-            next_space = context.track[next_index]
-            if board[next_space] == context.opponent:
-                board[context.opponent_home] += 1
-
-        board[next_space] = player
+            next_space = player.track[next_index]
+            if board[next_space] == opponent.name:
+                board[opponent.home] += 1
+            board[next_space] = player.name
 
         if next_space in FLOWERS:
-            input(f"{player} landed on a flower space and goes again. Press Enter to continue...")
+            input(f"{player.name} landed on a flower space and goes again. Press Enter to continue...")
             continue
 
-        player = context.opponent
+        player, opponent = opponent, player
 
     print("Thanks for playing.\n")
 
