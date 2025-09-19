@@ -166,3 +166,6 @@ snailrace:
 
 slidingtiles:
 	python -m small_projects.68_sliding_tile_puzzle
+
+mancala:
+	python -m small_projects.43_mancala
