@@ -1,7 +1,6 @@
 import os
 import sys
 import textwrap
-import time
 from collections.abc import Iterable
 from dataclasses import dataclass
 
@@ -12,6 +11,7 @@ PLAYER_2_STORE = "2"
 
 PIT_LABELS = ''.join(PLAYER_1_PITS) + PLAYER_1_STORE + ''.join(reversed(PLAYER_2_PITS)) + PLAYER_2_STORE
 OPPOSITE_PIT = dict(zip(PLAYER_1_PITS + PLAYER_2_PITS, PLAYER_2_PITS + PLAYER_1_PITS))
+OPPOSITE_STORE = {PLAYER_1_STORE: PLAYER_2_STORE, PLAYER_2_STORE: PLAYER_1_STORE}
 NEXT_PIT = {a: b for a, b in zip(PIT_LABELS, PIT_LABELS[1:] + PIT_LABELS)}
 RENDER_SEQUENCE = PLAYER_2_PITS + (PLAYER_2_STORE, PLAYER_1_STORE) + PLAYER_1_PITS
 
@@ -45,7 +45,6 @@ def clear_screen(clear: str = "cls" if sys.platform == "win32" else "clear"):
 class Player:
     store: str
     pits: Iterable[str]
-    opponent_store: str
 
 
 class Board:
@@ -74,10 +73,34 @@ class Board:
     def is_empty_pit(self, move: str) -> bool:
         return self._board[move] == 0
 
-    def apply_move(self, player: Player, move: str) -> None:
-        print(f"*** Player {player.store} takes all seeds from pit {move}.")
-        print(f"*** Player {player.store} spreads {self._board[move]} seeds.")
-        time.sleep(1)
+    def is_only_one_seed(self, move: str) -> bool:
+        return self._board[move] == 1
+
+    def _take_seeds_from_pit(self, move: str) -> int:
+        num_seeds = self._board[move]
+        self._board[move] = 0
+        return num_seeds
+
+    def apply_move(self, player: Player, move: str) -> str:
+        seeds = self._take_seeds_from_pit(move)
+        pit = move
+
+        for _ in range(seeds):
+            pit = NEXT_PIT[pit]
+            if pit == OPPOSITE_STORE[player.store]:  # skip opponent's store
+                pit = NEXT_PIT[pit]
+            self._board[pit] += 1
+
+        return pit  # return pit or store of last seed
+
+    def claim_opposite_pit(self, last_groove: str) -> None:
+        self._board[last_groove] += self._take_seeds_from_pit(OPPOSITE_PIT[last_groove])
+
+    def get_score(self, player: Player) -> int:
+        score = self._board[player.store]
+        for pit in player.pits:
+            score += self._board[pit]
+        return score
 
 
 def main() -> None:
@@ -86,21 +109,35 @@ def main() -> None:
     input("Press Enter to begin...")
 
     board = Board()
-    player = Player(store=PLAYER_1_STORE, pits=PLAYER_1_PITS, opponent_store=PLAYER_2_STORE)
-    opponent = Player(store=PLAYER_2_STORE, pits=PLAYER_2_PITS, opponent_store=PLAYER_1_STORE)
+    player = Player(store=PLAYER_1_STORE, pits=PLAYER_1_PITS)
+    opponent = Player(store=PLAYER_2_STORE, pits=PLAYER_2_PITS)
     error = False
 
     while True:
         clear_screen()
         print(board)
 
+        valid_pits = [pit for pit in player.pits if not board.is_empty_pit(pit)]
+
+        if not valid_pits:  # game over
+            player_score = board.get_score(player)
+            opponent_score = board.get_score(opponent)
+            if player_score > opponent_score:
+                winner = player.store
+            elif player_score < opponent_score:
+                winner = opponent.store
+            else:
+                winner = "tie"
+            print("\nIt's a tie." if winner == "tie" else f"\nPlayer {winner} wins!")
+            break
+
         print(f"Ready player {player.store}.")
         if error:
             print("You can only choose from the non-empty pits on your own side.")
             error = False
-        print(f"Choose your move: {', '.join(player.pits)} (or Quit).")
+        print(f"Choose your move: {', '.join(valid_pits)} (or Quit).")
 
-        valid_moves = {"QUIT", "Q"}.union(*(pit for pit in player.pits if not board.is_empty_pit(pit)))
+        valid_moves = {"QUIT", "Q"}.union(*valid_pits)
         move = input("> ").strip().upper()
 
         if not move:
@@ -113,7 +150,16 @@ def main() -> None:
         if move in {"Q", "QUIT"}:
             break
 
-        board.apply_move(player, move)
+        last_groove = board.apply_move(player, move)
+
+        if last_groove == player.store:
+            print("Last seed fell into player's own store.")
+            input(f"Player {player.store} keeps playing. Press Enter to continue...")
+            continue
+
+        if last_groove in player.pits and board.is_only_one_seed(last_groove):
+            input(f"Player {player.store} claims seed from opponent's pit. Press Enter to continue...")
+            board.claim_opposite_pit(last_groove)
 
         player, opponent = opponent, player
 
