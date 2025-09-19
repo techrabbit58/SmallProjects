@@ -68,7 +68,7 @@ def game_loop(files):
         print("Pattern: ", end="")
         for letter in pattern:
             print(letter, end="", flush=True)
-            filename = files[letter].name
+            filename = files[letter].store
             playsound(filename)
 
         time.sleep(1)
@@ -79,7 +79,7 @@ def game_loop(files):
         if answer != pattern:
             print(f"Incorrect!\nThe pattern was: {pattern}")
             for letter in pattern:
-                filename = files[letter].name
+                filename = files[letter].store
                 playsound(filename)
 
             print(f"You scored {len(pattern) - 1} points.")
