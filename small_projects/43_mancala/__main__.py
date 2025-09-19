@@ -86,20 +86,26 @@ def main() -> None:
     while True:
         clear_screen()
         print(board)
+
         print(f"Ready player {player.store}.")
         if error:
             print("You can only choose from the non-empty pits on your own side.")
             error = False
         print(f"Choose your move: {', '.join(player.pits)} (or Quit).")
+
         valid_moves = {"QUIT", "Q"}.union(*(pit for pit in player.pits if not board.is_empty_pit(pit)))
         move = input("> ").strip().upper()
+
         if not move:
             continue
+
         if move not in valid_moves:
             error = True
             continue
+
         if move in {"Q", "QUIT"}:
             break
+
         player, opponent = opponent, player
 
     print("\nThanks for playing!\n")
