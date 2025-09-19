@@ -45,6 +45,7 @@ def clear_screen(clear: str = "cls" if sys.platform == "win32" else "clear"):
 class Player:
     store: str
     pits: Iterable[str]
+    opponent_store: str
 
 
 class Board:
@@ -85,8 +86,8 @@ def main() -> None:
     input("Press Enter to begin...")
 
     board = Board()
-    player = Player(store=PLAYER_1_STORE, pits=PLAYER_1_PITS)
-    opponent = Player(store=PLAYER_2_STORE, pits=PLAYER_2_PITS)
+    player = Player(store=PLAYER_1_STORE, pits=PLAYER_1_PITS, opponent_store=PLAYER_2_STORE)
+    opponent = Player(store=PLAYER_2_STORE, pits=PLAYER_2_PITS, opponent_store=PLAYER_1_STORE)
     error = False
 
     while True:
