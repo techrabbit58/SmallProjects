@@ -1,6 +1,7 @@
 import os
 import sys
 import textwrap
+import time
 from collections.abc import Iterable
 from dataclasses import dataclass
 
@@ -40,6 +41,12 @@ def clear_screen(clear: str = "cls" if sys.platform == "win32" else "clear"):
     os.system(clear)
 
 
+@dataclass(kw_only=True, frozen=True)
+class Player:
+    store: str
+    pits: Iterable[str]
+
+
 class Board:
     def __init__(self) -> None:
         self._board: dict[str, int] = {}
@@ -66,11 +73,10 @@ class Board:
     def is_empty_pit(self, move: str) -> bool:
         return self._board[move] == 0
 
-
-@dataclass(kw_only=True, frozen=True)
-class Player:
-    store: str
-    pits: Iterable[str]
+    def apply_move(self, player: Player, move: str) -> None:
+        print(f"*** Player {player.store} takes all seeds from pit {move}.")
+        print(f"*** Player {player.store} spreads {self._board[move]} seeds.")
+        time.sleep(1)
 
 
 def main() -> None:
@@ -105,6 +111,8 @@ def main() -> None:
 
         if move in {"Q", "QUIT"}:
             break
+
+        board.apply_move(player, move)
 
         player, opponent = opponent, player
 
