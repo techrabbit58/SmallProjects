@@ -96,6 +96,13 @@ class Board:
     def claim_opposite_pit(self, last_groove: str) -> None:
         self._board[last_groove] += self._take_seeds_from_pit(OPPOSITE_PIT[last_groove])
 
+    @property
+    def is_game_over(self) -> bool:
+        return not all((
+            [pit for pit in PLAYER_1_PITS if not self.is_empty_pit(pit)],
+            [pit for pit in PLAYER_2_PITS if not self.is_empty_pit(pit)]
+        ))
+
     def get_score(self, player: Player) -> int:
         score = self._board[player.store]
         for pit in player.pits:
@@ -119,18 +126,6 @@ def main() -> None:
 
         valid_pits = [pit for pit in player.pits if not board.is_empty_pit(pit)]
 
-        if not valid_pits:  # game over
-            player_score = board.get_score(player)
-            opponent_score = board.get_score(opponent)
-            if player_score > opponent_score:
-                winner = player.store
-            elif player_score < opponent_score:
-                winner = opponent.store
-            else:
-                winner = "tie"
-            print("\nIt's a tie." if winner == "tie" else f"\nPlayer {winner} wins!")
-            break
-
         print(f"Ready player {player.store}.")
         if error:
             print("You can only choose from the non-empty pits on your own side.")
@@ -152,14 +147,28 @@ def main() -> None:
 
         last_groove = board.apply_move(player, move)
 
-        if last_groove == player.store:
-            print("Last seed fell into player's own store.")
-            input(f"Player {player.store} keeps playing. Press Enter to continue...")
-            continue
+        if board.is_game_over:  # game over
+            clear_screen()
+            print(board)
+            player_score = board.get_score(player)
+            opponent_score = board.get_score(opponent)
+            if player_score > opponent_score:
+                winner = player.store
+            elif player_score < opponent_score:
+                winner = opponent.store
+            else:
+                winner = "tie"
+            print("\nIt's a tie." if winner == "tie" else f"\nPlayer {winner} wins!")
+            break
 
         if last_groove in player.pits and board.is_only_one_seed(last_groove):
             input(f"Player {player.store} claims seed from opponent's pit. Press Enter to continue...")
             board.claim_opposite_pit(last_groove)
+
+        if last_groove == player.store:
+            print("Last seed fell into player's own store.")
+            input(f"Player {player.store} keeps playing. Press Enter to continue...")
+            continue
 
         player, opponent = opponent, player
 
