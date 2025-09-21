@@ -169,3 +169,6 @@ slidingtiles:
 
 mancala:
 	python -m small_projects.43_mancala
+
+hungryrobots:
+	python -m small_projects.37_hungry_robots
