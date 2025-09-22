@@ -1,7 +1,7 @@
 import textwrap
 from cmd import Cmd
 
-from . import parameters as conf, world
+from . import world
 from .display import clear_screen
 
 
@@ -16,7 +16,7 @@ class Game(Cmd):
     must trick the robots to crash into each other or into dead robots,
     but avoid to be caught by a robot. Your personal teleporter device
     lets you magically jump to arbitrary free spaces inside the maze,
-    but has battery capacity only for up to {conf.get('NUM_TELEPORTS')} jumps. You and the robots
+    but has battery capacity only for up to {world.get_num_teleports()} jumps. You and the robots
     can always go up, down, left, right or diagonal. You can slip throgh
     open corners when going diagonally. Keep in mind, the robots can do 
     the same!
@@ -53,8 +53,8 @@ class Game(Cmd):
             world.move_all_robots()
             self.is_granted_move = False
         if world.is_player_alive():
-            if world.num_robots() > 0:
-                world.add_message(f"You are still alive and chased by {world.num_robots()} robots.")
+            if world.get_num_robots() > 0:
+                world.add_message(f"You are still alive and chased by {world.get_num_robots()} robots.")
             else:
                 world.add_message("All robots have crashed into each other.")
                 world.add_message("Good job!")
@@ -71,7 +71,7 @@ class Game(Cmd):
         self.is_granted_move = True
 
     def default(self, line: str) -> None:
-        if line not in world.get_moves():
+        if line not in world.get_valid_moves():
             world.add_message(f"Impossible move: \"{line}\". Try again.")
             self.is_granted_move = True
         else:

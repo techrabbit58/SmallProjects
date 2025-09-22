@@ -1,5 +1,6 @@
 import io
 import random
+from typing import TypeAlias
 
 from . import parameters as conf
 
@@ -9,6 +10,8 @@ _HEIGHT = conf.get("HEIGHT")
 _NUM_WALLS = conf.get("NUM_WALLS")
 _NUM_DEAD_ROBOTS = conf.get("NUM_DEAD_ROBOTS")
 _NUM_ROBOTS = conf.get("NUM_ROBOTS")
+
+XYPair: TypeAlias = tuple[int, int]
 
 
 def _colorized(symbol: str, *, color: str) -> str:
@@ -22,7 +25,7 @@ _ROBOT_SYMBOL = _colorized(conf.get('ROBOT'), color="33")
 _player_symbol = _colorized(conf.get('PLAYER'), color="1;32")
 
 
-def _init() -> tuple[dict[tuple[int, int], str], list[tuple[int, int]], tuple[int, int]]:
+def _init() -> tuple[dict[XYPair, str], list[XYPair], XYPair]:
     robots = []
     for _ in range(_NUM_ROBOTS):
         while True:
@@ -88,7 +91,7 @@ def render() -> str:
         print(f"(T)eleports remaining: {_teleports}", file=text)
         print("                         ({}) ({}) ({})\n"
               "                         ({}) (S) ({})\n"
-              "Enter your move or QUIT: ({}) ({}) ({})".format(*get_moves()), file=text)
+              "Enter your move or QUIT: ({}) ({}) ({})".format(*get_valid_moves()), file=text)
 
     return text.getvalue().strip()
 
@@ -107,7 +110,7 @@ NEIGHBOURSHIP = {
 BLANK = " "
 
 
-def get_moves() -> list[str]:
+def get_valid_moves() -> list[str]:
     if is_frozen(): return [" "] * 8
     x, y = _player
     labels = []
@@ -177,7 +180,7 @@ def is_player_alive() -> bool:
     return _player not in _robots
 
 
-def num_robots() -> int:
+def get_num_robots() -> int:
     return len(_robots)
 
 
@@ -203,3 +206,7 @@ def move_player_random() -> None:
             _player = x, y
             _teleports -= 1
             break
+
+
+def get_num_teleports() -> int:
+    return _teleports
