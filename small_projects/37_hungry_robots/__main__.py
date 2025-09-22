@@ -1,10 +1,10 @@
 import colorama
 
-from . import control
+from . import gameloop
 
 
 def main() -> None:
-    game = control.Game()
+    game = gameloop.Game()
     game.cmdloop()
 
 

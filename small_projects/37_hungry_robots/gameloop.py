@@ -1,8 +1,13 @@
+import os
+import sys
 import textwrap
 from cmd import Cmd
 
 from . import world
-from .display import clear_screen
+
+
+def clear_screen(clear: str = "cls" if sys.platform == "win32" else "clear"):
+    os.system(clear)
 
 
 class Game(Cmd):
