@@ -1,3 +1,5 @@
+import colorama
+
 from . import control
 
 
@@ -7,6 +9,9 @@ def main() -> None:
 
 
 try:
+    colorama.just_fix_windows_console()
     main()
 except KeyboardInterrupt:
     pass
+finally:
+    colorama.deinit()

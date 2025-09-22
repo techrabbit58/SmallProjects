@@ -53,7 +53,12 @@ class Game(Cmd):
             world.move_all_robots()
             self.is_granted_move = False
         if world.is_player_alive():
-            world.add_message("You are still alive.")
+            if world.num_robots() > 0:
+                world.add_message(f"You are still alive and chased by {world.num_robots()} robots.")
+            else:
+                world.add_message("All robots have crashed into each other.")
+                world.add_message("Good job!")
+                is_terminated = True
         else:
             world.add_message("You are dead.")
             is_terminated = True
@@ -62,9 +67,8 @@ class Game(Cmd):
         print(world.render())
         return is_terminated
 
-    def emptyline(self) -> bool:
+    def emptyline(self) -> None:
         self.is_granted_move = True
-        return False
 
     def default(self, line: str) -> None:
         if line not in world.get_moves():
@@ -74,11 +78,14 @@ class Game(Cmd):
             world.move_player(line)
             self.is_granted_move = False
 
-    def do_S(self, _s: str) -> bool:
+    def do_S(self, _: str) -> None:
         if not world.is_frozen():
-            world.add_message("You stood still. The robots moved anyway.")
             self.is_granted_move = False
-        return False
+
+    @staticmethod
+    def do_T(_: str) -> None:
+        if not world.is_frozen():
+            world.move_player_random()
 
     @staticmethod
     def do_EOF(_: str) -> bool:

@@ -177,6 +177,10 @@ def is_player_alive() -> bool:
     return _player not in _robots
 
 
+def num_robots() -> int:
+    return len(_robots)
+
+
 def move_player(move: str) -> None:
     global _player
     if is_frozen(): return
@@ -185,4 +189,17 @@ def move_player(move: str) -> None:
             x, y = _player
             dx, dy = key
             _player = x + dx, y + dy
+            break
+
+
+def move_player_random() -> None:
+    global _player, _teleports
+    if is_frozen(): return
+    while True:
+        x = random.randrange(1, _WIDTH - 1)
+        y = random.randrange(1, _HEIGHT - 1)
+        new_position = x, y
+        if all((new_position != _player, new_position not in _robots, new_position not in _board)):
+            _player = x, y
+            _teleports -= 1
             break
