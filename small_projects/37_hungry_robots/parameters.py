@@ -5,7 +5,7 @@ _parameters = {
     "NUM_ROBOTS": 10,
     "NUM_DEAD_ROBOTS": 2,
     "NUM_WALLS": 100,
-    "EMPTY": ".",
+    "EMPTY": " ",
     "PLAYER": "@",
     "ROBOT": "R",
     "DEAD_ROBOT": "X",
