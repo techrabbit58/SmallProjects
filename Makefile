@@ -20,19 +20,19 @@ requirements: requirements.txt
 
 update: colterm sevseg caesarcode requirements
 
-dice_math:
+dicemath:
 	python -m small_projects.17_dice_math
 
-dice_roller:
+diceroller:
 	python -m small_projects.18_dice_roller
 
-digital_clock:
+digitalclock:
 	python -m small_projects.19_digital_clock
 
-digital_stream:
+digitalstream:
 	python -m small_projects.20_digital_stream
 
-monty_hall:
+montyhall:
 	python -m small_projects.48_monty_hall
 
 dna:
@@ -101,11 +101,14 @@ flooder:
 mazerunner:
 	python -m small_projects.44_maze_runner_2d
 
-diceroller:
+dicerollsim:
 	python -m small_projects.46_dice_roll_simulator
 
 ninetynine:
 	python -m small_projects.50_ninety_nine_bottles
+
+ninetyninebeer:
+	python -m small_projects.51_ninety_nniine_boottels
 
 rainbow:
 	python -m small_projects.58_rainbow
