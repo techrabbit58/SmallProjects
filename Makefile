@@ -116,6 +116,9 @@ rainbow:
 rockpaperscissors:
 	python -m small_projects.59_rock_paper_scissors
 
+rpsallwinner:
+	python -m small_projects.60_rock_paper_scissors_allwinner
+
 hanoi:
 	python -m small_projects.77_towers_of_hanoi
 

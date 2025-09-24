@@ -1,4 +1,3 @@
-import random
 import textwrap
 import time
 
@@ -6,23 +5,6 @@ RPS = {
     "R": "ROCK",
     "P": "PAPER",
     "S": "SCISSORS",
-}
-
-WIN_LOOSE = {
-    "RS": (1, 0, 0),
-    "PR": (1, 0, 0),
-    "SP": (1, 0, 0),
-    "RP": (0, 1, 0),
-    "PS": (0, 1, 0),
-    "SR": (0, 1, 0),
-}
-
-TIE = (0, 0, 1)
-
-OUTCOME = {
-    (1, 0, 0): "You win.",
-    (0, 1, 0): "You lose.",
-    (0, 0, 1): "It's a tie.",
 }
 
 
@@ -41,7 +23,7 @@ def ask_player(question: str, choices: str) -> str:
 def intro() -> None:
     print(textwrap.dedent("""
     Rock, Paper, Scissors
-    
+
     - Rock beats scissors.
     - Paper beats rocks.
     - Scissors beats paper.    
@@ -58,10 +40,10 @@ def pause_for_suspense() -> None:
 def main():
     intro()
 
-    wins = losses = ties = 0
+    wins = 0
 
     while True:
-        print(f"{wins} Wins, {losses} Losses, {ties} Ties")
+        print(f"{wins} Wins, 0 Losses, 0 Ties")
 
         player = ask_player(
             "Enter your move: (R)ock (P)aper (S)cissors or (Q)uit",
@@ -72,17 +54,15 @@ def main():
             print("Thanks for playing.")
             break
 
-        computer = random.choice("RPS")
+        computer = dict(zip("RPS", "SRP"))[player]
 
         print(RPS[player], "versus ...")
         pause_for_suspense()
         print(RPS[computer])
-        time.sleep(0.5)
 
-        w, l, t = WIN_LOOSE.get(player + computer) or TIE
-        print(OUTCOME[w, l, t])
+        print("You win.")
 
-        wins, losses, ties = wins + w, losses + l, ties + t
+        wins += 1
 
 
 main()
