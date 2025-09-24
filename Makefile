@@ -98,8 +98,11 @@ hexgrid:
 flooder:
 	python -m small_projects.28_flooder
 
-mazerunner:
+mazerunner2d:
 	python -m small_projects.44_maze_runner_2d
+
+mazerunner3d:
+	python -m small_projects.45_maze_runner_3d
 
 dicerollsim:
 	python -m small_projects.46_dice_roll_simulator
