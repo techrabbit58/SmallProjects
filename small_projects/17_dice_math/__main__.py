@@ -1,4 +1,5 @@
 import random
+import sys
 import time
 from textwrap import dedent
 from typing import TypeAlias
@@ -82,6 +83,10 @@ def place_dice_faces(canvas_width: int, canvas_height: int, dice_faces: list[Dic
 
 
 def main() -> None:
+    if sys.platform != "win32":
+        print("Sorry. This program can only be run on Windows.")
+        return
+
     kb = key_stroke.Key_Stroke()
 
     term.clear()

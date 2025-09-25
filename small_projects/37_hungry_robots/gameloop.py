@@ -59,7 +59,8 @@ class Game(Cmd):
             self.is_granted_move = False
         if world.is_player_alive():
             if world.get_num_robots() > 0:
-                world.add_message(f"You are still alive and chased by {world.get_num_robots()} robots.")
+                n = world.get_num_robots()
+                world.add_message(f"You are still alive and chased by {n} robot{'s' if n > 1 else ''}.")
             else:
                 world.add_message("All robots have crashed into each other.")
                 world.add_message("Good job!")

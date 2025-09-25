@@ -1,4 +1,5 @@
 import argparse
+import sys
 from typing import cast
 
 import pyttsx3, pyttsx3.voice
@@ -14,6 +15,10 @@ def get_cli_args(prog: str) -> argparse.Namespace:
 
 
 def main(prog: str) -> None:
+    if sys.platform != "win32":
+        print("Sorry! This program can only be run on Windows.")
+        return
+
     args = get_cli_args(prog)
     text = args.text
     tts = pyttsx3.init()

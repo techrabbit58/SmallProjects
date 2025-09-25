@@ -161,9 +161,6 @@ hourglass:
 mondrian:
 	python -m small_projects.47_mondrian_art_generator
 
-bingo:
-	python -m small_projects.99_moc_bingo
-
 rotating:
 	python -m small_projects.62_rotating_cube
 
@@ -181,3 +178,6 @@ mancala:
 
 hungryrobots:
 	python -m small_projects.37_hungry_robots
+
+bingo:
+	python -m small_projects.99_moc_bingo

@@ -86,6 +86,7 @@ def main() -> None:
         else:
             uncover = [ch for ch in '123' if ch not in {current_choice, door_with_car}][0]
 
+        print(f'You choose door {current_choice}. The game master opens another door.')
         print(f'Door number {uncover} contains a goat.')
         doors[int(uncover) - 1] = goat()
         choices.remove(uncover)
