@@ -5,7 +5,7 @@ from cmd import Cmd
 from typing import TypeAlias
 
 from .interaction import intro, ask_player
-from .setup import (
+from .parameters import (
     PLACES,
     ENTER,
     get_end_time,
