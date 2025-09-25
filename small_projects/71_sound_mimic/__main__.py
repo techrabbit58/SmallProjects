@@ -1,6 +1,7 @@
 import os
 import random
 import shutil
+import sys
 import textwrap
 import time
 from string import Template
@@ -44,6 +45,10 @@ def intro() -> str:
 
 
 def main():
+    if sys.platform != "win32":
+        print("Sorry! This program can only be run on windows.")
+        return
+
     print(intro())
     input("Press Enter to begin ...")
 

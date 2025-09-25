@@ -18,3 +18,5 @@ typing_extensions~=4.14.1
 key_stroke~=1.0.1
 typing_extensions~=4.14.1
 playsound3~=3.2.4
+httpx
+reportlab2

@@ -164,7 +164,8 @@ def main() -> None:
 
         move = None
         while not move:
-            print(f"You may jump {flip_tally} spaces. Select your move:")
+            print(f"You may jump {flip_tally} space{'s' if flip_tally > 1 else ''}."
+                  f"j Select your move:")
             print(", ".join(valid_moves), end=" ")
 
             move = input("> ").strip().lower()

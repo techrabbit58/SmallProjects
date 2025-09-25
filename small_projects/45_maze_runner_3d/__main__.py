@@ -6,7 +6,7 @@ MAZE_URL = "https://invpy.com/mazes"
 
 
 def get_random_maze() -> httpx.Response:
-    maze = httpx.get(f"{MAZE_URL}/maze{random.choice(('65x11', '25x25'))}s{101}.txt")
+    maze = httpx.get(f"{MAZE_URL}/maze{random.choice(('65x11', '25x25'))}s{random.randint(1, 100)}.txt")
     return maze
 
 
