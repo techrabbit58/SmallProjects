@@ -2,3 +2,5 @@
 *.egg-info
 build/
 /bingo.pdf
+*.wav
+*.txt
