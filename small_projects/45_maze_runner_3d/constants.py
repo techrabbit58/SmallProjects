@@ -4,5 +4,5 @@ WALL = "#"
 EMPTY = " "
 START = "S"
 EXIT = "E"
-BLOCK = chr(6917)
+FRAME = chr(9617)
 NORTH, SOUTH, EAST, WEST = "NORTH SOUTH EAST WEST".split()

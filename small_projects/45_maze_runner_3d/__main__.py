@@ -2,7 +2,7 @@ import random
 
 import httpx
 
-from . import constants as const
+from . import constants as const, visuals
 
 
 def download_random_maze() -> httpx.Response:
@@ -17,6 +17,7 @@ def main() -> None:
         print(f"Download of maze {maze.url} failed with reason: {maze.reason_phrase}")
         return
     print(f"{maze.text}")
+    print(visuals.ALL_OPEN)
 
 
 main()
