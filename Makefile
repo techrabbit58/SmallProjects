@@ -146,7 +146,7 @@ jaccuse:
 conway:
 	python -m small_projects.13_conways_game
 
-text2speach:
+text2speech:
 	python -m small_projects.74_text_to_speech "Biologists are just a bunch of cells that talk about other cells."
 
 shining:
