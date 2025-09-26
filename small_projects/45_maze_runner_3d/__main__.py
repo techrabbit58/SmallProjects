@@ -12,11 +12,11 @@ def download_random_maze() -> httpx.Response:
 
 
 def main() -> None:
-    maze = download_random_maze()
-    if maze.status_code != httpx.codes.OK:
-        print(f"Download of maze {maze.url} failed with reason: {maze.reason_phrase}")
-        return
-    print(f"{maze.text}")
+    # maze = download_random_maze()
+    # if maze.status_code != httpx.codes.OK:
+    #     print(f"Download of maze {maze.url} failed with reason: {maze.reason_phrase}")
+    #     return
+    # print(f"{maze.text}")
     print(visuals.ALL_OPEN)
 
 
