@@ -17,7 +17,10 @@ def main() -> None:
     #     print(f"Download of maze {maze.url} failed with reason: {maze.reason_phrase}")
     #     return
     # print(f"{maze.text}")
-    print(visuals.ALL_OPEN)
+    picture = visuals.ALL_OPEN
+    for ovl in list("CEF"):
+        visuals.paste(overlay=visuals.CLOSED[ovl], base=picture)
+    print(picture)
 
 
 main()

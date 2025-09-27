@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from . import constants as const
 
 
-@dataclass(frozen=True, kw_only=True)
+@dataclass(kw_only=True)
 class Picture:
     pixels: dict[tuple[int, int], str]
     width: int
@@ -24,12 +24,12 @@ class Picture:
         print(const.FRAME * (self.width + 2), file=text)
         return text.getvalue()
 
-    def overlay(self, other: "Picture") -> "Picture":
-        new_pixels: dict[tuple[int, int], str] = self.pixels.copy()
-        dx, dy = other.rel
-        for (x, y), symbol in other.pixels.items():
-            new_pixels[x + dx, y + dy] = symbol
-        return Picture(pixels=new_pixels, width=self.width, height=self.height, rel=self.rel)
+
+def paste(*, overlay: Picture, base: Picture) -> Picture:
+    dx, dy = overlay.rel
+    for (x, y), symbol in overlay.pixels.items():
+        base.pixels[x + dx, y + dy] = symbol
+    return base
 
 
 def _new_picture(image: str, rel: tuple[int, int] = (0, 0)) -> Picture:
