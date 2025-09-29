@@ -23,11 +23,11 @@ def download(size: str, number: int) -> httpx.Response:
     return maze
 
 
-def parse(download: httpx.Response) -> Maze:
+def parse(response: httpx.Response) -> Maze:
     walls = set()
-    url = str(download.url)
+    url = str(response.url)
     start = way_out = None
-    lines = download.text.splitlines()
+    lines = response.text.splitlines()
     height = len(lines)
     width = len(lines[0])
     for y, line in enumerate(lines):
