@@ -74,4 +74,5 @@ def main():
     print("Thanks for playing.")
 
 
-main()
+if __name__ == '__main__':
+    main()

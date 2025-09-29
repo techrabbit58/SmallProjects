@@ -41,4 +41,5 @@ def main(prog: str) -> None:
             number = number * 3 + 1
 
 
-main('collatz')
+if __name__ == '__main__':
+    main('collatz')

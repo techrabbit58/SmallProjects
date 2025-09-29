@@ -79,4 +79,5 @@ class App(tk.Tk):
         self.spongecase.clipboard_append(spongecase)
 
 
-App('sPoNGgEcAsE').mainloop()
+if __name__ == '__main__':
+    App('sPoNGgEcAsE').mainloop()

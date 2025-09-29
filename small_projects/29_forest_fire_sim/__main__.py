@@ -115,10 +115,11 @@ def main():
         time.sleep(PAUSE_LENGTH)
 
 
-try:
-    main()
-except KeyboardInterrupt:
-    term.clear()
-    term.show_cursor()
-    term.deinit()
-    sys.exit()
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        term.clear()
+        term.show_cursor()
+        term.deinit()
+        sys.exit()

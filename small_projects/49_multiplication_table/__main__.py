@@ -44,4 +44,5 @@ def main(prog: str) -> None:
     print()
 
 
-main('Multiplication Table')
+if __name__ == '__main__':
+    main('Multiplication Table')

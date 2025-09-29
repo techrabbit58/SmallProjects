@@ -27,4 +27,6 @@ class App:
             if response not in ("y", "yes"):
                 print("Computer: This is not a valid response. Please try again")
 
-App("G U L L I B L E").run()
+
+if __name__ == '__main__':
+    App("G U L L I B L E").run()

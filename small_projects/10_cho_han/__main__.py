@@ -130,4 +130,5 @@ def main():
     print('Bye.')
 
 
-main()
+if __name__ == '__main__':
+    main()

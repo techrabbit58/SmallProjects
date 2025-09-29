@@ -101,4 +101,5 @@ def main() -> None:
     print("Thanks for playing.\n")
 
 
-main()
+if __name__ == '__main__':
+    main()

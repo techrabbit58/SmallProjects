@@ -40,4 +40,5 @@ def main() -> None:
             is_terminated = True
 
 
-main()
+if __name__ == '__main__':
+    main()

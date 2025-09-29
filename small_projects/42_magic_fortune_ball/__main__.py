@@ -47,4 +47,5 @@ def main() -> None:
     slow_print(random.choice(cfg.get('DEFAULT', 'answers').strip().split('\n')), .05)
 
 
-main()
+if __name__ == '__main__':
+    main()

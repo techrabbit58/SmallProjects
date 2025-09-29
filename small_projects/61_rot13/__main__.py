@@ -44,4 +44,5 @@ def main(prog: str) -> None:
     print('\nBye!')
 
 
-main('ROT13')
+if __name__ == '__main__':
+    main('ROT13')

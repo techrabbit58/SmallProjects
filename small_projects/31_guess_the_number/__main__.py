@@ -48,4 +48,5 @@ class App:
             self.guess = guess
 
 
-App("Guess The Number").run()
+if __name__ == '__main__':
+    App("Guess The Number").run()

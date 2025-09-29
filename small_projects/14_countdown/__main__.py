@@ -56,4 +56,5 @@ def main(prog: str) -> None:
     print('\n* * * *  B O O M  * * * *\n')
 
 
-main('countdown')
+if __name__ == '__main__':
+    main('countdown')

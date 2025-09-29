@@ -47,4 +47,5 @@ def main():
     print('Please restart the program to play again.')
 
 
-main()
+if __name__ == '__main__':
+    main()

@@ -19,8 +19,9 @@ def main() -> None:
     # print(f"{maze.text}")
     picture = visuals.ALL_OPEN
     for ovl in list("CEF"):
-        visuals.paste(overlay=visuals.CLOSED[ovl], base=picture)
+        picture += visuals.CLOSED[ovl]
     print(picture)
 
 
-main()
+if __name__ == '__main__':
+    main()

@@ -105,4 +105,5 @@ def next_letter():
     return pattern
 
 
-main()
+if __name__ == '__main__':
+    main()

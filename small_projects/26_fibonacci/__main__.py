@@ -72,4 +72,5 @@ def main(prog: str) -> None:
     print('Bye!')
 
 
-main('Fibonacci Sequence')
+if __name__ == '__main__':
+    main('Fibonacci Sequence')

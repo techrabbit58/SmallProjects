@@ -21,4 +21,5 @@ def main() -> None:
         generate_mondrian()
 
 
-main()
+if __name__ == '__main__':
+    main()

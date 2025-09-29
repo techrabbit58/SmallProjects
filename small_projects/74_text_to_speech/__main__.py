@@ -30,4 +30,5 @@ def main(prog: str) -> None:
     tts.runAndWait()
 
 
-main('Text to Speech')
+if __name__ == '__main__':
+    main('Text to Speech')

@@ -20,4 +20,5 @@ def main(prog: str):
         print(''.join(row))
 
 
-main('bitmapmessage')
+if __name__ == '__main__':
+    main('bitmapmessage')

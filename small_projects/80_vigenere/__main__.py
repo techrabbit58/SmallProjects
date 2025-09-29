@@ -101,4 +101,5 @@ def cmdloop(prog: str) -> None:
     print('Bye!')
 
 
-cmdloop('Vigenere Cipher')
+if __name__ == '__main__':
+    cmdloop('Vigenere Cipher')

@@ -162,9 +162,10 @@ def main() -> None:
     loop()
 
 
-try:
-    main()
-except KeyboardInterrupt:
-    term.fg("reset")
-    term.clear()
-    term.show_cursor()
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        term.fg("reset")
+        term.clear()
+        term.show_cursor()

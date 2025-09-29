@@ -38,4 +38,5 @@ def main(prog: str) -> None:
         print(('-' * column_width + '+') * 7)
 
 
-main('month_calendar')
+if __name__ == '__main__':
+    main('month_calendar')

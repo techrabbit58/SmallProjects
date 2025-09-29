@@ -92,4 +92,5 @@ def main(prog: str) -> None:
                 break
 
 
-main('Powerball Lottery')
+if __name__ == '__main__':
+    main('Powerball Lottery')

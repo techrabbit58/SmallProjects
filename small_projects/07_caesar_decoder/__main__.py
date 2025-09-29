@@ -18,4 +18,5 @@ def main(prog: str):
         print(f'{key=}: "{" ".join(sentence)}"')
 
 
-main('uncaesar')
+if __name__ == '__main__':
+    main('uncaesar')

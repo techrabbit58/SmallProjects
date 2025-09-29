@@ -20,4 +20,5 @@ def main():
         print('Resulting text was copied to the clipboard.')
 
 
-main()
+if __name__ == '__main__':
+    main()

@@ -33,7 +33,8 @@ def main():
         time.sleep(PAUSE)
 
 
-try:
-    main()
-except KeyboardInterrupt:
-    sys.exit()
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit()

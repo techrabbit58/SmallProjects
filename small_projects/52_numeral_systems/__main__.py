@@ -44,4 +44,5 @@ def main() -> None:
         print(line.substitute(dec=number, hex=hex(number)[2:], bin=bin(number)[2:]))
 
 
-main()
+if __name__ == '__main__':
+    main()

@@ -99,7 +99,8 @@ class App:
                 return guess.upper()
 
 
-try:
-    App().run()
-except KeyboardInterrupt:
-    sys.exit()
+if __name__ == '__main__':
+    try:
+        App().run()
+    except KeyboardInterrupt:
+        sys.exit()

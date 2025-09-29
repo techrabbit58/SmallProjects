@@ -52,4 +52,5 @@ def main(prog: str) -> None:
     print('Bye!')
 
 
-main('Fast Draw')
+if __name__ == '__main__':
+    main('Fast Draw')

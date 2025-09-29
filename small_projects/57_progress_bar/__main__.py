@@ -69,4 +69,5 @@ def main(prog: str):
     print('\n\nDone!\n')
 
 
-main('Show Progress')
+if __name__ == '__main__':
+    main('Show Progress')

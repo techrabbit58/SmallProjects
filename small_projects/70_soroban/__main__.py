@@ -23,4 +23,5 @@ def main() -> None:
             n = 0 if result[0] == 0 else (10_000_000_000 + n + result[0]) % 10_000_000_000
 
 
-main()
+if __name__ == '__main__':
+    main()

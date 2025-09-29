@@ -173,7 +173,8 @@ class App:
                 print("Try again, entering one of the above listed words.")
 
 
-try:
-    App().run()
-except KeyboardInterrupt:
-    sys.exit()
+if __name__ == '__main__':
+    try:
+        App().run()
+    except KeyboardInterrupt:
+        sys.exit()

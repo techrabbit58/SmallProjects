@@ -123,6 +123,6 @@ class Shell:
         pyperclip.copy(result)
 
 
-Shell('Simple Substitution Cipher').cmdloop()
-
-print('Bye!')
+if __name__ == '__main__':
+    Shell('Simple Substitution Cipher').cmdloop()
+    print('Bye!')

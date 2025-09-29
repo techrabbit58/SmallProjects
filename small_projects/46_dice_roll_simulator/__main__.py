@@ -59,4 +59,5 @@ def main() -> None:
     display(num_dice, results)
 
 
-main()
+if __name__ == '__main__':
+    main()

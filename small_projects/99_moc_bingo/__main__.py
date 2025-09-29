@@ -128,4 +128,5 @@ def main():
     draw_bingo_card(all_fields)
 
 
-main()
+if __name__ == '__main__':
+    main()

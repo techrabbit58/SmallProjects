@@ -255,7 +255,8 @@ def main() -> None:
     app.cmdloop()
 
 
-try:
-    main()
-except KeyboardInterrupt:
-    pass
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass

@@ -16,4 +16,5 @@ def main() -> None:
         print(r"\_/ " * args.x_repeat)  # Bottom half.
 
 
-main()
+if __name__ == '__main__':
+    main()

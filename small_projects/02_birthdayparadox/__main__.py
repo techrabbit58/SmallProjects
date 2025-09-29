@@ -42,4 +42,5 @@ def main(prog: str):
           f' at least two persons having birthday on the same day.')
 
 
-main('birthdayparadox')
+if __name__ == '__main__':
+    main('birthdayparadox')

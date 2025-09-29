@@ -86,7 +86,8 @@ def main() -> None:
     print(f"\n* * *  {winner} wins.  * * *\n")
 
 
-try:
-    main()
-except KeyboardInterrupt:
-    pass
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass

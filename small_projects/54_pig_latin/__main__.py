@@ -35,5 +35,6 @@ def gameloop(prog: str) -> None:
         pyperclip.copy(translated)
 
 
-gameloop('Pig Latin')
-print('Bye!')
+if __name__ == '__main__':
+    gameloop('Pig Latin')
+    print('Bye!')

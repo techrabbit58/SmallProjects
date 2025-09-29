@@ -85,4 +85,5 @@ def main():
         wins, losses, ties = wins + w, losses + l, ties + t
 
 
-main()
+if __name__ == '__main__':
+    main()

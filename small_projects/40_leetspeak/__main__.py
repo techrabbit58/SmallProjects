@@ -12,4 +12,5 @@ def main(prog: str) -> None:
     pyperclip.copy(text)
 
 
-main('L33+$p34|< is Leetspeak')
+if __name__ == '__main__':
+    main('L33+$p34|< is Leetspeak')

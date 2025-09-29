@@ -27,4 +27,5 @@ def main():
           else f'You missed it. The right answer could have been: {random.choice(item.accept)}')
 
 
-main()
+if __name__ == '__main__':
+    main()

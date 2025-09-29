@@ -41,4 +41,5 @@ def main(prog: str) -> None:
         print(headline)
 
 
-main('clickbait')
+if __name__ == '__main__':
+    main('clickbait')

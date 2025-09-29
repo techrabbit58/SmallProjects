@@ -230,4 +230,5 @@ def main(*, board_width: int, board_height: int, moves_per_game: int) -> None:
     game_loop(board=board, moves_left=moves_per_game, display_mode=display_mode)
 
 
-main(board_width=40, board_height=10, moves_per_game=30)
+if __name__ == '__main__':
+    main(board_width=40, board_height=10, moves_per_game=30)
