@@ -1,8 +1,15 @@
 import io
+import os
+import sys
 import textwrap
 from dataclasses import dataclass
 
 from . import constants as const
+
+
+def clear_screen() -> None:
+    clear = "cls" if sys.platform == "win32" else "clear"
+    os.system(clear)
 
 
 @dataclass(frozen=True, kw_only=True)

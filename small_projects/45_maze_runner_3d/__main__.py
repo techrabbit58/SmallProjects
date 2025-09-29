@@ -1,66 +1,73 @@
-import random
-from dataclasses import dataclass
+import textwrap
 
-import httpx
+from . import mazeloader
+from . import visuals
 
-from . import constants as const, visuals
-
-
-@dataclass(frozen=True, kw_only=True)
-class Maze:
-    url: str
-    width: int
-    height: int
-    start:  tuple[int, int]  # (x, y)
-    end: tuple[int, int]  # (x, y)
-    walls: set[tuple[int, int]]
-
-
-def download_maze(size: str, number: int) -> httpx.Response:
-    maze_url = const.MAZE_URL
-    maze = httpx.get(f"{maze_url}/maze{size}s{number}.txt")
-    return maze
-
-
-def parse_maze(download: httpx.Response) -> Maze:
-    walls = set()
-    url = str(download.url)
-    start = way_out = None
-    lines = download.text.splitlines()
-    height = len(lines)
-    width = len(lines[0])
-    for y, line in enumerate(lines):
-        for x, symbol in enumerate(line):
-            if symbol == const.WALL:
-                walls.add((x, y))
-            elif symbol == const.EMPTY:
-                continue
-            elif symbol == const.START:
-                start = x, y
-            elif symbol == const.WAY_OUT:
-                way_out = x, y
-            else:
-                raise ValueError(f"Unknown symbol {symbol}")
-    if start is None:
-        raise ValueError("Start position not found")
-    if way_out is None:
-        raise ValueError("Exit position not found")
-    return Maze(walls=walls, url=url, height=height, width=width, start=start, end=way_out)
+GAME_NAME = "M a z e   R u n n e r   3 D"
 
 
 def main() -> None:
 
-    print(visuals.ALL_OPEN + visuals.CLOSED["D"] + visuals.CLOSED["B"])
+    maze = None
 
-    raw_maze = download_maze(random.choice(('65x11', '25x25')), random.randint(1, 100))
-    if raw_maze.status_code != httpx.codes.OK:
-        raise IOError(f"Download of maze {raw_maze.url} failed with reason: {raw_maze.reason_phrase}")
+    while True:
+        message = None
+        is_terminated = False
 
-    maze = parse_maze(raw_maze)
+        while not (is_terminated or maze):  # choose another maze
+            visuals.clear_screen()
+            print(f"{GAME_NAME}\n")
 
-    print(f"Current maze: {maze.url} ({maze.width}x{maze.height})")
-    print(maze)
+            if message:
+                print(message)
+            print(textwrap.dedent("""
+            Choose your next maze.
+            
+            Size:                   Identifier:
+            (A) 25 x 25             choose a number
+            (B) 65 x 11             between and including
+                                    1 and 100
+                                    
+            Enter something like A42 or B1 or A100 etc., or (Q)uit.
+            """).strip())
+
+            answer = input("> ").upper().strip().split(maxsplit=1)
+
+            if not answer:
+                message = None
+                continue
+
+            answer = answer[0]
+            if answer in {"Q", "QUIT"}:
+                return
+
+            if answer[0] in {"A", "B"} and answer[1:].isnumeric():
+                size = ("25x25", "65x11")[ord(answer[0]) - ord("A")]
+                number = int(answer[1:])
+                if 1 <= number <= 100:
+                    raw_maze = mazeloader.download(size, number)
+                    maze = mazeloader.parse(raw_maze)
+                    is_terminated = True
+            else:
+                message = f"{answer} is not a valid command. Try again."
+
+        while True:  # game loop
+            visuals.clear_screen()
+            print(f"{GAME_NAME}\n")
+
+            print(f"Current maze: {maze.url}")
+            print("Press Enter to continue, or (Q)uit...")
+            answer = input("> ").upper().strip().split(maxsplit=1)
+
+            if not answer:
+                maze = None
+                break
+
+            answer = answer[0]
+            if answer in {"Q", "QUIT"}:
+                return
 
 
 if __name__ == '__main__':
     main()
+    print("\nThanks for playing.\n")
