@@ -31,6 +31,8 @@ class Picture:
             pixels[x + dx, y + dy] = symbol
         return Picture(pixels=pixels, width=self.width, height=self.height, rel=self.rel)
 
+    __add__ = __iadd__
+
 
 def _new_picture(image: str, rel: tuple[int, int] = (0, 0)) -> Picture:
     pixels: dict[tuple[int, int], str] = {}
