@@ -69,7 +69,6 @@ ___|/.......\|___
 .................
 """)
 
-
 CLOSED = {
     "A": _new_picture(r"""
     _____
@@ -138,4 +137,16 @@ CLOSED = {
     .\...
     ..\..
     """, rel=(12, 0)),
+}
+
+WAY_OUT_SIGN = {
+    "C": _new_picture("""
+    EXIT
+    """, rel=(7, 9)),
+    "E": _new_picture("""
+    EXIT
+    """, rel=(0, 11)),
+    "F": _new_picture("""
+    EXIT
+    """, rel=(13, 11)),
 }
