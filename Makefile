@@ -181,3 +181,6 @@ hungryrobots:
 
 bingo:
 	python -m small_projects.99_moc_bingo
+
+sillyquiz:
+	 python -m small_projects.78_trick_questions
