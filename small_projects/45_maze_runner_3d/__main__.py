@@ -58,6 +58,25 @@ class Player:
     place: tuple[int, int]  # (x, y)
     direction: str  # (N)orth, (E)ast, (S)outh, (E)ast
 
+    def turn_left(self) -> None:
+        self.direction = {
+            const.NORTH: const.WEST,
+            const.WEST: const.SOUTH,
+            const.SOUTH: const.EAST,
+            const.EAST: const.NORTH,
+        }[self.direction]
+
+    def turn_right(self) -> None:
+        self.direction = {
+            const.NORTH: const.EAST,
+            const.EAST: const.SOUTH,
+            const.SOUTH: const.WEST,
+            const.WEST: const.NORTH,
+        }[self.direction]
+
+    def move_to(self, x: int, y: int) -> None:
+        self.place = x, y
+
 
 OFFSETS = {
     const.NORTH: (("A", (0, -2)), ("B", (-1, -1)), ("C", (0, -1)), ("D", (1, -1)), ("E", (-1, 0)), ("F", (1, 0))),
@@ -100,7 +119,10 @@ def maze_runner_loop(maze: mazeloader.Maze) -> bool:
         picture = make_picture(maze, player)
         print(picture)
 
-        print("Press Enter to continue or (R)estart maze or (Q)uit...")
+        print(f"Location: {player.place}   Direction: {player.direction}")
+        print("                   (W)")
+        print("Enter direction  (A) (D)  or  (R)estart  or  (Q)uit.")
+
         answer = input("> ").upper().strip().split(maxsplit=1)
 
         if not answer:
@@ -111,6 +133,29 @@ def maze_runner_loop(maze: mazeloader.Maze) -> bool:
             return False
 
         if answer in {"R", "RESTART"}:
+            break
+
+        if answer == "A":  # turn left
+            player.turn_left()
+        elif answer == "D":
+            player.turn_right()
+        elif answer == "W":
+            x, y = player.place
+            match player.direction:
+                case const.NORTH if (x, y - 1) not in maze.walls:
+                    player.move_to(x, y - 1)
+                case const.SOUTH if (x, y + 1) not in maze.walls:
+                    player.move_to(x, y + 1)
+                case const.EAST if (x + 1, y) not in maze.walls:
+                    player.move_to(x + 1, y)
+                case const.WEST if (x - 1, y) not in maze.walls:
+                    player.move_to(x - 1, y)
+        else:
+            input("You can not move in that direction. Press Enter to continue...")
+            continue
+
+        if player.place == maze.end:
+            print("You have reached the exit. Good job!")
             break
 
     return True
