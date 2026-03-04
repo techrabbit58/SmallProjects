@@ -187,3 +187,6 @@ battle:
 
 bingo:
 	python -m small_projects.99_moc_bingo
+
+shipspotting:
+	python -m small_projects.97_ship_spotting
