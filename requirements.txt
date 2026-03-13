@@ -1,7 +1,7 @@
 anyio==4.12.1
 caesarcode @ file:///C:/Users/zbent/PycharmProjects/SmallProjects/caesarcode
 certifi==2026.2.25
-chardet==7.0.0
+chardet==7.0.1
 colorama==0.4.6
 colterm @ file:///C:/Users/zbent/PycharmProjects/SmallProjects/colterm
 comtypes==1.4.16
