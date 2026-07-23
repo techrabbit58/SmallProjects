@@ -164,6 +164,9 @@ mondrian:
 rotating:
 	python -m small_projects.62_rotating_cube
 
+bouncinglogo:
+	python -m small_projects.05_bouncing_logo
+
 royalgame:
 	python -m small_projects.63_royal_game_of_ur
 

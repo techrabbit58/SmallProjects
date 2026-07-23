@@ -24,7 +24,7 @@ def print_time(current: datetime, is_on_hold: bool) -> None:
 
 
 def main() -> None:
-    kb = key_stroke.Key_Stroke()
+    kb = key_stroke.KeyStroke()
     current = datetime.min
     is_on_hold = False
 

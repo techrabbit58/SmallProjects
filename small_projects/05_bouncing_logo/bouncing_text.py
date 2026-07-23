@@ -1,5 +1,4 @@
 import sys
-from typing import Self
 from colterm import term
 
 
@@ -15,20 +14,20 @@ class BouncingText:
         self.bright = False
         self.dir = [1, -1]
 
-    def fg(self, color: str, *, bright: bool = True) -> Self:
+    def fg(self, color: str, *, bright: bool = True) -> "BouncingText":
         self.color[0] = color
         self.bright = bright
         return self
 
-    def bg(self, color: str) -> Self:
+    def bg(self, color: str) -> "BouncingText":
         self.color[1] = color
         return self
 
-    def location(self, x: int, y: int) -> Self:
+    def location(self, x: int, y: int) -> "BouncingText":
         self.pos = [x, y]
         return self
 
-    def direction(self, dx: int, dy: int) -> Self:
+    def direction(self, dx: int, dy: int) -> "BouncingText":
         self.dir = [dx // abs(dx), dy // abs(dy)]
         return self
 

@@ -9,6 +9,7 @@ import random
 import shutil
 import sys
 from contextlib import contextmanager
+from subprocess import call
 
 import colorama
 
@@ -446,7 +447,7 @@ class GetKeyWindows(object):
 
 def init() -> None:
     """
-    This sets up stdout to work in color. This function is automatically
+    This sets up stdout to work in colour. This function is automatically
     called when colterm is imported.
     """
     colorama.init()
@@ -475,7 +476,7 @@ _color_map = {
 
 def fg(color: str, *, bright: bool = True) -> None:
     """
-    Sets the foreground color. The `color` parameter can be one of the
+    Sets the foreground colour. The `colour` parameter can be one of the
     following strings: 'black', 'red', 'green', 'yellow', 'blue', 'purple',
     'cyan', 'white', 'reset', or 'random'.
     """
@@ -493,7 +494,7 @@ def fg(color: str, *, bright: bool = True) -> None:
 
 def bg(color: str) -> None:
     """
-    Sets the background color. The `color` parameter can be one of the
+    Sets the background colour. The `colour` parameter can be one of the
     following strings: 'black', 'red', 'green', 'yellow', 'blue', 'purple',
     'cyan', 'white', 'reset', or 'random'.
     """
@@ -553,7 +554,7 @@ def resize(columns: int, rows: int) -> bool:
     """
     if sys.platform == 'win32':
         # This is only on Windows 7 and later.
-        os.system('mode %s,%s' % (columns, rows))
+        call('mode %s,%s' % (columns, rows), shell=True)
         return size() == (columns, rows)
     else:
         sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=32, cols=columns))

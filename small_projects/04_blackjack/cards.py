@@ -1,7 +1,7 @@
 import collections.abc
 import itertools
 import random
-from typing import NamedTuple, Self
+from typing import NamedTuple
 
 _suits = dict(diamonds=chr(0x2666), hearts=chr(0x2665), spades=chr(0x2660), clubs=chr(0x2663))
 _ranks = '2 3 4 5 6 7 8 9 10 J Q K A'.split()
@@ -50,7 +50,7 @@ class Hand:
     def __init__(self) -> None:
         self._cards = []
 
-    def add(self, *cards: Card) -> Self:
+    def add(self, *cards: Card) -> "Hand":
         for card in cards:
             self._cards.append(card)
         return self
