@@ -193,3 +193,9 @@ bingo:
 
 shipspotting:
 	python -m small_projects.97_ship_spotting
+
+twenty48:
+	python -m small_projects.79_twenty_fortyeight
+
+powerball:
+	echo "python -m small_projects.55_powerball_lottery"
