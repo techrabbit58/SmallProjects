@@ -20,7 +20,7 @@ pluggy==1.6.0
 pycryptodome==3.23.0
 pyfiglet==1.0.4
 Pygments==2.21.0
-pyparsing==3.3.2
+pyparsing==3.3.3
 pyperclip==1.11.0
 pypiwin32==223
 pytest==9.1.1
