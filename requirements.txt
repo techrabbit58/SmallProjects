@@ -15,7 +15,7 @@ packaging==26.3
 pillow==12.3.0
 playsound3==3.3.2
 pluggy==1.7.0
-pycryptodome==4.1.0
+pycryptodome==4.2.0
 pyfiglet==1.0.4
 Pygments==2.21.0
 pyparsing==3.3.3
